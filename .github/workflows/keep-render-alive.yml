@@ -1,0 +1,12 @@
+name: Keep Render Alive
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+
+jobs:
+  http_request_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send HTTP Request
+        run: echo "curlhttps://example.com"
