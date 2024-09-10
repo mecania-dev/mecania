@@ -20,9 +20,3 @@ class UserRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
             return UserRetrieveDestroySerializer
         else:
             return UserCreateUpdateSerializer
-
-class UserDetailFromToken(generics.RetrieveAPIView):
-    serializer_class = UserRetrieveDestroySerializer
-
-    def get_object(self):
-        return self.request.user
