@@ -3,6 +3,7 @@ name: Keep Render Alive
 on:
   schedule:
     - cron: '*/10 * * * *'
+  workflow_dispatch:
 
 jobs:
   http_request_job:
