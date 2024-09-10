@@ -1,0 +1,78 @@
+import { forwardRef } from 'react'
+
+import { Card } from '@/components/card'
+import { Logo } from '@/components/icons/logo'
+import { Message } from '@/types/entities/message'
+import { Skeleton, SlotsToClasses, tv, VariantProps } from '@nextui-org/react'
+import { format } from 'date-fns'
+
+const chatMessage = tv({
+  slots: {
+    base: 'flex',
+    card: 'break-word relative w-fit bg-white/65 p-1.5 pb-4 text-small text-inherit',
+    sender: 'font-bold',
+    message: 'whitespace-pre-wrap',
+    date: 'absolute bottom-0.5 right-1.5 text-tiny text-foreground-400',
+    logo: 'h-8 w-8 shrink-0'
+  },
+  variants: {
+    isAI: {
+      true: { card: 'max-w-[calc(100%-2rem)]' },
+      false: { card: 'max-w-[calc(100%-4.5rem)]' }
+    },
+    isSender: {
+      true: { base: 'justify-end' },
+      false: { base: 'justify-start' }
+    },
+    isAIGenerating: {
+      true: { logo: 'animate-[spin_3s_linear_infinite]' }
+    }
+  }
+})
+
+type ChatMessageVariants = VariantProps<typeof chatMessage>
+type ChatMessageClassNames = {
+  classNames?: SlotsToClasses<keyof ReturnType<typeof chatMessage>>
+}
+
+type ChatMessageProps = Pick<Message, 'sender' | 'message' | 'sendDate'> & ChatMessageVariants & ChatMessageClassNames
+
+export const ChatMessage = forwardRef<HTMLDivElement, ChatMessageProps>(function ChatMessage(
+  { sender, message, sendDate, isAI, isSender, isAIGenerating, classNames },
+  ref
+) {
+  const classes = chatMessage({ isAI, isSender, isAIGenerating })
+  const msgContent = (
+    <Card className={classes.card({ class: classNames?.card })} radius="sm" shadow="sm">
+      <p className={classes.sender({ class: classNames?.sender })}>{sender === 'AI' ? 'MecanIA' : sender.username}</p>
+      <p className={classes.message({ class: classNames?.message })}>{message}</p>
+      <p className={classes.date({ class: classNames?.date })}>{format(sendDate, 'HH:mm')}</p>
+    </Card>
+  )
+
+  return isAI ? (
+    <div ref={ref} className="flex gap-2">
+      <Logo className={classes.logo()} />
+      <div className="w-full">{message ? msgContent : <GeneratingMessageSkeleton />}</div>
+    </div>
+  ) : (
+    <div ref={ref} className={classes.base({ class: classNames?.base })}>
+      {msgContent}
+    </div>
+  )
+})
+
+function GeneratingMessageSkeleton() {
+  return (
+    <div className="w-full max-w-[calc(100%-2rem)] space-y-2">
+      {[...Array(3)].map((_, i) => (
+        <Skeleton
+          classNames={{
+            base: ['h-6 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10', i === 2 && 'w-2/3']
+          }}
+          key={i}
+        />
+      ))}
+    </div>
+  )
+}
