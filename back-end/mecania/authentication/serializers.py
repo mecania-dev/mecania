@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 import pytz
 
-from users.serializers import UserCreateUpdateSerializer
+from users.serializers import UserCreateUpdateSerializer, UserRetrieveDestroySerializer
 from users.models import User
 
 from rest_framework import serializers
@@ -58,6 +58,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             'issued_at': refresh_iat.isoformat(),
             'expires_in': refresh_token['exp'] - int(time.time())
         }
+
+        data['user'] = UserRetrieveDestroySerializer(user).data
 
         self.username_field = 'login'
         return data
