@@ -1,7 +1,3 @@
-import { FieldPath, FieldPathValue, FieldValues } from 'react-hook-form'
-
-import { get } from 'lodash'
-
 import { isArray, isObject } from './assertions'
 
 export function tryParseJSON<T = any>(value?: string, defaultValue?: any): T | undefined {
@@ -75,24 +71,6 @@ export function splitObject<T extends Record<string, any>, K extends keyof T>(
   )
 
   return addToRest ? (result as [T, Pick<T, K>]) : (result as [Omit<T, K>, Pick<T, K>])
-}
-
-export function find<TFieldValues extends FieldValues, TFieldName extends FieldPath<TFieldValues>>(
-  array: TFieldValues[] | undefined,
-  key: TFieldName,
-  value?: FieldPathValue<TFieldValues, TFieldName>
-) {
-  if (!isArray(array)) return undefined
-  return array.find(item => get(item, key) === value)
-}
-
-export function findMany<TFieldValues extends FieldValues, TFieldName extends FieldPath<TFieldValues>>(
-  array: TFieldValues[] | undefined,
-  key: TFieldName,
-  value?: FieldPathValue<TFieldValues, TFieldName>
-) {
-  if (!isArray(array)) return []
-  return array.filter(item => get(item, key) === value)
 }
 
 export function cut<T>(array: T[], index: number) {
