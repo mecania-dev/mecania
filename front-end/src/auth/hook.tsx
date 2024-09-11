@@ -34,7 +34,12 @@ export function useAuth() {
   async function signIn(payload: SignInRequest, raiseToast = true) {
     const isOk = await serverSignIn(payload)
 
-    if (!isOk && raiseToast) {
+    if (isOk) {
+      setIsAuthenticated(true)
+      return
+    }
+
+    if (raiseToast) {
       toast({ message: 'Login ou senha inválidos', type: 'error' })
     }
   }
