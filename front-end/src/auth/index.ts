@@ -3,6 +3,11 @@ import { tryParseJSON } from '@/lib/object'
 import { User } from '@/types/entities/user'
 import { cookies } from 'next/headers'
 
+const refreshTokenState = {
+  isRefreshing: false,
+  refreshToken: ''
+}
+
 export interface Tokens {
   refresh: {
     token: string
@@ -80,8 +85,19 @@ export function clearTokens() {
 }
 
 export async function validateTokens() {
-  const tokens = getTokens()
+  let tokens = getTokens()
   if (!tokens) return undefined
+
+  if (refreshTokenState.isRefreshing && refreshTokenState.refreshToken === tokens.refresh.token) {
+    console.info('\nToken validation paused while refreshing token...')
+    while (refreshTokenState.isRefreshing) {
+      await new Promise(resolve => setTimeout(resolve, 100)) // wait 100ms before checking again
+    }
+    console.info('Token validation resumed\n')
+
+    tokens = getTokens()
+    if (!tokens) return undefined
+  }
 
   if (isAccessTokenExpired(tokens.access)) {
     const newTokens = await refreshToken(tokens.refresh.token)
@@ -92,30 +108,38 @@ export async function validateTokens() {
 }
 
 export async function refreshToken(refreshToken: string) {
-  const res = await api.post<Tokens>(
-    'auth/refresh-token/',
-    {
-      refresh: refreshToken
-    },
-    { raw: true }
-  )
+  refreshTokenState.isRefreshing = true
+  refreshTokenState.refreshToken = refreshToken
 
-  clearTokens()
+  try {
+    const res = await api.post<Tokens>(
+      'auth/refresh-token/',
+      {
+        refresh: refreshToken
+      },
+      { raw: true }
+    )
 
-  if (!res.ok) {
-    console.error('Failed to refresh token', {
-      status: res.data.response.status,
-      statusText: res.data.response.statusText,
-      data: res.data.response.data
-    })
-    return
+    clearTokens()
+
+    if (!res.ok) {
+      console.error('Failed to refresh token', {
+        status: res.data.response.status,
+        statusText: res.data.response.statusText,
+        data: res.data.response.data
+      })
+      return
+    }
+
+    const { access, refresh } = res.data
+
+    setTokens({ access, refresh })
+
+    return res.data
+  } finally {
+    refreshTokenState.isRefreshing = false
+    refreshTokenState.refreshToken = ''
   }
-
-  const { access, refresh } = res.data
-
-  setTokens({ access, refresh })
-
-  return res.data
 }
 
 export function isAccessTokenExpired(access: Tokens['access']) {
