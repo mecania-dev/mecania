@@ -24,7 +24,11 @@ export const UserContext = createContext({} as UserContextProps)
 export function UserProvider({ children }: { children: ReactNode }) {
   const auth = useAuth()
   const { state: userState } = useSWRCustom<User>(auth.isAuthenticated ? '/auth/me' : null, {
-    onError: auth.signOut
+    onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+      if (retryCount >= 2) {
+        auth.signOut()
+      }
+    }
   })
 
   const user = userState.data
