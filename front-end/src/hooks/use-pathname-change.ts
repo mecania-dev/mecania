@@ -1,8 +1,8 @@
+import { MaybePromise } from '@/lib/promise'
 import { usePathname } from 'next/navigation'
 
 import { useIsLoading } from './use-is-loading'
 import { useIsMounted } from './use-is-mounted'
-import { MaybePromise } from '@/lib/promise'
 
 export function usePathnameChange(
   fn: MaybePromise<(pathname: string) => any> = () => {},

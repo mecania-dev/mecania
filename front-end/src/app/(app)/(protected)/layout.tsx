@@ -1,11 +1,10 @@
-import { Authorize } from '@/components/authorize'
+import { isAuthenticated } from '@/auth'
+import { redirect } from 'next/navigation'
 
 import { ProtectedSidebar } from './sidebar'
 
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <Authorize redirect="/sign-in">
-      <ProtectedSidebar>{children}</ProtectedSidebar>
-    </Authorize>
-  )
+export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
+  if (!isAuthenticated()) return redirect('/sign-in')
+
+  return <ProtectedSidebar>{children}</ProtectedSidebar>
 }

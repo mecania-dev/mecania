@@ -43,7 +43,7 @@ export const FiscalIdentificationInput = forwardRef<HTMLInputElement, FiscalIden
         value !== actualValue &&
         onCNPJChange
       ) {
-        const res = await api.get<CNPJApiResponse>(getCNPJUrl(value))
+        const res = await api.get<CNPJApiResponse>(getCNPJUrl(value), { raw: true })
         onCNPJChange(res.ok ? res.data : undefined)
         !res.ok && onCNPJNotFound?.(value)
       }

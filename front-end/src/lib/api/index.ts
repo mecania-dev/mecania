@@ -1,12 +1,12 @@
 import { ToastProps } from '@/components/toast'
 import { toast } from '@/hooks/use-toast'
-import { apiClient } from '@/http/api-client'
-import { ApiRequestConfig, ApiResponse, apiRequestConfigKeys } from './types'
+import { apiClient, rawApiClient } from '@/http/api-client'
 import { AxiosResponse } from 'axios'
 
+import { isObject } from '../assertions'
 import { maybePromise } from '../promise'
 import { mapPropsVariants } from '../variants'
-import { isObject } from '../assertions'
+import { ApiRequestConfig, apiRequestConfigKeys } from './types'
 
 interface RaiseToastProps<T> {
   message: ApiRequestConfig<T>['successMessage'] | ApiRequestConfig<T>['errorMessage']
@@ -18,35 +18,39 @@ interface RaiseToastProps<T> {
 async function baseRequest<T>(promise: Promise<AxiosResponse<T>>, config: ApiRequestConfig<T> = {}) {
   try {
     const res = await promise
-    return handleSuccess<T>(res, config)
+    return await handleSuccess<T>(res, config)
   } catch (error: any) {
-    return handleError(error, config)
+    return await handleError(error, config)
   }
 }
 
-async function get<T>(url: string, config: ApiRequestConfig<T> = {}): Promise<ApiResponse<T>> {
-  const [axiosConfig, apiConfig] = mapPropsVariants(config, apiRequestConfigKeys)
-  return await baseRequest(apiClient.get<T>(url, axiosConfig), apiConfig)
+function getApiClient(raw?: boolean) {
+  return raw ? rawApiClient : apiClient
 }
 
-async function post<T>(url: string, data: any, config: ApiRequestConfig<T> = {}): Promise<ApiResponse<T>> {
+async function get<T>(url: string, { raw, ...config }: ApiRequestConfig<T> = {}) {
   const [axiosConfig, apiConfig] = mapPropsVariants(config, apiRequestConfigKeys)
-  return await baseRequest(apiClient.post<T>(url, data, axiosConfig), apiConfig)
+  return await baseRequest(getApiClient(raw).get<T>(url, axiosConfig), apiConfig)
 }
 
-async function put<T>(url: string, data: any, config: ApiRequestConfig<T> = {}): Promise<ApiResponse<T>> {
+async function post<T>(url: string, data: any, { raw, ...config }: ApiRequestConfig<T> = {}) {
   const [axiosConfig, apiConfig] = mapPropsVariants(config, apiRequestConfigKeys)
-  return await baseRequest(apiClient.put<T>(url, data, axiosConfig), apiConfig)
+  return await baseRequest(getApiClient(raw).post<T>(url, data, axiosConfig), apiConfig)
 }
 
-async function patch<T>(url: string, data: any, config: ApiRequestConfig<T> = {}): Promise<ApiResponse<T>> {
+async function put<T>(url: string, data: any, { raw, ...config }: ApiRequestConfig<T> = {}) {
   const [axiosConfig, apiConfig] = mapPropsVariants(config, apiRequestConfigKeys)
-  return await baseRequest(apiClient.patch<T>(url, data, axiosConfig), apiConfig)
+  return await baseRequest(getApiClient(raw).put<T>(url, data, axiosConfig), apiConfig)
 }
 
-async function remove<T>(url: string, config: ApiRequestConfig<T> = {}): Promise<ApiResponse<T>> {
+async function patch<T>(url: string, data: any, { raw, ...config }: ApiRequestConfig<T> = {}) {
   const [axiosConfig, apiConfig] = mapPropsVariants(config, apiRequestConfigKeys)
-  return await baseRequest(apiClient.delete<T>(url, axiosConfig), apiConfig)
+  return await baseRequest(getApiClient(raw).patch<T>(url, data, axiosConfig), apiConfig)
+}
+
+async function remove<T>(url: string, { raw, ...config }: ApiRequestConfig<T> = {}) {
+  const [axiosConfig, apiConfig] = mapPropsVariants(config, apiRequestConfigKeys)
+  return await baseRequest(getApiClient(raw).delete<T>(url, axiosConfig), apiConfig)
 }
 
 export const api = { get, post, put, patch, delete: remove }
@@ -74,7 +78,7 @@ async function handleSuccess<T>(res: AxiosResponse<T>, config: ApiRequestConfig<
     type: 'success'
   })
 
-  return { ok: true, ...res }
+  return { ok: true as const, ...res }
 }
 
 async function handleError<T>(error: any, config: ApiRequestConfig<T>) {
@@ -90,7 +94,7 @@ async function handleError<T>(error: any, config: ApiRequestConfig<T>) {
     type: 'error'
   })
 
-  return { ok: false, data: error, status, statusText: errorMessage }
+  return { ok: false as const, data: error, status, statusText: errorMessage }
 }
 
 function getSuccessMessage<T>(res: any = {}, successMessageKey?: ApiRequestConfig<T>['successMessageKey']) {

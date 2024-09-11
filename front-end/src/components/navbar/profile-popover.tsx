@@ -12,7 +12,7 @@ const link = tv({
 
 export function ProfilePopover() {
   const [isOpen, setIsOpen] = useState(false)
-  const { user, logout } = useUser()
+  const { user, signOut } = useUser()
   const signedAs = user?.username || user?.email || 'unknown'
   const isAdmin = user?.isSuperuser
 
@@ -45,7 +45,7 @@ export function ProfilePopover() {
           variant="light"
           radius="sm"
           className="h-auto w-full justify-start px-2 py-1.5"
-          onPress={logout}
+          onPress={signOut}
         >
           Sair
         </Button>

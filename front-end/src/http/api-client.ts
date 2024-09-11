@@ -1,24 +1,20 @@
 import { env } from '@/env'
-import { clientCookies } from '@/lib/cookies/client'
-import { tryParseJSON } from '@/lib/object'
 import axios from 'axios'
 
-export const apiClient = axios.create({ baseURL: env.NEXT_PUBLIC_API_BASE_URL })
+import { getAccessToken } from './get-access-token'
+
+export function getApiClient() {
+  return axios.create({ baseURL: env.NEXT_PUBLIC_API_BASE_URL })
+}
+
+export const apiClient = getApiClient()
+export const rawApiClient = getApiClient()
 
 apiClient.interceptors.request.use(async config => {
-  let token: string | undefined
-  
-  if (typeof window === 'undefined') {
-    const { cookies: serverCookies } = await import('next/headers')
-    const tokens = serverCookies().get('tokens')?.value
-    token = tryParseJSON(tokens, null)?.access.token
-  }else{
-    const tokens = clientCookies.get('tokens', null)
-    token = tokens?.access.token
-  }
+  const accessToken = await getAccessToken()
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`
   }
 
   return config

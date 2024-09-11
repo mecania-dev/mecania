@@ -20,7 +20,7 @@ export const ZipCodeInput = forwardRef<HTMLInputElement, ZipCodeInputProps>(func
   const actualSetValue = onValueChange ?? setValue
   const [handleAddressChange, isAddressLoading] = useIsLoading(async (value: string) => {
     if (isValidCEP(value) && value !== actualValue && onZipCodeChange) {
-      const res = await api.get<ZipCodeResponse>(getZipCodeUrl(value))
+      const res = await api.get<ZipCodeResponse>(getZipCodeUrl(value), { raw: true })
       onZipCodeChange(res.ok ? res.data : undefined)
     }
   })

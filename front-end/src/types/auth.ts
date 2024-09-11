@@ -4,21 +4,6 @@ import { z } from 'zod'
 import { fiscalIdentificationSchema } from './fiscal-identification'
 import { phoneNumberSchema } from './phone-number'
 
-export interface TokenResponse {
-  access: {
-    token: string
-    expires: string
-    issuedAt: string
-    expiresIn: number
-  }
-  refresh: {
-    token: string
-    expires: string
-    issuedAt: string
-    expiresIn: number
-  }
-}
-
 export const signInSchema = z.object({
   login: string({ name: 'Email ou nome de usuário', min: 1 }),
   password: string({ name: 'Senha', min: 6, max: 64 }, { required_error: 'Por favor, insira uma senha' })

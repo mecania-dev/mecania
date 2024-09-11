@@ -1,16 +1,17 @@
 import { ToastProps } from '@/components/toast'
+import { LiteralUnion } from '@/types/utils'
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 
-import { LiteralUnion, Primitive } from '@/types/utils'
-import { MaybePromise } from '../promise';
+import { MaybePromise } from '../promise'
 
 type Message = { title?: string; description?: string; type?: ToastProps['type'] } | string | null | undefined
 
 export interface ApiRequestConfig<T = any> extends AxiosRequestConfig<T> {
   successMessage?: Message | ((res: AxiosResponse<T>) => Message)
   errorMessage?: Message | ((error: any) => Message)
-  successMessageKey?: T extends Primitive ? T : LiteralUnion<keyof T, string>
+  successMessageKey?: LiteralUnion<keyof T, string>
   raiseToast?: boolean
+  raw?: boolean
   onSuccess?: MaybePromise<(res: AxiosResponse<T>) => void>
   onError?: MaybePromise<(error: any) => void>
 }

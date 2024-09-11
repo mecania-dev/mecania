@@ -25,7 +25,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.className} antialiased`} suppressHydrationWarning>
-      <body className='flex min-h-[100dvh] flex-col bg-default-50 overflow-auto scroll-smooth text-foreground'>
+      <body className="flex min-h-[100dvh] flex-col overflow-auto scroll-smooth bg-default-50 text-foreground">
         <Providers>{children}</Providers>
       </body>
     </html>

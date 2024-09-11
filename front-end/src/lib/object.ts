@@ -8,7 +8,7 @@ export function tryParseJSON<T = any>(value?: string, defaultValue?: any): T | u
   try {
     return JSON.parse(value as any) as T | undefined
   } catch {
-    return defaultValue !== undefined ? defaultValue :value as T | undefined
+    return defaultValue !== undefined ? defaultValue : (value as T | undefined)
   }
 }
 

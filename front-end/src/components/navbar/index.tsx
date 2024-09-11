@@ -20,8 +20,8 @@ import { NavLink } from './nav-link'
 import { ProfilePopover } from './profile-popover'
 
 export function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { isAuthenticated } = useUser()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const menuItems = [{ label: 'Início', href: '/' }]
 

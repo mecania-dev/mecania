@@ -1,4 +1,3 @@
-
 import { api, ApiRequestConfig } from './api'
 
 export const fetcher = {
