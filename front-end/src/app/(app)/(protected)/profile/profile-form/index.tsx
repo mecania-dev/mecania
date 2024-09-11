@@ -29,7 +29,7 @@ export function ProfileForm() {
   }
 
   return (
-    <Form form={form} className="space-y-4" onSubmit={onSubmit as any}>
+    <Form form={form} className="space-y-4" onSubmit={onSubmit as any} autoComplete="off">
       <ProfileFormBody />
       <ProfileFormFooter />
     </Form>

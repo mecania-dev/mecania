@@ -39,7 +39,6 @@ export function ProfileFormBody() {
           value={values.firstName}
           placeholder={defaultValues?.firstName}
           errorMessage={errors.firstName?.message}
-          autoComplete="off"
           {...register('firstName')}
         />
         {!isMechanic && (
@@ -48,7 +47,6 @@ export function ProfileFormBody() {
             value={values.lastName}
             placeholder={defaultValues?.lastName}
             errorMessage={errors.lastName?.message}
-            autoComplete="off"
             {...register('lastName')}
           />
         )}
@@ -58,7 +56,6 @@ export function ProfileFormBody() {
         value={values.username}
         placeholder={defaultValues?.username}
         errorMessage={errors.username?.message}
-        autoComplete="off"
         {...register('username')}
       />
       <Input
@@ -66,7 +63,6 @@ export function ProfileFormBody() {
         value={values.email}
         placeholder={defaultValues?.email}
         errorMessage={errors.email?.message}
-        autoComplete="off"
         {...register('email')}
       />
       <PhoneNumberInput
@@ -74,7 +70,6 @@ export function ProfileFormBody() {
         value={values.phoneNumber}
         placeholder={defaultValues?.phoneNumber}
         errorMessage={errors.phoneNumber?.message}
-        autoComplete="off"
         {...register('phoneNumber')}
       />
       <FiscalIdentificationInput
@@ -83,7 +78,6 @@ export function ProfileFormBody() {
         value={values.fiscalIdentification}
         placeholder={defaultValues?.fiscalIdentification}
         errorMessage={errors.fiscalIdentification?.message}
-        autoComplete="off"
         {...register('fiscalIdentification')}
       />
       <PasswordInput
@@ -91,7 +85,7 @@ export function ProfileFormBody() {
         value={values.password ?? ''}
         placeholder={defaultValues?.password}
         errorMessage={errors.password?.message}
-        autoComplete="off"
+        autoComplete="new-password"
         {...register('password', { setValueAs: value => defaultStringValue(value, undefined) })}
       />
       <PasswordInput
@@ -99,7 +93,6 @@ export function ProfileFormBody() {
         value={values.confirmPassword ?? ''}
         placeholder={defaultValues?.confirmPassword}
         errorMessage={errors.confirmPassword?.message}
-        autoComplete="off"
         {...register('confirmPassword', { setValueAs: value => defaultStringValue(value, undefined) })}
       />
     </div>
