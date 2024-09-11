@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinLengthValidator
 from django.db.models.fields.files import ImageFieldFile
+
 from services.models import Service
 from utils.image import compress_image
 
@@ -21,7 +22,7 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         # checking if the password has changed, because in the admin panel the password is always sent as a hash
-        if not self.pk or User.objects.get(pk=self.pk).password != self.password:
+        if self._state.adding or User.objects.get(pk=self.pk).password != self.password:
             self.set_password(self.password)
 
         if self.avatar_url and isinstance(self.avatar_url, ImageFieldFile):

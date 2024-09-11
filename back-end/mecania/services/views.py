@@ -1,28 +1,50 @@
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 from .models import Service
-from users.models import User
 from .serializers import ServiceSerializer
+from users.models import User
+from users.permissions import IsSelfOrAdmin, IsInGroups
 
 class ServiceListCreateView(generics.ListCreateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [IsAuthenticated()]
+        return [IsAdminUser()]
+
 class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [IsAuthenticated()]
+        return [IsAdminUser()]
 
-class ServiceAddRemoveView(generics.GenericAPIView):
+class UserServicesView(generics.GenericAPIView):
+    serializer_class = ServiceSerializer
+
+    def get_permissions(self):
+        return [IsSelfOrAdmin('user_id'), IsInGroups(['Mechanic'])]
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        user = get_object_or_404(User, id=user_id)
+        return Service.objects.filter(id__in=user.services.values_list('id', flat=True))
+
+    def get(self, request, user_id):
+        user = get_object_or_404(User, id=user_id)
+        services = user.services.all()
+        serializer = self.get_serializer(services, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, user_id):
-        """
-        Add services to a user.
-        Expects a JSON payload with a list of service IDs.
-        """
         user = get_object_or_404(User, id=user_id)
         service_ids = request.data.get('services', [])
 
@@ -36,10 +58,6 @@ class ServiceAddRemoveView(generics.GenericAPIView):
         return Response({"message": "Services added successfully."}, status=status.HTTP_200_OK)
 
     def delete(self, request, user_id, service_id=None):
-        """
-        Remove a specific service from a user.
-        If no service_id is provided, remove all services.
-        """
         user = get_object_or_404(User, id=user_id)
 
         if service_id:

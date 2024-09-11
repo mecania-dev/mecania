@@ -4,12 +4,29 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 from .models import Address
+from .serializers import AddressSerializer, AddressCreateUpdateSerializer
 from users.models import User
+from users.permissions import IsSelfOrAdmin, IsInGroups
 
-from .serializers import AddressCreateUpdateSerializer
+class UserAddressesView(generics.GenericAPIView):
+    def get_permissions(self):
+        return [IsSelfOrAdmin('user_id'), IsInGroups(['Mechanic'])]
 
-class AddressCreateUpdateView(generics.CreateAPIView):
-    serializer_class = AddressCreateUpdateSerializer
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')
+        user = get_object_or_404(User, id=user_id)
+        return Address.objects.filter(id__in=user.addresses.values_list('id', flat=True))
+
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return AddressSerializer
+        return AddressCreateUpdateSerializer
+
+    def get(self, request, user_id):
+        user = get_object_or_404(User, id=user_id)
+        addresses = user.addresses.all()
+        serializer = self.get_serializer(addresses, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, user_id):
         user = get_object_or_404(User, id=user_id)
