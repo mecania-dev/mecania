@@ -1,8 +1,9 @@
 from django.db import models
 from users.models import User
 
+
 class Address(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="addresses")
     street = models.CharField(max_length=255)
     number = models.CharField(max_length=10)
     district = models.CharField(max_length=100)
@@ -15,7 +16,7 @@ class Address(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['created_at']
+        ordering = ["created_at"]
 
     def __str__(self):
-        return f'{self.street}, {self.number} - {self.district}, {self.city} - {self.state}, {self.zip_code}, {self.country}'
+        return f"{self.street}, {self.number} - {self.district}, {self.city} - {self.state}, {self.zip_code}, {self.country}"

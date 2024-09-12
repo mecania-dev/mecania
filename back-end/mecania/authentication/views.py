@@ -1,23 +1,99 @@
-from rest_framework import generics
-from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
-from users.models import User
-from .serializers import UserRegisterSerializer, UserRetrieveDestroySerializer, MyTokenObtainPairSerializer, MyTokenRefreshSerializer
+from .serializers import CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
 
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserRegisterSerializer
-    permission_classes = [AllowAny]
 
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
-class MyTokenRefreshView(TokenRefreshView):
-    serializer_class = MyTokenRefreshSerializer
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
 
-class UserDetailFromToken(generics.RetrieveAPIView):
-    serializer_class = UserRetrieveDestroySerializer
+        if response.status_code == 200:
+            access = response.data.get("access")
+            refresh = response.data.get("refresh")
 
-    def get_object(self):
-        return self.request.user
+            response.set_cookie(
+                "access",
+                access.get("token"),
+                max_age=access.get("expires_in"),
+                path=settings.AUTH_COOKIE_PATH,
+                secure=settings.AUTH_COOKIE_SECURE,
+                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+                samesite=settings.AUTH_COOKIE_SAMESITE,
+            )
+            response.set_cookie(
+                "refresh",
+                refresh.get("token"),
+                max_age=refresh.get("expires_in"),
+                path=settings.AUTH_COOKIE_PATH,
+                secure=settings.AUTH_COOKIE_SECURE,
+                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+                samesite=settings.AUTH_COOKIE_SAMESITE,
+            )
+
+        return response
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    serializer_class = CustomTokenRefreshSerializer
+
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh")
+
+        if refresh_token:
+            request.data["refresh"] = refresh_token
+
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 200:
+            access = response.data.get("access")
+            refresh = response.data.get("refresh")
+
+            response.set_cookie(
+                "access",
+                access.get("token"),
+                max_age=access.get("expires_in"),
+                path=settings.AUTH_COOKIE_PATH,
+                secure=settings.AUTH_COOKIE_SECURE,
+                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+                samesite=settings.AUTH_COOKIE_SAMESITE,
+            )
+            response.set_cookie(
+                "refresh",
+                refresh.get("token"),
+                max_age=refresh.get("expires_in"),
+                path=settings.AUTH_COOKIE_PATH,
+                secure=settings.AUTH_COOKIE_SECURE,
+                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+                samesite=settings.AUTH_COOKIE_SAMESITE,
+            )
+
+        return response
+
+
+class CustomTokenVerifyView(TokenVerifyView):
+    def post(self, request, *args, **kwargs):
+        access_token = request.COOKIES.get("access")
+
+        if access_token:
+            request.data["token"] = access_token
+
+        return super().post(request, *args, **kwargs)
+
+
+class LogoutView(APIView):
+    def post(self, request, *args, **kwargs):
+        response = Response(status=status.HTTP_204_NO_CONTENT)
+        response.delete_cookie("access")
+        response.delete_cookie("refresh")
+
+        return response

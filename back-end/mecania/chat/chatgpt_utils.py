@@ -5,13 +5,10 @@ from django.conf import settings
 client = OpenAI()
 client.api_key = settings.OPENAI_API_KEY
 
+
 def ask_gpt(messages: Iterable[object]):
     try:
-        completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            max_tokens=500
-        )
+        completion = client.chat.completions.create(model="gpt-3.5-turbo", messages=messages, max_tokens=500)
         chat_response = completion.choices[0].message
 
         return chat_response

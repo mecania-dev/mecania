@@ -8,17 +8,18 @@ from .serializers import AddressSerializer, AddressCreateUpdateSerializer
 from users.models import User
 from users.permissions import IsSelfOrAdmin, IsInGroups
 
+
 class UserAddressesView(generics.GenericAPIView):
     def get_permissions(self):
-        return [IsSelfOrAdmin('user_id'), IsInGroups(['Mechanic'])]
+        return [IsSelfOrAdmin("user_id"), IsInGroups(["Mechanic"])]
 
     def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
+        user_id = self.kwargs.get("user_id")
         user = get_object_or_404(User, id=user_id)
-        return Address.objects.filter(id__in=user.addresses.values_list('id', flat=True))
+        return Address.objects.filter(id__in=user.addresses.values_list("id", flat=True))
 
     def get_serializer_class(self):
-        if self.request.method in ['GET']:
+        if self.request.method in ["GET"]:
             return AddressSerializer
         return AddressCreateUpdateSerializer
 

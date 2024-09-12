@@ -3,8 +3,9 @@ from django.dispatch import receiver
 from django.contrib.auth.models import Group
 from .models import User
 
+
 @receiver(post_save, sender=User)
 def add_user_to_default_group(sender: User, instance: User, created: bool, **kwargs):
     if instance.groups.count() == 0:  # Check if user has no groups
-        default_group = Group.objects.get(name='Driver')
+        default_group, _ = Group.objects.get_or_create(name="Driver")
         instance.groups.add(default_group)

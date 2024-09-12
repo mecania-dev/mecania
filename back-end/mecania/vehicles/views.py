@@ -8,17 +8,18 @@ from .serializers import VehicleSerializer, VehicleCreateUpdateSerializer
 from users.models import User
 from users.permissions import IsSelfOrAdmin, IsInGroups
 
+
 class UserVehiclesView(generics.GenericAPIView):
     def get_permissions(self):
-        return [IsSelfOrAdmin('user_id'), IsInGroups(['Driver'])]
+        return [IsSelfOrAdmin("user_id"), IsInGroups(["Driver"])]
 
     def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
+        user_id = self.kwargs.get("user_id")
         user = get_object_or_404(User, id=user_id)
-        return Vehicle.objects.filter(id__in=user.vehicles.values_list('id', flat=True))
+        return Vehicle.objects.filter(id__in=user.vehicles.values_list("id", flat=True))
 
     def get_serializer_class(self):
-        if self.request.method in ['GET']:
+        if self.request.method in ["GET"]:
             return VehicleSerializer
         return VehicleCreateUpdateSerializer
 

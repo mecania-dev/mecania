@@ -1,10 +1,15 @@
 from django.urls import path, include
-from . import views
+from .views import (
+    CustomTokenObtainPairView,
+    CustomTokenRefreshView,
+    CustomTokenVerifyView,
+    LogoutView,
+)
 
 urlpatterns = [
-    path('rest-framework/', include('rest_framework.urls')),
-    path('register/', views.RegisterView.as_view(), name='register'),
-    path('login/', views.MyTokenObtainPairView.as_view(), name='login'),
-    path('refresh-token/', views.MyTokenRefreshView.as_view(), name='refresh-token'),
-    path("me/", views.UserDetailFromToken.as_view(), name="user-detail-from-token"),
+    path("rest-framework/", include("rest_framework.urls")),
+    path("login/", CustomTokenObtainPairView.as_view(), name="login"),
+    path("refresh/", CustomTokenRefreshView.as_view(), name="refresh"),
+    path("verify/", CustomTokenVerifyView.as_view(), name="verify"),
+    path("logout/", LogoutView.as_view(), name="logout"),
 ]

@@ -1,20 +1,18 @@
 from django.db import models
 from users.models import User
 
+
 class Vehicle(models.Model):
     FUEL_CHOICES = [
-        ('gasoline', 'Gasolina'),
-        ('diesel', 'Diesel'),
-        ('ethanol', 'Etanol'),
-        ('electric', 'Elétrico'),
-        ('hybrid', 'Híbrido'),
+        ("gasoline", "Gasolina"),
+        ("diesel", "Diesel"),
+        ("ethanol", "Etanol"),
+        ("electric", "Elétrico"),
+        ("hybrid", "Híbrido"),
     ]
-    TRANSMISSION_CHOICES = [
-        ('manual', 'Manual'),
-        ('automatic', 'Automático')
-    ]
+    TRANSMISSION_CHOICES = [("manual", "Manual"), ("automatic", "Automático")]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='vehicles')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="vehicles")
     brand = models.CharField(max_length=100)
     model = models.CharField(max_length=100)
     year = models.IntegerField()
@@ -28,8 +26,7 @@ class Vehicle(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['created_at']
+        ordering = ["created_at"]
 
     def __str__(self):
-        return f'{self.brand} {self.model} {self.year}'
-
+        return f"{self.brand} {self.model} {self.year}"
