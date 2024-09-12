@@ -33,11 +33,11 @@ export async function signIn({ login, password }: { login: string; password: str
     { raw: true }
   )
 
-  clearTokens()
-
   if (res.ok) {
     const { access, refresh } = res.data
     setTokens({ access, refresh })
+  } else {
+    clearTokens()
   }
 
   return res
@@ -120,14 +120,13 @@ export async function refreshToken(refreshToken: string) {
       { raw: true }
     )
 
-    clearTokens()
-
     if (!res.ok) {
       console.error('Failed to refresh token', {
         status: res.data.response.status,
         statusText: res.data.response.statusText,
         data: res.data.response.data
       })
+      clearTokens()
       return
     }
 

@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
 import { api, ApiRequestConfig, ApiResponse } from '@/lib/api'
-import { fetcher } from '@/lib/fetcher'
 import useSWR from 'swr'
 
-import { useQueue } from './use-queue'
+import { useQueue } from '../use-queue'
+import { fetcher } from './fetcher'
 
 export type SWRKey = (() => string | undefined | null) | string | undefined | null
 export type SWRCustom<T = any> = ReturnType<typeof useSWRCustom<T>>

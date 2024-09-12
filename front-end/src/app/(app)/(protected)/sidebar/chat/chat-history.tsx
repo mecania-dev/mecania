@@ -3,8 +3,8 @@
 import { LuTrash2 } from 'react-icons/lu'
 
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
+import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { confirmationModal } from '@/hooks/use-confirmation-modal'
-import { useSWRCustom } from '@/hooks/use-swr-custom'
 import { useChats } from '@/mocks/use-chats'
 import { compareDesc, parseISO } from 'date-fns'
 

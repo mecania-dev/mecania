@@ -4,7 +4,7 @@ import { ReactNode, createContext, useContext } from 'react'
 
 import Loading from '@/app/loading'
 import { useAuth } from '@/auth/hook'
-import { useSWRCustom } from '@/hooks/use-swr-custom'
+import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { SignInRequest, SignUpRequest } from '@/types/auth'
 import { User } from '@/types/entities/user'
 import { SWRResponse } from 'swr'

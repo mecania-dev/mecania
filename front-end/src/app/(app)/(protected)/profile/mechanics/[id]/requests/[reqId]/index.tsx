@@ -2,7 +2,7 @@
 
 import Loading from '@/app/loading'
 import { Redirect } from '@/components/redirect'
-import { useSWRCustom } from '@/hooks/use-swr-custom'
+import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { useMechanics } from '@/mocks/use-mechanics'
 import { useRequests } from '@/mocks/use-requests'
 
