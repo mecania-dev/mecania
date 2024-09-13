@@ -12,7 +12,7 @@ export async function middleware(req: NextRequest) {
 
   // Redirect to home if authenticated user tries to access auth routes
   if (isAuthenticated && authPrefixes.some(prefix => pathname.startsWith(prefix))) {
-    const response = NextResponse.rewrite(new URL(callbackUrl?.value ?? '/', req.url))
+    const response = NextResponse.redirect(new URL(callbackUrl?.value ?? '/', req.url))
     response.cookies.delete('callback-url')
     return response
   }
