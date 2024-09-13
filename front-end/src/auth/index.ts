@@ -1,8 +1,7 @@
 import { api } from '@/lib/api'
+import { cookies } from '@/lib/cookies'
 import { SignInRequest, SignUpRequest } from '@/types/auth'
 import { User } from '@/types/entities/user'
-import { getCookies, setCookie, deleteCookie } from 'cookies-next'
-import { CookiesFn } from 'cookies-next/lib/types'
 import { jwtDecode, JwtPayload } from 'jwt-decode'
 
 export interface Tokens {
@@ -54,34 +53,14 @@ export async function isAuthenticated() {
 }
 
 export async function getTokens() {
-  let cookieStore: CookiesFn | undefined
-
-  if (typeof window === 'undefined') {
-    const { cookies: serverCookies } = await import('next/headers')
-
-    cookieStore = serverCookies
-  }
-
-  const { access_token, refresh_token } = getCookies({ cookies: cookieStore })
-
-  return { access: access_token, refresh: refresh_token }
+  return await cookies({ access: 'access_token', refresh: 'refresh_token' })
 }
 
 export async function setTokens(access?: string, refresh?: string) {
-  let cookieStore: CookiesFn | undefined
-
-  if (typeof window === 'undefined') {
-    const { cookies: serverCookies } = await import('next/headers')
-
-    cookieStore = serverCookies
-  }
-
   if (access && refresh) {
-    setCookie('access_token', access, { cookies: cookieStore })
-    setCookie('refresh_token', refresh, { cookies: cookieStore })
+    await cookies.set({ access_token: access, refresh_token: refresh })
   } else {
-    deleteCookie('access_token', { cookies: cookieStore })
-    deleteCookie('refresh_token', { cookies: cookieStore })
+    await cookies.delete(['access_token', 'refresh_token'])
   }
 }
 

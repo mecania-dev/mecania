@@ -2,9 +2,9 @@ import { useState } from 'react'
 
 import { useIsLoading } from '@/hooks/use-is-loading'
 import { useIsMounted } from '@/hooks/use-is-mounted'
+import { useRedirect } from '@/hooks/use-redirect'
 import { toast } from '@/hooks/use-toast'
 import { SignInRequest, SignUpRequest } from '@/types/auth'
-import { useRouter } from 'next/navigation'
 
 import {
   getTokens,
@@ -15,7 +15,7 @@ import {
 } from '.'
 
 export function useAuth() {
-  const router = useRouter()
+  const { redirect, pathname } = useRedirect()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [handleValidateAuthState, isLoading] = useIsLoading(async () => {
     const { access, refresh } = await getTokens()
@@ -29,7 +29,7 @@ export function useAuth() {
     const res = await signUpRequest(payload)
     if (res.ok) {
       await signIn({ login: payload.email, password: payload.password }, false)
-      router.refresh()
+      await redirect('/profile')
     }
   }
 
@@ -38,7 +38,7 @@ export function useAuth() {
 
     if (res.ok) {
       setIsAuthenticated(true)
-      router.refresh()
+      await redirect('/profile')
       return
     }
 
@@ -50,7 +50,7 @@ export function useAuth() {
   async function signOut() {
     await signOutRequest()
     setIsAuthenticated(false)
-    router.refresh()
+    await redirect('/sign-in', { callbackUrl: pathname })
   }
 
   return { isAuthenticated, isLoading, isMounted, signUp, signIn, signOut }
