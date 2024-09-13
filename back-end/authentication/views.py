@@ -15,6 +15,11 @@ from users.models import User
 
 
 def set_cookies(response):
+    if settings.DEBUG:
+        response.delete_cookie("access")
+        response.delete_cookie("refresh")
+        return
+
     access = response.data.get("access")
     refresh = response.data.get("refresh")
 

@@ -42,6 +42,8 @@ export async function signIn({ login, password }: SignInRequest) {
 }
 
 export async function signOut() {
+  if (!(await isAuthenticated())) return
+
   const res = await api.post('auth/logout/', {}, { raw: true })
   await setTokens()
   return res
@@ -70,32 +72,35 @@ export async function isTokensValid(
   onSuccess?: (access: string, refresh?: string) => void
 ) {
   console.log('Iniciando validação de tokens...')
-  if (!accessToken) return false
-  let decoded: JwtPayload
+  if (!accessToken && !refreshToken) return false
+  let decoded: JwtPayload | undefined
 
   console.log(`\naccessToken: ${accessToken}`)
   console.log(`\nrefreshToken: ${refreshToken}`)
 
-  try {
-    decoded = jwtDecode(accessToken)
-    console.log('\nDecodificado com sucesso!')
-  } catch {
-    await setTokens()
-    console.log('\nErro ao decodificar token!')
-    return false
+  if (accessToken) {
+    try {
+      decoded = jwtDecode(accessToken)
+      console.log('\nDecodificado com sucesso!')
+    } catch {
+      await setTokens()
+      console.log('\nErro ao decodificar token!')
+      return false
+    }
+
+    const now = Date.now()
+    const expiration = (decoded?.exp ?? now) * 1000
+    const isExpired = now >= expiration
+
+    console.log(`\nFaltam ${(expiration - now) / 1000} segundos para expirar o token.`)
+
+    if (!isExpired) {
+      console.log('\nToken válido!')
+      onSuccess?.(accessToken, refreshToken)
+      return true
+    }
   }
 
-  const now = Date.now()
-  const expiration = (decoded.exp ?? now) * 1000
-  const isExpired = now >= expiration
-
-  console.log(`\nFaltam ${(expiration - now) / 1000} segundos para expirar o token.`)
-
-  if (!isExpired) {
-    console.log('\nToken válido!')
-    onSuccess?.(accessToken, refreshToken)
-    return true
-  }
   if (!refreshToken) {
     console.log('\nToken expirado e sem refreshToken!')
     return false

@@ -37,7 +37,7 @@ export async function cookies<T extends string | object | undefined = undefined>
   }, {} as any)
 }
 
-async function setCookies(cookies: Record<string, string>, options?: Omit<DefaultOptions, 'cookies'>) {
+async function setCookies(cookies: Record<string, any>, options?: Omit<DefaultOptions, 'cookies'>) {
   let cookieStore: CookiesFn | undefined
 
   if (typeof window === 'undefined') {
