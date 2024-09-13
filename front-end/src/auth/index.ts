@@ -93,10 +93,16 @@ export async function isTokensValid(
   if (!accessToken) return false
   let decoded: JwtPayload
 
+  console.log('Iniciando validação de tokens...')
+  console.log(`\naccessToken: ${accessToken}`)
+  console.log(`\nrefreshToken: ${refreshToken}`)
+
   try {
     decoded = jwtDecode(accessToken)
+    console.log('\nDecodificado com sucesso!')
   } catch {
     await setTokens()
+    console.log('\nErro ao decodificar token!')
     return false
   }
 
@@ -104,11 +110,17 @@ export async function isTokensValid(
   const expiration = (decoded.exp ?? now) * 1000
   const isExpired = now >= expiration
 
+  console.log(`\nFaltam ${(expiration - now) / 1000} segundos para expirar o token.`)
+
   if (!isExpired) {
+    console.log('\nToken válido!')
     onSuccess?.(accessToken, refreshToken)
     return true
   }
-  if (!refreshToken) return false
+  if (!refreshToken) {
+    console.log('\nToken expirado e sem refreshToken!')
+    return false
+  }
 
   const res = await api.post<{ access: string; refresh: string }>(
     '/auth/refresh/',
@@ -117,6 +129,7 @@ export async function isTokensValid(
   )
 
   if (!res.ok) {
+    console.log('\nErro ao atualizar token!')
     await setTokens()
     return false
   }
@@ -124,5 +137,9 @@ export async function isTokensValid(
   const { access, refresh } = res.data
   await setTokens(access, refresh)
   onSuccess?.(access, refresh)
+  console.log('\nToken atualizado com sucesso!')
+  console.log(`\naccessToken: ${access}`)
+  console.log(`\nrefreshToken: ${refresh}`)
+  console.log('-----------------------------------\n')
   return true
 }
