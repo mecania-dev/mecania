@@ -42,9 +42,10 @@ export async function signIn({ login, password }: SignInRequest) {
 }
 
 export async function signOut() {
-  if (!(await isAuthenticated())) return
+  const isAuthed = await isAuthenticated()
+  if (!isAuthed) return
 
-  const res = await api.post('auth/logout/', {}, { raw: true })
+  const res = await api.post('auth/logout/', {})
   await setTokens()
   return res
 }
