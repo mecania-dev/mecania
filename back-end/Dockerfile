@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the current directory contents into the container at /app
 ADD . .
 
-RUN python mecania/manage.py collectstatic --noinput 
+RUN python manage.py collectstatic --noinput 
 
 # Run gunicorn as the entrypoint
 CMD gunicorn --pythonpath mecania mecania.wsgi:application --bind 0.0.0.0:$PORT
