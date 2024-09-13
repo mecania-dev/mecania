@@ -21,9 +21,9 @@ apiClient.interceptors.request.use(async config => {
 
 apiClient.interceptors.response.use(undefined, async error => {
   if (error instanceof AxiosError && error.config && [401, 403].includes(error.response?.status ?? 0)) {
-    const { access, refresh } = await getTokens()
+    const { refresh } = await getTokens()
 
-    const isValid = await isTokensValid(access, refresh, access => {
+    const isValid = await isTokensValid(undefined, refresh, access => {
       if (error.config) {
         error.config.headers.Authorization = `Bearer ${access}`
       }
