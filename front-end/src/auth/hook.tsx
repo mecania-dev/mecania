@@ -6,21 +6,16 @@ import { useRedirect } from '@/hooks/use-redirect'
 import { toast } from '@/hooks/use-toast'
 import { SignInRequest, SignUpRequest } from '@/types/auth'
 
-import {
-  getTokens,
-  isTokensValid,
-  signUp as signUpRequest,
-  signIn as signInRequest,
-  signOut as signOutRequest
-} from '.'
+import { getTokens, signUp as signUpRequest, signIn as signInRequest, signOut as signOutRequest } from '.'
+import { getValidAccessTokenAction } from './actions'
 
 export function useAuth() {
   const { redirect, pathname } = useRedirect()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [handleValidateAuthState, isLoading] = useIsLoading(async () => {
     const { access, refresh } = await getTokens()
-    const isValid = await isTokensValid(access, refresh)
-    setIsAuthenticated(isValid)
+    const validToken = await getValidAccessTokenAction(access, refresh)
+    setIsAuthenticated(!!validToken)
   })
 
   const isMounted = useIsMounted(handleValidateAuthState)
