@@ -8,15 +8,20 @@ const protectedPrefixes = ['/profile', '/chat']
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname
   const isAuthenticated = await auth.isAuthenticated()
+  const callbackUrl = req.cookies.get('callback-url')
 
   // Redirect to home if authenticated user tries to access auth routes
   if (isAuthenticated && authPrefixes.some(prefix => pathname.startsWith(prefix))) {
-    return NextResponse.redirect(new URL('/', req.url))
+    const response = NextResponse.rewrite(new URL(callbackUrl?.value ?? '/', req.url))
+    response.cookies.delete('callback-url')
+    return response
   }
 
   // Redirect to sign-in if unauthenticated user tries to access protected routes
   if (!isAuthenticated && protectedPrefixes.some(prefix => pathname.startsWith(prefix))) {
-    return NextResponse.redirect(new URL('/sign-in', req.url))
+    const response = NextResponse.redirect(new URL('/sign-in', req.url))
+    response.cookies.set('callback-url', pathname)
+    return response
   }
 }
 

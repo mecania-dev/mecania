@@ -48,11 +48,9 @@ export function useAuth() {
   }
 
   async function signOut() {
-    const res = await signOutRequest()
-    if (res.ok) {
-      setIsAuthenticated(false)
-      router.refresh()
-    }
+    await signOutRequest()
+    setIsAuthenticated(false)
+    router.refresh()
   }
 
   return { isAuthenticated, isLoading, isMounted, signUp, signIn, signOut }

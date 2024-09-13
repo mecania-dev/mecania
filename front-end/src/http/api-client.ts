@@ -11,7 +11,10 @@ export const rawApiClient = getApiClient()
 
 apiClient.interceptors.request.use(async config => {
   const { access, refresh } = await getTokens()
-  await isTokensValid(access, refresh)
+
+  await isTokensValid(access, refresh, access => {
+    config.headers.Authorization = `Bearer ${access}`
+  })
 
   return config
 })
