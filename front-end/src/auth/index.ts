@@ -1,24 +1,9 @@
 import { api } from '@/lib/api'
 import { SignInRequest, SignUpRequest } from '@/types/auth'
 import { User } from '@/types/entities/user'
-import { getCookies } from 'cookies-next'
+import { getCookies, setCookie, deleteCookie } from 'cookies-next'
 import { CookiesFn } from 'cookies-next/lib/types'
-import { jwtDecode } from 'jwt-decode'
-
-export interface Tokens {
-  refresh: {
-    token: string
-    expires: string
-    issuedAt: string
-    expiresIn: number
-  }
-  access: {
-    token: string
-    expires: string
-    issuedAt: string
-    expiresIn: number
-  }
-}
+import { jwtDecode, JwtPayload } from 'jwt-decode'
 
 export async function signUp(payload: SignUpRequest) {
   const res = await api.post<User>('users/', payload, {
@@ -33,7 +18,7 @@ export async function signUp(payload: SignUpRequest) {
 }
 
 export async function signIn({ login, password }: SignInRequest) {
-  const res = await api.post<{ refresh: Tokens['refresh']; access: Tokens['access']; user: User }>(
+  const res = await api.post<{ access: string; refresh: string; user: User }>(
     'auth/login/',
     {
       login,
@@ -42,11 +27,20 @@ export async function signIn({ login, password }: SignInRequest) {
     { raw: true }
   )
 
+  if (res.ok) {
+    const { access, refresh } = res.data
+    await setTokens(access, refresh)
+  } else {
+    await setTokens()
+  }
+
   return res
 }
 
 export async function signOut() {
-  await api.post('auth/logout/', {}, { raw: true })
+  const res = await api.post('auth/logout/', {}, { raw: true })
+  if (res.ok) setTokens()
+  return res
 }
 
 export async function isAuthenticated() {
@@ -63,37 +57,55 @@ export async function getTokens() {
     cookieStore = serverCookies
   }
 
-  const { access, refresh } = getCookies({ cookies: cookieStore })
+  const { access_token, refresh_token } = getCookies({ cookies: cookieStore })
 
-  return { access, refresh }
+  return { access: access_token, refresh: refresh_token }
 }
 
-export async function isTokensValid(token?: string, refresh?: string) {
-  if (!token) return false
+export async function setTokens(access?: string, refresh?: string) {
+  let cookieStore: CookiesFn | undefined
+
+  if (typeof window === 'undefined') {
+    const { cookies: serverCookies } = await import('next/headers')
+
+    cookieStore = serverCookies
+  }
+
+  if (access && refresh) {
+    setCookie('access_token', access, { cookies: cookieStore })
+    setCookie('refresh_token', refresh, { cookies: cookieStore })
+  } else {
+    deleteCookie('access_token', { cookies: cookieStore })
+    deleteCookie('refresh_token', { cookies: cookieStore })
+  }
+}
+
+export async function isTokensValid(accessToken?: string, refreshToken?: string) {
+  if (!accessToken) return false
+  let decoded: JwtPayload
+
   try {
-    const decoded = jwtDecode(token)
-    const now = Date.now()
-    const expiration = (decoded?.exp ?? now) * 1000
-    const isExpired = now >= expiration
-
-    console.log(`\nSeconds remaining until expiration: ${Math.floor((expiration - now) / 1000)}\n`)
-
-    if (!isExpired) return true
-    if (!refresh) return false
-
-    console.log('Token expired, refreshing...')
-    try {
-      const res = await api.post('/auth/refresh/', {}, { raw: true })
-      console.log('Token refreshed')
-      console.log(res.data)
-      return true
-    } catch (error) {
-      console.log('Failed to refresh token')
-      console.error(error)
-      return false
-    }
-  } catch (error) {
-    console.error(error)
+    decoded = jwtDecode(accessToken)
+  } catch {
+    await setTokens()
     return false
   }
+
+  const now = Date.now()
+  const expiration = (decoded.exp ?? now) * 1000
+  const isExpired = now >= expiration
+
+  if (!isExpired) return true
+  if (!refreshToken) return false
+
+  const res = await api.post<{ access: string; refresh: string }>('/auth/refresh/', {}, { raw: true })
+
+  if (!res.ok) {
+    await setTokens()
+    return false
+  }
+
+  const { access, refresh } = res.data
+  await setTokens(access, refresh)
+  return true
 }
