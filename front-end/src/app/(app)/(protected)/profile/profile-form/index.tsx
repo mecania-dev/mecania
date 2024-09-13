@@ -18,10 +18,6 @@ export function ProfileForm() {
   })
 
   async function onSubmit(userUpdate: UserUpdateOutput) {
-    if (!(userUpdate instanceof FormData)) {
-      delete userUpdate.avatarUrl
-    }
-
     const res = await api.patch<User>(`users/${user?.id}/`, userUpdate, { raiseToast: true })
     if (res.ok) {
       form.reset(getDefaultValues(res.data))
