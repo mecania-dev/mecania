@@ -1,51 +1,61 @@
+import time
+
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
 
-from .serializers import CustomTokenObtainPairSerializer, CustomTokenRefreshSerializer
+from users.models import User
+
+
+def set_cookies(response):
+    access = response.data.get("access")
+    refresh = response.data.get("refresh")
+
+    access_token = AccessToken(access)
+    refresh_token = RefreshToken(refresh)
+
+    response.set_cookie(
+        "access",
+        access,
+        max_age=access_token["exp"] - int(time.time()),
+        path=settings.AUTH_COOKIE_PATH,
+        secure=settings.AUTH_COOKIE_SECURE,
+        httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+        samesite=settings.AUTH_COOKIE_SAMESITE,
+    )
+    response.set_cookie(
+        "refresh",
+        refresh,
+        max_age=refresh_token["exp"] - int(time.time()),
+        path=settings.AUTH_COOKIE_PATH,
+        secure=settings.AUTH_COOKIE_SECURE,
+        httponly=settings.AUTH_COOKIE_HTTP_ONLY,
+        samesite=settings.AUTH_COOKIE_SAMESITE,
+    )
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
-
     def post(self, request, *args, **kwargs):
+        login = request.data["login"]
+        user = User.objects.filter(email=login).first() or User.objects.filter(username=login).first()
+        request.data["username"] = user.username if user else login
+
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
-            access = response.data.get("access")
-            refresh = response.data.get("refresh")
-
-            response.set_cookie(
-                "access",
-                access.get("token"),
-                max_age=access.get("expires_in"),
-                path=settings.AUTH_COOKIE_PATH,
-                secure=settings.AUTH_COOKIE_SECURE,
-                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
-                samesite=settings.AUTH_COOKIE_SAMESITE,
-            )
-            response.set_cookie(
-                "refresh",
-                refresh.get("token"),
-                max_age=refresh.get("expires_in"),
-                path=settings.AUTH_COOKIE_PATH,
-                secure=settings.AUTH_COOKIE_SECURE,
-                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
-                samesite=settings.AUTH_COOKIE_SAMESITE,
-            )
+            set_cookies(response)
 
         return response
 
 
 class CustomTokenRefreshView(TokenRefreshView):
-    serializer_class = CustomTokenRefreshSerializer
-
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get("refresh")
 
@@ -55,27 +65,7 @@ class CustomTokenRefreshView(TokenRefreshView):
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
-            access = response.data.get("access")
-            refresh = response.data.get("refresh")
-
-            response.set_cookie(
-                "access",
-                access.get("token"),
-                max_age=access.get("expires_in"),
-                path=settings.AUTH_COOKIE_PATH,
-                secure=settings.AUTH_COOKIE_SECURE,
-                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
-                samesite=settings.AUTH_COOKIE_SAMESITE,
-            )
-            response.set_cookie(
-                "refresh",
-                refresh.get("token"),
-                max_age=refresh.get("expires_in"),
-                path=settings.AUTH_COOKIE_PATH,
-                secure=settings.AUTH_COOKIE_SECURE,
-                httponly=settings.AUTH_COOKIE_HTTP_ONLY,
-                samesite=settings.AUTH_COOKIE_SAMESITE,
-            )
+            set_cookies(response)
 
         return response
 

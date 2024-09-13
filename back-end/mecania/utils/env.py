@@ -19,10 +19,6 @@ def env(key: str, default=None, type=None, split: str = None, validate_split=Non
     value = os.environ.get(key, default)
 
     if split is not None:
-        return [
-            item
-            for item in value.split(split)
-            if item and (validate_split is None or validate_split(item))
-        ]
+        return [item for item in value.split(split) if item and (validate_split is None or validate_split(item))]
 
     return value
