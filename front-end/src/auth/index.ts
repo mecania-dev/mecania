@@ -90,10 +90,10 @@ export async function isTokensValid(
   refreshToken?: string,
   onSuccess?: (access: string, refresh?: string) => void
 ) {
+  console.log('Iniciando validação de tokens...')
   if (!accessToken) return false
   let decoded: JwtPayload
 
-  console.log('Iniciando validação de tokens...')
   console.log(`\naccessToken: ${accessToken}`)
   console.log(`\nrefreshToken: ${refreshToken}`)
 
