@@ -3,38 +3,37 @@ import { useState } from 'react'
 import { useIsLoading } from '@/hooks/use-is-loading'
 import { useIsMounted } from '@/hooks/use-is-mounted'
 import { toast } from '@/hooks/use-toast'
-import { api } from '@/lib/api'
 import { SignInRequest, SignUpRequest } from '@/types/auth'
-import { User } from '@/types/entities/user'
 
-import { signIn as serverSignIn, signOut as serverSignOut, validateAuthState } from './actions'
+import {
+  getTokens,
+  isTokensValid,
+  signUp as signUpRequest,
+  signIn as signInRequest,
+  signOut as signOutRequest
+} from '.'
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [handleValidateAuthState, isLoading] = useIsLoading(async () => {
-    const isValid = await validateAuthState()
+    const { access, refresh } = await getTokens()
+    const isValid = await isTokensValid(access, refresh)
     setIsAuthenticated(isValid)
   })
 
   const isMounted = useIsMounted(handleValidateAuthState)
 
   async function signUp(payload: SignUpRequest) {
-    const res = await api.post<User>('auth/register/', payload, {
-      raiseToast: true,
-      errorMessage: error => {
-        const message = Object.values(error.response?.data ?? [])[0]
-        return Array.isArray(message) ? message[0] : 'Erro ao criar conta'
-      }
-    })
+    const res = await signUpRequest(payload)
     if (res.ok) {
       await signIn({ login: payload.email, password: payload.password }, false)
     }
   }
 
   async function signIn(payload: SignInRequest, raiseToast = true) {
-    const isOk = await serverSignIn(payload)
+    const res = await signInRequest(payload)
 
-    if (isOk) {
+    if (res.ok) {
       setIsAuthenticated(true)
       return
     }
@@ -45,7 +44,7 @@ export function useAuth() {
   }
 
   async function signOut() {
-    await serverSignOut()
+    await signOutRequest()
     setIsAuthenticated(false)
   }
 

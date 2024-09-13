@@ -4,7 +4,7 @@ import { Mecania } from '@/components/icons/mecania'
 import { redirect } from 'next/navigation'
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
-  if (isAuthenticated()) return redirect('/')
+  if (await isAuthenticated()) return redirect('/')
 
   return (
     <div className="box-content flex grow flex-col items-center justify-center gap-6 p-5 sm:p-20">

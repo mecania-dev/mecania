@@ -7,7 +7,7 @@ const protectedPrefixes = ['/profile', '/chat']
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname
-  const isAuthenticated = auth.isAuthenticated()
+  const isAuthenticated = await auth.isAuthenticated()
 
   // Redirect to home if authenticated user tries to access auth routes
   if (isAuthenticated && authPrefixes.some(prefix => pathname.startsWith(prefix))) {

@@ -1,21 +1,17 @@
+import { getTokens, isTokensValid } from '@/auth'
 import { env } from '@/env'
 import axios from 'axios'
 
-import { getAccessToken } from './get-access-token'
-
 export function getApiClient() {
-  return axios.create({ baseURL: env.NEXT_PUBLIC_API_BASE_URL })
+  return axios.create({ baseURL: env.NEXT_PUBLIC_API_BASE_URL, withCredentials: true })
 }
 
 export const apiClient = getApiClient()
 export const rawApiClient = getApiClient()
 
 apiClient.interceptors.request.use(async config => {
-  const accessToken = await getAccessToken()
-
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`
-  }
+  const { access, refresh } = await getTokens()
+  await isTokensValid(access, refresh)
 
   return config
 })

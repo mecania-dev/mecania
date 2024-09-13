@@ -1,12 +1,9 @@
 import { api } from '@/lib/api'
-import { tryParseJSON } from '@/lib/object'
+import { SignInRequest, SignUpRequest } from '@/types/auth'
 import { User } from '@/types/entities/user'
-import { cookies } from 'next/headers'
-
-const refreshTokenState = {
-  isRefreshing: false,
-  refreshToken: ''
-}
+import { getCookies } from 'cookies-next'
+import { CookiesFn } from 'cookies-next/lib/types'
+import { jwtDecode } from 'jwt-decode'
 
 export interface Tokens {
   refresh: {
@@ -23,7 +20,19 @@ export interface Tokens {
   }
 }
 
-export async function signIn({ login, password }: { login: string; password: string }) {
+export async function signUp(payload: SignUpRequest) {
+  const res = await api.post<User>('users/', payload, {
+    raiseToast: true,
+    errorMessage: error => {
+      const message = Object.values(error.response?.data ?? [])[0]
+      return Array.isArray(message) ? message[0] : 'Erro ao criar conta'
+    }
+  })
+
+  return res
+}
+
+export async function signIn({ login, password }: SignInRequest) {
   const res = await api.post<{ refresh: Tokens['refresh']; access: Tokens['access']; user: User }>(
     'auth/login/',
     {
@@ -33,118 +42,58 @@ export async function signIn({ login, password }: { login: string; password: str
     { raw: true }
   )
 
-  if (res.ok) {
-    const { access, refresh } = res.data
-    setTokens({ access, refresh })
-  } else {
-    clearTokens()
-  }
-
   return res
 }
 
 export async function signOut() {
-  clearTokens()
+  await api.post('auth/logout/', {}, { raw: true })
 }
 
-export function isAuthenticated() {
-  return !!getTokens()
+export async function isAuthenticated() {
+  const { access, refresh } = await getTokens()
+  return !!access && !!refresh
 }
 
-export function getTokens() {
-  const tokens = cookies().get('tokens')?.value
-  const parsedTokens = tryParseJSON(tokens, null) as Tokens | null
-  if (!parsedTokens || !parsedTokens.access || !parsedTokens.refresh) return null
-  return parsedTokens
-}
+export async function getTokens() {
+  let cookieStore: CookiesFn | undefined
 
-export function setTokens(tokens: Tokens) {
-  const { access, refresh } = tokens
-  cookies().set(
-    'tokens',
-    JSON.stringify({
-      access: {
-        ...access,
-        expiresIn: Date.now() + access.expiresIn * 1000
-      },
-      refresh: {
-        ...refresh,
-        expiresIn: Date.now() + refresh.expiresIn * 1000
-      }
-    }),
-    {
-      maxAge: refresh.expiresIn,
-      httpOnly: true,
-      path: '/'
-    }
-  )
-}
+  if (typeof window === 'undefined') {
+    const { cookies: serverCookies } = await import('next/headers')
 
-export function clearTokens() {
-  cookies().delete('tokens')
-}
-
-export async function validateTokens() {
-  let tokens = getTokens()
-  if (!tokens) return undefined
-
-  if (refreshTokenState.isRefreshing && refreshTokenState.refreshToken === tokens.refresh.token) {
-    console.info('\nToken validation paused while refreshing token...')
-    while (refreshTokenState.isRefreshing) {
-      await new Promise(resolve => setTimeout(resolve, 100)) // wait 100ms before checking again
-    }
-    console.info('Token validation resumed\n')
-
-    tokens = getTokens()
-    if (!tokens) return undefined
+    cookieStore = serverCookies
   }
 
-  if (isAccessTokenExpired(tokens.access)) {
-    const newTokens = await refreshToken(tokens.refresh.token)
-    return newTokens
-  }
+  const { access, refresh } = getCookies({ cookies: cookieStore })
 
-  return tokens
+  return { access, refresh }
 }
 
-export async function refreshToken(refreshToken: string) {
-  refreshTokenState.isRefreshing = true
-  refreshTokenState.refreshToken = refreshToken
-
+export async function isTokensValid(token?: string, refresh?: string) {
+  if (!token) return false
   try {
-    const res = await api.post<Tokens>(
-      'auth/refresh-token/',
-      {
-        refresh: refreshToken
-      },
-      { raw: true }
-    )
+    const decoded = jwtDecode(token)
+    const now = Date.now()
+    const expiration = (decoded?.exp ?? now) * 1000
+    const isExpired = now >= expiration
 
-    if (!res.ok) {
-      console.error('Failed to refresh token', {
-        status: res.data.response.status,
-        statusText: res.data.response.statusText,
-        data: res.data.response.data
-      })
-      clearTokens()
-      return
+    console.log(`\nSeconds remaining until expiration: ${Math.floor((expiration - now) / 1000)}\n`)
+
+    if (!isExpired) return true
+    if (!refresh) return false
+
+    console.log('Token expired, refreshing...')
+    try {
+      const res = await api.post('/auth/refresh/', {}, { raw: true })
+      console.log('Token refreshed')
+      console.log(res.data)
+      return true
+    } catch (error) {
+      console.log('Failed to refresh token')
+      console.error(error)
+      return false
     }
-
-    const { access, refresh } = res.data
-
-    setTokens({ access, refresh })
-
-    return res.data
-  } finally {
-    refreshTokenState.isRefreshing = false
-    refreshTokenState.refreshToken = ''
+  } catch (error) {
+    console.error(error)
+    return false
   }
-}
-
-export function isAccessTokenExpired(access: Tokens['access']) {
-  const now = Date.now()
-
-  console.log(`\nSeconds remaining until expiration: ${Math.floor((access.expiresIn - now) / 1000)}\n`)
-
-  return now >= access.expiresIn
 }
