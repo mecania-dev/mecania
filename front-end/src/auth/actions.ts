@@ -8,7 +8,7 @@ import { clearSession, clearTokens, setSession, setTokens } from '.'
 
 export async function setCredentialsAction(props: { access: string; refresh: string; user: User }) {
   const { access, refresh, user } = props
-  const callbackUrl = await cookies('callback_url')
+  const callbackUrl = await cookies('callback-url')
 
   if (!user) {
     throw new Error('User should be returned from the server')
