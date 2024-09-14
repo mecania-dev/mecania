@@ -1,10 +1,9 @@
-import { isAuthenticated } from '@/auth'
-import { redirect } from 'next/navigation'
+import { auth } from '@/auth'
 
 import { ProtectedSidebar } from './sidebar'
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  if (!(await isAuthenticated())) return redirect('/sign-in')
+  await auth({ onlyToken: true })
 
   return <ProtectedSidebar>{children}</ProtectedSidebar>
 }
