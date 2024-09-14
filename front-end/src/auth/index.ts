@@ -27,7 +27,7 @@ interface AuthProps {
 export async function auth({ groups, unauthorizedGroups, redirectUrl, custom }: AuthProps = {}) {
   const session = await getSession()
   const isAuthenticated = !!session
-  let authorized = false // I'm not initializing this with isAuthenticated because of the groups verification
+  let authorized = isAuthenticated
   let user: User | undefined
   let realRedirectUrl: string | undefined = redirectUrl ?? '/sign-in'
 
@@ -35,21 +35,9 @@ export async function auth({ groups, unauthorizedGroups, redirectUrl, custom }: 
     user = session
 
     if (groups?.length) {
-      for (const group of groups) {
-        if (user.groups.includes(group)) {
-          authorized = true
-          break
-        }
-      }
+      authorized = groups.some(g => session.groups.includes(g))
     } else if (unauthorizedGroups?.length) {
-      for (const group of unauthorizedGroups) {
-        if (user.groups.includes(group)) {
-          authorized = false
-          break
-        }
-      }
-    } else {
-      authorized = true
+      authorized = !unauthorizedGroups.some(g => session.groups.includes(g))
     }
   }
 
