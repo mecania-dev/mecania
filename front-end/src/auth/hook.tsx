@@ -1,4 +1,4 @@
-import { getValidAccessToken, setSession as setSessionAuth } from '@/auth'
+import { ACCESS_TOKEN_NAME, getValidAccessToken, REFRESH_TOKEN_NAME, setSession as setSessionAuth } from '@/auth'
 import { useIsLoading } from '@/hooks/use-is-loading'
 import { useIsMounted } from '@/hooks/use-is-mounted'
 import { useRedirect } from '@/hooks/use-redirect'
@@ -10,8 +10,8 @@ import { getCookie } from 'cookies-next'
 import { setCredentialsAction, signOutAction } from './actions'
 
 function getIsAuthenticated() {
-  const access = getCookie('access_token')
-  const refresh = getCookie('refresh_token')
+  const access = getCookie(ACCESS_TOKEN_NAME)
+  const refresh = getCookie(REFRESH_TOKEN_NAME)
   return !!access && !!refresh
 }
 
@@ -47,11 +47,12 @@ export function useAuth() {
 
   async function signOut() {
     setCallbackUrl(pathname)
-    await signOutAction()
+    await signOutAction(pathname !== '/')
   }
 
   async function setSession(user?: User) {
-    await setSessionAuth(user)
+    const access = getCookie(ACCESS_TOKEN_NAME)
+    await setSessionAuth(user, access)
   }
 
   return { isAuthenticated, isLoading, isMounted, signUp, signIn, signOut, setSession }

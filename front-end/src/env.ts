@@ -8,6 +8,10 @@ const server = z.object({
 type ServerEnvs = z.infer<typeof server>
 
 const client = z.object({
+  NEXT_PUBLIC_DEVELOPMENT: z
+    .string()
+    .optional()
+    .transform(v => v == 'true'),
   NEXT_PUBLIC_API_BASE_URL: z.string().optional()
 })
 
@@ -16,6 +20,7 @@ type ClientEnvs = z.infer<typeof client>
 const processEnv = {
   PORT: process.env.PORT,
   NODE_ENV: process.env.NODE_ENV,
+  NEXT_PUBLIC_DEVELOPMENT: process.env.NEXT_PUBLIC_DEVELOPMENT,
   NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL
 }
 

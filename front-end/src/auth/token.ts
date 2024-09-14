@@ -1,8 +1,12 @@
+import { env } from '@/env'
 import { cookies } from '@/lib/cookies'
-import { jwtDecode, JwtPayload } from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode'
 
 import { refreshTokenAction } from './actions'
 import { clearSession } from './session'
+
+export const ACCESS_TOKEN_NAME = 'access_token'
+export const REFRESH_TOKEN_NAME = 'refresh_token'
 
 export async function getValidAccessToken(forceRefresh = false) {
   const { access, refresh } = await getTokens()
@@ -12,38 +16,44 @@ export async function getValidAccessToken(forceRefresh = false) {
     return
   }
 
-  if (access && !forceRefresh) {
-    const isExpired = await isTokenExpired(access)
-    if (!isExpired) return access
-  }
+  if (access && !forceRefresh && !isTokenExpired(access)) return access
 
   return await refreshTokenAction({ refresh })
 }
 
-export async function isTokenExpired(token: string) {
-  let decoded: JwtPayload | undefined
+export function isTokenExpired(token: string) {
+  return Date.now() >= getTokenExpiration(token) * 1000
+}
+
+export function getTokenExpiration(token?: string) {
+  if (!token) return 0
 
   try {
-    decoded = jwtDecode(token)
+    const decoded = jwtDecode(token)
+    return decoded.exp ?? 0
   } catch {
-    return true
+    return 0
   }
-
-  const now = Date.now()
-  const expiration = (decoded?.exp ?? now) * 1000
-  return now >= expiration
 }
 
 export async function getTokens() {
-  return await cookies({ access: 'access_token', refresh: 'refresh_token' })
+  return await cookies({ access: ACCESS_TOKEN_NAME, refresh: REFRESH_TOKEN_NAME })
 }
 
 export async function setTokens(access?: string, refresh?: string) {
   if (access && refresh) {
-    await cookies.set({ access_token: access, refresh_token: refresh })
+    await cookies.set(
+      { [ACCESS_TOKEN_NAME]: access, [REFRESH_TOKEN_NAME]: refresh },
+      {
+        maxAge: getTokenExpiration(access) - Date.now() / 1000,
+        path: '/',
+        secure: !env.NEXT_PUBLIC_DEVELOPMENT,
+        sameSite: 'strict'
+      }
+    )
   }
 }
 
 export async function clearTokens() {
-  await cookies.delete(['access_token', 'refresh_token'])
+  await cookies.delete([ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME])
 }

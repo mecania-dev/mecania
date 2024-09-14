@@ -14,15 +14,15 @@ export async function setCredentialsAction(props: { access: string; refresh: str
     throw new Error('User should be returned from the server')
   }
 
-  await setSession(user)
+  await setSession(user, access)
   await setTokens(access, refresh)
   redirect(callbackUrl || '/profile')
 }
 
-export async function signOutAction() {
+export async function signOutAction(shouldRedirect = true) {
   await clearSession()
   await clearTokens()
-  redirect('/sign-in')
+  shouldRedirect && redirect('/sign-in')
 }
 
 export async function refreshTokenAction(payload: RefreshTokenRequest) {
