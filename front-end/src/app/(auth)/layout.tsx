@@ -6,7 +6,6 @@ import { cookies } from '@/lib/cookies'
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   await auth({
     redirectUrl: '/',
-    onlyToken: true,
     async custom({ isAuthenticated, setRedirectUrl }) {
       const callbackUrl = await cookies('callback-url')
       setRedirectUrl(callbackUrl ?? '/')

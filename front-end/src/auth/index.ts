@@ -21,7 +21,6 @@ interface AuthProps {
   groups?: User['groups']
   unauthorizedGroups?: User['groups']
   redirectUrl?: string
-  onlyToken?: boolean
   custom?: MaybePromise<(props: AuthCustomProps) => boolean | undefined | void>
 }
 
