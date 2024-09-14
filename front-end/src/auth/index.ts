@@ -133,7 +133,10 @@ export async function setSession(user?: User) {
 }
 
 export async function getValidAccessToken(accessToken?: string, refreshToken?: string) {
-  if (!accessToken && !refreshToken) return
+  if (!accessToken && !refreshToken) {
+    await setSession()
+    return
+  }
   let decoded: JwtPayload | undefined
 
   if (accessToken) {
@@ -151,7 +154,10 @@ export async function getValidAccessToken(accessToken?: string, refreshToken?: s
     if (!isExpired) return accessToken
   }
 
-  if (!refreshToken) return
+  if (!refreshToken) {
+    await setTokens()
+    return
+  }
 
   const res = await api.post<{ access: string; refresh: string }>(
     '/auth/refresh/',
