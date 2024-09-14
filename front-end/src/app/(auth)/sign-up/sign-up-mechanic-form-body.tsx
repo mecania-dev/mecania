@@ -5,8 +5,7 @@ import { FiscalIdentificationInput } from '@/components/input/fiscal-identificat
 import { PasswordInput } from '@/components/input/password'
 import { PhoneNumberInput } from '@/components/input/phone-number'
 import { toast } from '@/hooks/use-toast'
-import { SignUpRequest } from '@/http'
-import { CNPJApiResponse } from '@/types/cnpj'
+import { CNPJApiResponse, SignUpRequest } from '@/http'
 
 export function SignUpMechanicFormBody() {
   const { watch, register, setValue, formState } = useFormContext<SignUpRequest>()

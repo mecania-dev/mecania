@@ -3,7 +3,8 @@
 import { useState } from 'react'
 
 import { Input } from '@/components/input'
-import { ZipCodeInput, ZipCodeResponse } from '@/components/input/zip-code'
+import { ZipCodeInput } from '@/components/input/zip-code'
+import { ZipCodeResponse } from '@/http'
 
 export function Addresses() {
   const [address, setAddress] = useState<ZipCodeResponse>()

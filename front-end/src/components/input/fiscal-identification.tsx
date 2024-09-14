@@ -1,13 +1,12 @@
 import { forwardRef, useState } from 'react'
 
 import { useIsLoading } from '@/hooks/use-is-loading'
-import { getCNPJ } from '@/http'
+import { CNPJApiResponse, getCNPJ } from '@/http'
 import {
   FiscalIdentificationType,
   fiscalIdentificationMask,
   isValidFiscalIdentification
 } from '@/lib/masks/fiscal-identification'
-import { CNPJApiResponse } from '@/types/cnpj'
 import { Spinner } from '@nextui-org/react'
 
 import { Input, InputProps } from '.'

@@ -6,9 +6,9 @@ import { FiscalIdentificationInput } from '@/components/input/fiscal-identificat
 import { ImageInput } from '@/components/input/image'
 import { PasswordInput } from '@/components/input/password'
 import { PhoneNumberInput } from '@/components/input/phone-number'
+import { UserUpdateInput } from '@/http'
 import { defaultStringValue } from '@/lib/string'
 import { useUser } from '@/providers/user-provider'
-import { UserUpdateInput } from '@/types/entities/user'
 
 export function ProfileFormBody() {
   const { isMechanic } = useUser()

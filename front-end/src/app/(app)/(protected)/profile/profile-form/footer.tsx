@@ -1,8 +1,8 @@
 import { useFormContext } from 'react-hook-form'
 
 import { Button } from '@/components/button'
+import { UserUpdateInput } from '@/http'
 import { len } from '@/lib/object'
-import { UserUpdateInput } from '@/types/entities/user'
 
 export function ProfileFormFooter() {
   const form = useFormContext<UserUpdateInput>()
