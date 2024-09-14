@@ -42,15 +42,12 @@ export async function getTokens() {
 
 export async function setTokens(access?: string, refresh?: string) {
   if (access && refresh) {
-    await cookies.set(
-      { [ACCESS_TOKEN_NAME]: access, [REFRESH_TOKEN_NAME]: refresh },
-      {
-        maxAge: getTokenExpiration(access) - Date.now() / 1000,
-        path: '/',
-        secure: !env.NEXT_PUBLIC_DEVELOPMENT,
-        sameSite: 'strict'
-      }
-    )
+    await cookies.set({ [ACCESS_TOKEN_NAME]: access, [REFRESH_TOKEN_NAME]: refresh }, (_, value) => ({
+      maxAge: getTokenExpiration(value) - Date.now() / 1000,
+      path: '/',
+      secure: !env.NEXT_PUBLIC_DEVELOPMENT,
+      sameSite: 'strict'
+    }))
   }
 }
 
