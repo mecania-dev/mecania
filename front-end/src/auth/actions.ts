@@ -10,6 +10,10 @@ export async function setCredentialsAction(props: { access: string; refresh: str
   const { access, refresh, user } = props
   const callbackUrl = await cookies('callback_url')
 
+  if (!user) {
+    throw new Error('User should be returned from the server')
+  }
+
   await setSession(user)
   await setTokens(access, refresh)
   redirect(callbackUrl || '/profile')
