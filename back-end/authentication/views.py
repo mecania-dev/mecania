@@ -12,6 +12,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from users.models import User
+from users.serializers import UserRetrieveDestroySerializer
 
 
 def set_cookies(response):
@@ -56,6 +57,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
+            response.data["user"] = UserRetrieveDestroySerializer(user).data
             set_cookies(response)
 
         return response
