@@ -1,7 +1,7 @@
 import { forwardRef, useState } from 'react'
 
 import { useIsLoading } from '@/hooks/use-is-loading'
-import { api } from '@/lib/api'
+import { getZipCode, ZipCodeResponse } from '@/http'
 import { CEPMask, isValidCEP } from '@/lib/masks/zip-code'
 import { Spinner } from '@nextui-org/react'
 
@@ -20,7 +20,7 @@ export const ZipCodeInput = forwardRef<HTMLInputElement, ZipCodeInputProps>(func
   const actualSetValue = onValueChange ?? setValue
   const [handleAddressChange, isAddressLoading] = useIsLoading(async (value: string) => {
     if (isValidCEP(value) && value !== actualValue && onZipCodeChange) {
-      const res = await api.get<ZipCodeResponse>(getZipCodeUrl(value), { raw: true })
+      const res = await getZipCode(value)
       onZipCodeChange(res.ok ? res.data : undefined)
     }
   })
@@ -46,23 +46,3 @@ export const ZipCodeInput = forwardRef<HTMLInputElement, ZipCodeInputProps>(func
     />
   )
 })
-
-export interface ZipCodeResponse {
-  cep: string
-  state: string
-  city: string
-  neighborhood: string
-  street: string
-  service: string
-  location: {
-    type: string
-    coordinates: {
-      longitude: string
-      latitude: string
-    }
-  }
-}
-
-export function getZipCodeUrl(zipCode: string) {
-  return `https://brasilapi.com.br/api/cep/v2/${zipCode}`
-}

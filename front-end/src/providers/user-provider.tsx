@@ -3,10 +3,9 @@
 import { ReactNode, createContext, useContext } from 'react'
 
 import Loading from '@/app/loading'
-import { setSession } from '@/auth'
 import { useAuth } from '@/auth/hook'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
-import { SignInRequest, SignUpRequest } from '@/types/auth'
+import { SignInRequest, SignUpRequest } from '@/http'
 import { User } from '@/types/entities/user'
 import { SWRResponse } from 'swr'
 
@@ -26,7 +25,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const auth = useAuth()
   const { state: userState } = useSWRCustom<User>(auth.isAuthenticated ? 'users/me' : null, {
     onError: auth.isAuthenticated ? auth.signOut : undefined,
-    onSuccess: setSession
+    onSuccess: auth.setSession
   })
 
   const user = userState.data

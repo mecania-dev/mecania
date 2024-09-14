@@ -1,4 +1,4 @@
-import { getTokens, getValidAccessToken } from '@/auth'
+import { getValidAccessToken } from '@/auth'
 import { env } from '@/env'
 import axios, { AxiosError } from 'axios'
 
@@ -10,9 +10,7 @@ export const apiClient = getApiClient()
 export const rawApiClient = getApiClient()
 
 apiClient.interceptors.request.use(async config => {
-  const { access, refresh } = await getTokens()
-
-  const validToken = await getValidAccessToken(access, refresh)
+  const validToken = await getValidAccessToken()
 
   if (validToken) {
     config.headers.Authorization = `Bearer ${validToken}`
@@ -23,9 +21,7 @@ apiClient.interceptors.request.use(async config => {
 
 apiClient.interceptors.response.use(undefined, async error => {
   if (error instanceof AxiosError && error.config && [401, 403].includes(error.response?.status ?? 0)) {
-    const { refresh } = await getTokens()
-
-    const validToken = await getValidAccessToken(undefined, refresh)
+    const validToken = await getValidAccessToken(true)
 
     if (validToken) {
       error.config.baseURL = undefined

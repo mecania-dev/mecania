@@ -2,8 +2,8 @@
 
 import { Form } from '@/components/form'
 import { useForm } from '@/hooks/use-form'
+import { SignUpRequest, signUpSchema } from '@/http'
 import { useUser } from '@/providers/user-provider'
-import { SignUpRequest, signUpSchema } from '@/types/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 

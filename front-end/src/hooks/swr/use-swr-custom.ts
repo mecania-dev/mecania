@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { api, ApiRequestConfig, ApiResponse } from '@/lib/api'
+import { api, ApiRequestConfig, ApiResponse } from '@/http'
 import useSWR from 'swr'
 
 import { useQueue } from '../use-queue'

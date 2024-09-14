@@ -8,7 +8,8 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  await auth({ redirectUrl: '/profile', groups: ['Mechanic'] })
+  const isAuthenticated = await auth({ redirectUrl: '/profile', groups: ['Mechanic'] })
+  if (!isAuthenticated) return null
 
   return (
     <div className="p-5">

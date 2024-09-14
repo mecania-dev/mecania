@@ -2,9 +2,9 @@
 
 import { Form } from '@/components/form'
 import { useForm } from '@/hooks/use-form'
-import { api } from '@/lib/api'
+import { updateUser, UserUpdateInput, UserUpdateOutput, userUpdateSchema } from '@/http'
 import { useUser } from '@/providers/user-provider'
-import { User, UserUpdateInput, UserUpdateOutput, userUpdateSchema } from '@/types/entities/user'
+import { User } from '@/types/entities/user'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { ProfileFormBody } from './body'
@@ -18,7 +18,7 @@ export function ProfileForm() {
   })
 
   async function onSubmit(userUpdate: UserUpdateOutput) {
-    const res = await api.patch<User>(`users/${user?.id}/`, userUpdate, { raiseToast: true })
+    const res = await updateUser(user!.id, userUpdate, { raiseToast: true })
     if (res.ok) {
       form.reset(getDefaultValues(res.data))
     }

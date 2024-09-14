@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { api, ApiRequestConfig } from '@/lib/api'
+import { api, ApiRequestConfig } from '@/http'
 
 export interface AsyncAutocompleteListResponse<T extends Record<string, any>> {
   items: T[]

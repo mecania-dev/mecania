@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form'
 
 import { Button } from '@/components/button'
-import { SignUpRequest } from '@/types/auth'
+import { SignUpRequest } from '@/http'
 
 export function SignUpFormFooter() {
   const form = useFormContext<SignUpRequest>()

@@ -4,7 +4,7 @@ import { Input } from '@/components/input'
 import { FiscalIdentificationInput } from '@/components/input/fiscal-identification'
 import { PasswordInput } from '@/components/input/password'
 import { PhoneNumberInput } from '@/components/input/phone-number'
-import { SignUpRequest } from '@/types/auth'
+import { SignUpRequest } from '@/http'
 
 export function SignUpCustomerFormBody() {
   const { watch, register, formState } = useFormContext<SignUpRequest>()

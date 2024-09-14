@@ -5,7 +5,7 @@ import { FiscalIdentificationInput } from '@/components/input/fiscal-identificat
 import { PasswordInput } from '@/components/input/password'
 import { PhoneNumberInput } from '@/components/input/phone-number'
 import { toast } from '@/hooks/use-toast'
-import { SignUpRequest } from '@/types/auth'
+import { SignUpRequest } from '@/http'
 import { CNPJApiResponse } from '@/types/cnpj'
 
 export function SignUpMechanicFormBody() {

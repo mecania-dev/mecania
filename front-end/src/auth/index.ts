@@ -1,27 +1,18 @@
-import { api } from '@/lib/api'
-import { cookies } from '@/lib/cookies'
-import { maybePromise, MaybePromise } from '@/lib/promise'
-import { SignInRequest, SignUpRequest } from '@/types/auth'
+import { maybePromise } from '@/lib/promise'
 import { User } from '@/types/entities/user'
-import { jwtDecode, JwtPayload } from 'jwt-decode'
 import { redirect } from 'next/navigation'
 
-export interface Tokens {
-  access: string
-  refresh: string
-}
+import { getSession } from './session'
+import { getTokens } from './token'
+import { AuthProps } from './types'
 
-interface AuthCustomProps {
-  user?: User
-  isAuthenticated: boolean
-  setRedirectUrl: (url?: string) => void
-}
+export * from './types'
+export * from './session'
+export * from './token'
 
-interface AuthProps {
-  groups?: User['groups']
-  unauthorizedGroups?: User['groups']
-  redirectUrl?: string
-  custom?: MaybePromise<(props: AuthCustomProps) => boolean | undefined | void>
+export async function isAuthenticated() {
+  const { access, refresh } = await getTokens()
+  return !!access && !!refresh
 }
 
 export async function auth({ groups, unauthorizedGroups, redirectUrl, custom }: AuthProps = {}) {
@@ -53,124 +44,4 @@ export async function auth({ groups, unauthorizedGroups, redirectUrl, custom }: 
 
   if (!authorized && realRedirectUrl) redirect(realRedirectUrl)
   return authorized
-}
-
-export async function signUp(payload: SignUpRequest) {
-  const res = await api.post<User>('users/', payload, {
-    raiseToast: true,
-    errorMessage: error => {
-      const message = Object.values(error.response?.data ?? [])[0]
-      return Array.isArray(message) ? message[0] : 'Erro ao criar conta'
-    }
-  })
-
-  return res
-}
-
-export async function signIn({ login, password }: SignInRequest) {
-  const res = await api.post<{ access: string; refresh: string; user: User }>(
-    'auth/login/',
-    {
-      login,
-      password
-    },
-    { raw: true }
-  )
-
-  if (res.ok) {
-    const { access, refresh, user } = res.data
-    await setTokens(access, refresh)
-    await setSession(user)
-  } else {
-    await setTokens()
-  }
-
-  return res
-}
-
-export async function signOut() {
-  const isAuthed = await isAuthenticated()
-  if (!isAuthed) return
-
-  const res = await api.post('auth/logout/', {})
-  await setTokens()
-  return res
-}
-
-export async function isAuthenticated() {
-  const { access, refresh } = await getTokens()
-  return !!access && !!refresh
-}
-
-export async function getTokens() {
-  return await cookies({ access: 'access_token', refresh: 'refresh_token' })
-}
-
-export async function setTokens(access?: string, refresh?: string) {
-  if (access && refresh) {
-    await cookies.set({ access_token: access, refresh_token: refresh })
-  } else {
-    await cookies.delete(['access_token', 'refresh_token'])
-    await setSession()
-  }
-}
-
-export async function getSession() {
-  const sessionJson = await cookies('session')
-  if (sessionJson) {
-    try {
-      return JSON.parse(sessionJson) as User
-    } catch {}
-  }
-}
-
-export async function setSession(user?: User) {
-  if (user) {
-    await cookies.set({ session: user })
-  } else {
-    await cookies.delete('session')
-  }
-}
-
-export async function getValidAccessToken(accessToken?: string, refreshToken?: string) {
-  if (!accessToken && !refreshToken) {
-    await setSession()
-    return
-  }
-  let decoded: JwtPayload | undefined
-
-  if (accessToken) {
-    try {
-      decoded = jwtDecode(accessToken)
-    } catch {
-      await setTokens()
-      return
-    }
-
-    const now = Date.now()
-    const expiration = (decoded?.exp ?? now) * 1000
-    const isExpired = now >= expiration
-
-    if (!isExpired) return accessToken
-  }
-
-  if (!refreshToken) {
-    await setTokens()
-    return
-  }
-
-  const res = await api.post<{ access: string; refresh: string }>(
-    '/auth/refresh/',
-    { refresh: refreshToken },
-    { raw: true }
-  )
-
-  if (!res.ok) {
-    await setTokens()
-    return
-  }
-
-  const { access, refresh } = res.data
-  await setTokens(access, refresh)
-  return access
 }

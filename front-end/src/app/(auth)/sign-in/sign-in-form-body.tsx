@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form'
 
 import { Input } from '@/components/input'
 import { PasswordInput } from '@/components/input/password'
-import { SignInRequest } from '@/types/auth'
+import { SignInRequest } from '@/http'
 
 export function SignInFormBody() {
   const { register, formState } = useFormContext<SignInRequest>()

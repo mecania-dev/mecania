@@ -1,7 +1,7 @@
 import { forwardRef, useState } from 'react'
 
 import { useIsLoading } from '@/hooks/use-is-loading'
-import { api } from '@/lib/api'
+import { getCNPJ } from '@/http'
 import {
   FiscalIdentificationType,
   fiscalIdentificationMask,
@@ -43,7 +43,7 @@ export const FiscalIdentificationInput = forwardRef<HTMLInputElement, FiscalIden
         value !== actualValue &&
         onCNPJChange
       ) {
-        const res = await api.get<CNPJApiResponse>(getCNPJUrl(value), { raw: true })
+        const res = await getCNPJ(value)
         onCNPJChange(res.ok ? res.data : undefined)
         !res.ok && onCNPJNotFound?.(value)
       }
@@ -69,7 +69,3 @@ export const FiscalIdentificationInput = forwardRef<HTMLInputElement, FiscalIden
     )
   }
 )
-
-export function getCNPJUrl(CNPJ: string) {
-  return `https://brasilapi.com.br/api/cnpj/v1/${CNPJ.replace(/\D/g, '')}`
-}

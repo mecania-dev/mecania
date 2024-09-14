@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form'
 
 import { Card } from '@/components/card'
-import { SignUpRequest } from '@/types/auth'
+import { SignUpRequest } from '@/http'
 import { Tab, Tabs } from '@nextui-org/react'
 
 import { SignUpCustomerFormBody } from './sign-up-customer-form-body'

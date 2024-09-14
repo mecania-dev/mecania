@@ -1,4 +1,4 @@
-import { api, ApiRequestConfig } from '@/lib/api'
+import { api, ApiRequestConfig } from '@/http'
 
 export const fetcher = {
   get:
