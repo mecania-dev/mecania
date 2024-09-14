@@ -1,12 +1,6 @@
 import { useState } from 'react'
 
-import {
-  getValidAccessToken,
-  getTokens,
-  signUp as signUpRequest,
-  signIn as signInRequest,
-  signOut as signOutRequest
-} from '@/auth'
+import { getValidAccessToken, getTokens, signUp as signUpRequest, signIn as signInRequest, setTokens } from '@/auth'
 import { useIsLoading } from '@/hooks/use-is-loading'
 import { useIsMounted } from '@/hooks/use-is-mounted'
 import { useRedirect } from '@/hooks/use-redirect'
@@ -37,7 +31,6 @@ export function useAuth() {
     if (res.ok) {
       setIsAuthenticated(true)
       await redirect('/profile')
-      router.refresh()
       return
     }
 
@@ -47,8 +40,8 @@ export function useAuth() {
   }
 
   async function signOut() {
-    await signOutRequest()
     setIsAuthenticated(false)
+    await setTokens()
     await redirect('/sign-in', { callbackUrl: pathname })
     router.refresh()
   }

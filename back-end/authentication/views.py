@@ -15,7 +15,8 @@ from users.models import User
 
 
 def set_cookies(response):
-    if settings.DEBUG:
+    # Disabled it because it wasnt necessary anymore
+    if True:
         response.delete_cookie("access")
         response.delete_cookie("refresh")
         return
