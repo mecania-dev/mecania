@@ -1,4 +1,5 @@
 import { ACCESS_TOKEN_NAME, getValidAccessToken, REFRESH_TOKEN_NAME, setSession as setSessionAuth } from '@/auth'
+import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { useIsLoading } from '@/hooks/use-is-loading'
 import { useIsMounted } from '@/hooks/use-is-mounted'
 import { useRedirect } from '@/hooks/use-redirect'
@@ -15,11 +16,20 @@ function getIsAuthenticated() {
   return !!access && !!refresh
 }
 
+async function setSession(user?: User) {
+  const access = getCookie(ACCESS_TOKEN_NAME)
+  await setSessionAuth(user, access)
+}
+
 export function useAuth() {
   const { pathname, setCallbackUrl } = useRedirect()
   const [handleValidateAuthState, isLoading] = useIsLoading(getValidAccessToken)
   const isMounted = useIsMounted(handleValidateAuthState)
   const isAuthenticated = isMounted && !isLoading ? getIsAuthenticated() : false
+  const user = useSWRCustom<User>(isAuthenticated ? 'users/me' : null, {
+    onError: signOut,
+    onSuccess: setSession
+  })
 
   async function signUp(payload: SignUpRequest) {
     const res = await signUpRequest(payload, {
@@ -50,10 +60,13 @@ export function useAuth() {
     await signOutAction(pathname !== '/')
   }
 
-  async function setSession(user?: User) {
-    const access = getCookie(ACCESS_TOKEN_NAME)
-    await setSessionAuth(user, access)
+  return {
+    user,
+    isAuthenticated: !!user.state.data,
+    isLoading: !isMounted || isLoading || user.state.isLoading,
+    isMounted,
+    signUp,
+    signIn,
+    signOut
   }
-
-  return { isAuthenticated, isLoading, isMounted, signUp, signIn, signOut, setSession }
 }

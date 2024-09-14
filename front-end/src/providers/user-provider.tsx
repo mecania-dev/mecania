@@ -4,7 +4,6 @@ import { ReactNode, createContext, useContext } from 'react'
 
 import Loading from '@/app/loading'
 import { useAuth } from '@/auth/hook'
-import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { SignInRequest, SignUpRequest } from '@/http'
 import { User } from '@/types/entities/user'
 import { SWRResponse } from 'swr'
@@ -22,27 +21,18 @@ export interface UserContextProps {
 export const UserContext = createContext({} as UserContextProps)
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  const auth = useAuth()
-  const { state: userState } = useSWRCustom<User>(auth.isAuthenticated ? 'users/me' : null, {
-    onError: auth.isAuthenticated ? auth.signOut : undefined,
-    onSuccess: auth.setSession
-  })
-
-  const user = userState.data
-  const isAuthenticated = !!user
-  const isMechanic = user?.groups.includes('Mechanic') ?? false
-  const isLoading = !auth.isMounted || auth.isLoading || userState.isLoading
+  const { user, isAuthenticated, isLoading, signUp, signIn, signOut } = useAuth()
 
   return (
     <UserContext.Provider
       value={{
-        user,
-        userState,
+        user: user.state.data,
+        userState: user.state,
+        isMechanic: user.state.data?.groups.includes('Mechanic') ?? false,
         isAuthenticated,
-        isMechanic,
-        signUp: auth.signUp,
-        signIn: auth.signIn,
-        signOut: auth.signOut
+        signUp,
+        signIn,
+        signOut
       }}
     >
       {isLoading ? <Loading /> : children}

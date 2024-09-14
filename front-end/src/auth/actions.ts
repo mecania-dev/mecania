@@ -1,5 +1,4 @@
 'use server'
-import { refreshToken, RefreshTokenRequest } from '@/http'
 import { cookies } from '@/lib/cookies'
 import { User } from '@/types/entities/user'
 import { redirect } from 'next/navigation'
@@ -23,18 +22,4 @@ export async function signOutAction(shouldRedirect = true) {
   await clearSession()
   await clearTokens()
   shouldRedirect && redirect('/sign-in')
-}
-
-export async function refreshTokenAction(payload: RefreshTokenRequest) {
-  const res = await refreshToken(payload)
-
-  if (!res.ok) {
-    await clearSession()
-    await clearTokens()
-    return
-  }
-
-  const { access: newAccess, refresh: newRefresh } = res.data
-  await setTokens(newAccess, newRefresh)
-  return newAccess
 }

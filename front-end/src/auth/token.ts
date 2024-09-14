@@ -1,8 +1,8 @@
 import { env } from '@/env'
+import { refreshToken } from '@/http'
 import { cookies } from '@/lib/cookies'
 import { jwtDecode } from 'jwt-decode'
 
-import { refreshTokenAction } from './actions'
 import { clearSession } from './session'
 
 export const ACCESS_TOKEN_NAME = 'access_token'
@@ -18,7 +18,17 @@ export async function getValidAccessToken(forceRefresh = false) {
 
   if (access && !forceRefresh && !isTokenExpired(access)) return access
 
-  return await refreshTokenAction({ refresh })
+  const res = await refreshToken({ refresh })
+
+  if (!res.ok) {
+    await clearSession()
+    await clearTokens()
+    return
+  }
+
+  const { access: newAccess, refresh: newRefresh } = res.data
+  await setTokens(newAccess, newRefresh)
+  return newAccess
 }
 
 export function isTokenExpired(token: string) {
