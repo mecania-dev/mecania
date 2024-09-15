@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 
 from .models import User
 from addresses.serializers import AddressSerializer
@@ -9,6 +9,7 @@ from services.serializers import ServiceSerializer
 
 class UserRetrieveDestroySerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
     addresses = AddressSerializer(many=True, read_only=True)
     vehicles = VehicleSerializer(many=True, read_only=True)
     services = ServiceSerializer(many=True, read_only=True)
@@ -31,6 +32,7 @@ class UserRetrieveDestroySerializer(serializers.ModelSerializer):
             "date_joined",
             "updated_at",
             "groups",
+            "permissions",
             "addresses",
             "vehicles",
             "services",
@@ -38,6 +40,13 @@ class UserRetrieveDestroySerializer(serializers.ModelSerializer):
 
     def get_groups(self, obj):
         return [group.name for group in obj.groups.all()]
+
+    def get_permissions(self, obj):
+        permissions = set()
+        for group in obj.groups.all():
+            group_permissions = Permission.objects.filter(group=group)
+            permissions.update(group_permissions.values_list("codename", flat=True))
+        return list(permissions)
 
 
 class UserCreateUpdateSerializer(serializers.ModelSerializer):

@@ -1,16 +1,19 @@
 import time
 
 from django.conf import settings
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
+from rest_framework.viewsets import ReadOnlyModelViewSet
+from django.contrib.auth.models import Permission
 
+from .serializers import PermissionSerializer
 from users.models import User
 from users.serializers import UserRetrieveDestroySerializer
 
@@ -95,3 +98,17 @@ class LogoutView(APIView):
         response.delete_cookie("refresh")
 
         return response
+
+
+class PermissionsView(APIView):
+    def get(self, request, *args, **kwargs):
+        only_codenames = request.query_params.get("only_codenames", "false").lower() == "true"
+
+        permissions = Permission.objects.all()
+
+        if only_codenames:
+            permission_codenames = permissions.values_list("codename", flat=True)
+            return Response(permission_codenames)
+        else:
+            serializer = PermissionSerializer(permissions, many=True)
+            return Response(serializer.data)
