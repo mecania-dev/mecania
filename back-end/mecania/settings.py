@@ -196,12 +196,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "static"
-MEDIA_URL = "media/"
-MEDIA_ROOT = BASE_DIR / "media"
-
 if DEBUG:
+    STATIC_URL = "static/"
+    STATIC_ROOT = BASE_DIR / "static"
+    MEDIA_URL = "media/"
+    MEDIA_ROOT = BASE_DIR / "media"
     STORAGES = {
         "default": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
         "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
@@ -216,7 +215,7 @@ else:
     AWS_QUERYSTRING_AUTH = False
     STORAGES = {
         "default": {"BACKEND": "mecania.storages.CustomS3Boto3Storage"},
-        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+        "staticfiles": {"BACKEND": "mecania.storages.CustomS3Boto3Storage"},
     }
 
 # Default primary key field type
