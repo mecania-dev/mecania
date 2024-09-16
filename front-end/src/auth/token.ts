@@ -3,7 +3,7 @@ import { refreshToken } from '@/http'
 import { cookies } from '@/lib/cookies'
 import { jwtDecode } from 'jwt-decode'
 
-import { clearSession } from './session'
+import { clearSession, setSession } from './session'
 
 export const ACCESS_TOKEN_NAME = 'access_token'
 export const REFRESH_TOKEN_NAME = 'refresh_token'
@@ -26,8 +26,9 @@ export async function getValidAccessToken(forceRefresh = false) {
     return
   }
 
-  const { access: newAccess, refresh: newRefresh } = res.data
+  const { access: newAccess, refresh: newRefresh, user } = res.data
   await setTokens(newAccess, newRefresh)
+  await setSession(user, newAccess)
   return newAccess
 }
 
