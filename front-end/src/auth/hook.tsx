@@ -57,7 +57,7 @@ export function useAuth() {
 
   async function signOut() {
     if (pathname !== '/') await setCallbackUrl(pathname)
-    await signOutAction()
+    await signOutAction(pathname !== '/')
   }
 
   return {
