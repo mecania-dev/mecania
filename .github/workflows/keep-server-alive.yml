@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Send HTTP Request
         run: |
-          response=$(curl -s -w "%{http_code}" -o /dev/stdout https://mecania.onrender.com/api/keep-alive/)
+          response=$(curl -s -w "%{http_code}" -o /dev/stdout https://mecania.vercel.app/api/keep-alive/)
           status="${response: -3}"
           body="${response%???}"
           if [ "$status" -eq 200 ]; then
