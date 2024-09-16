@@ -70,11 +70,11 @@ export function useAuth() {
   }
 
   async function signOut() {
-    await setCallbackUrl(pathname)
     await clearSession()
     await clearTokens()
 
     if (pathname !== '/') {
+      await setCallbackUrl(pathname)
       await redirect('/sign-in', { useCallbackUrl: false })
     }
   }

@@ -5,7 +5,7 @@ const authPrefixes = ['/sign-in', '/sign-up', '/forgot-password']
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname
 
-  if (!authPrefixes.some(prefix => pathname.startsWith(prefix))) {
+  if (pathname !== '/' && !authPrefixes.some(prefix => pathname.startsWith(prefix))) {
     const response = NextResponse.next()
     response.cookies.set('callback-url', pathname)
     return response
