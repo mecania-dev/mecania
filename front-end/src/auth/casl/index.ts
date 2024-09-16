@@ -2,10 +2,11 @@ import { AbilityBuilder, CreateAbility, createMongoAbility, MongoAbility } from 
 import { z } from 'zod'
 
 import { User } from './models/user'
-import { userSubject } from './subjects/user'
 import { permissions } from './permissions'
+import { userSubject } from './subjects/user'
+import { vehicleSubject } from './subjects/vehicle'
 
-const appAbilitiesSchema = z.union([userSubject, z.tuple([z.literal('manage'), z.literal('all')])])
+const appAbilitiesSchema = z.union([userSubject, vehicleSubject, z.tuple([z.literal('manage'), z.literal('all')])])
 
 type AppAbilities = z.infer<typeof appAbilitiesSchema>
 
@@ -15,18 +16,16 @@ export const createAppAbility = createMongoAbility as CreateAbility<AppAbility>
 export function defineAbilityFor(user: User) {
   const builder = new AbilityBuilder(createAppAbility)
 
-  if(user.isSuperuser)
+  user.groups.forEach(group => {
+    if (typeof permissions[group] !== 'function') {
+      throw new Error(`Permissions for ${group} group not found.`)
+    }
 
-  if (typeof permissions[user.isSuperuser ? 'admin' : ] !== 'function') {
-    throw new Error(`Permissions for role ${user.role} not found.`)
-  }
-
-  permissions[user.role](user, builder)
+    permissions[group](user, builder)
+  })
 
   const ability = builder.build({
-    detectSubjectType(subject) {
-      return subject.__typename
-    }
+    detectSubjectType: subject => subject.__typename
   })
 
   ability.can = ability.can.bind(ability)

@@ -9,6 +9,8 @@ import { AuthProps } from './types'
 export * from './types'
 export * from './session'
 export * from './token'
+export * from './casl'
+export * from './get-user-permissions'
 
 export async function isAuthenticated() {
   const { access, refresh } = await getTokens()
