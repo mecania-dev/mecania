@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import { useIsLoading } from '@/hooks/use-is-loading'
 import { useUser } from '@/providers/user-provider'
 import { tv, Avatar, Button, Popover, PopoverContent, PopoverTrigger, ScrollShadow } from '@nextui-org/react'
 import Link from 'next/link'
@@ -13,6 +14,7 @@ const link = tv({
 export function ProfilePopover() {
   const [isOpen, setIsOpen] = useState(false)
   const { user, signOut } = useUser()
+  const [handleSignOut, isSigningOut] = useIsLoading(signOut)
   const signedAs = user?.username || user?.email || 'unknown'
   const isAdmin = user?.isSuperuser
 
@@ -45,7 +47,8 @@ export function ProfilePopover() {
           variant="light"
           radius="sm"
           className="h-auto w-full justify-start px-2 py-1.5"
-          onPress={signOut}
+          onPress={handleSignOut}
+          isLoading={isSigningOut}
         >
           Sair
         </Button>
