@@ -10,6 +10,7 @@ export const permissions: Record<Group, PermissionsByGroup> = {
   Admin(_, { can, cannot }) {
     can('manage', 'all')
     cannot('create', 'Vehicle')
+    cannot('create', 'Address')
   },
   Driver(user, { can }) {
     can('get', 'User')
@@ -20,5 +21,7 @@ export const permissions: Record<Group, PermissionsByGroup> = {
   Mechanic(user, { can }) {
     can('get', 'User')
     can(['update', 'delete'], 'User', { id: { $eq: user.id } })
+    can(['get', 'create'], 'Address')
+    can(['update', 'delete'], 'Address', { userId: { $eq: user.id } })
   }
 }

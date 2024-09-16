@@ -14,13 +14,13 @@ export * from './get-user-permissions'
 
 export async function isAuthenticated() {
   const { access, refresh } = await getTokens()
-  return !!access && !!refresh
+  return !!access || !!refresh
 }
 
 export async function auth({ groups, unauthorizedGroups, redirectUrl, custom }: AuthProps = {}) {
   const session = await getSession()
-  const isAuthenticated = !!session
-  let authorized = isAuthenticated
+  const isAuthed = await isAuthenticated()
+  let authorized = isAuthed
   let user: User | undefined
   let realRedirectUrl: string | undefined = redirectUrl ?? '/sign-in'
 
@@ -38,7 +38,7 @@ export async function auth({ groups, unauthorizedGroups, redirectUrl, custom }: 
     realRedirectUrl = url
   }
 
-  const customRes = await maybePromise(custom, { user, isAuthenticated, setRedirectUrl })
+  const customRes = await maybePromise(custom, { user, isAuthenticated: isAuthed, setRedirectUrl })
 
   if (customRes != null) {
     authorized = customRes

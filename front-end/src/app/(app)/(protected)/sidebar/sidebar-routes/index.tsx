@@ -30,8 +30,8 @@ export function SidebarRoutes() {
   const routes = useMemo(
     () =>
       [
-        { icon: CgProfile, href: '/profile', children: 'Meus dados' },
-        { icon: FaLocationDot, href: '/profile/addresses', children: 'Endereços' },
+        { icon: CgProfile, href: '/profile', children: 'Meus dados', I: 'update', a: 'User' },
+        { icon: FaLocationDot, href: '/profile/addresses', children: 'Endereços', I: 'create', a: 'Address' },
         { icon: BiSolidCar, href: '/profile/vehicles', children: 'Veículos', I: 'create', a: 'Vehicle' },
         {
           icon: BiSolidCarMechanic,

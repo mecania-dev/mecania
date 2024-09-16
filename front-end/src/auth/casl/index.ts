@@ -3,10 +3,16 @@ import { z } from 'zod'
 
 import { User } from './models/user'
 import { permissions } from './permissions'
+import { addressSubject } from './subjects/address'
 import { userSubject } from './subjects/user'
 import { vehicleSubject } from './subjects/vehicle'
 
-const appAbilitiesSchema = z.union([userSubject, vehicleSubject, z.tuple([z.literal('manage'), z.literal('all')])])
+const appAbilitiesSchema = z.union([
+  userSubject,
+  addressSubject,
+  vehicleSubject,
+  z.tuple([z.literal('manage'), z.literal('all')])
+])
 
 type AppAbilities = z.infer<typeof appAbilitiesSchema>
 

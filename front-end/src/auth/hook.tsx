@@ -1,12 +1,4 @@
-import {
-  ACCESS_TOKEN_NAME,
-  clearSession,
-  clearTokens,
-  getValidAccessToken,
-  REFRESH_TOKEN_NAME,
-  setSession as setSessionAuth,
-  setTokens
-} from '@/auth'
+import { ACCESS_TOKEN_NAME, getValidAccessToken, REFRESH_TOKEN_NAME, setSession as setSessionAuth } from '@/auth'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { useIsLoading } from '@/hooks/use-is-loading'
 import { useIsMounted } from '@/hooks/use-is-mounted'
@@ -15,6 +7,8 @@ import { toast } from '@/hooks/use-toast'
 import { signUp as signUpRequest, SignUpRequest, signIn as signInRequest, SignInRequest } from '@/http'
 import { User } from '@/types/entities/user'
 import { getCookie } from 'cookies-next'
+
+import { setCredentialsAction, signOutAction } from './actions'
 
 function getIsAuthenticated() {
   const access = getCookie(ACCESS_TOKEN_NAME)
@@ -28,7 +22,7 @@ async function setSession(user?: User) {
 }
 
 export function useAuth() {
-  const { redirect, pathname, setCallbackUrl } = useRedirect()
+  const { pathname, setCallbackUrl } = useRedirect()
   const [handleValidateAuthState, isLoading] = useIsLoading(getValidAccessToken)
   const isMounted = useIsMounted(handleValidateAuthState)
   const isAuthenticated = isMounted && !isLoading ? getIsAuthenticated() : false
@@ -58,25 +52,12 @@ export function useAuth() {
       toast({ message: 'Login ou senha inválidos', type: 'error' })
     }
 
-    const { access, refresh, user } = res.data
-
-    if (!user) {
-      throw new Error('User should be returned from the server')
-    }
-
-    await setTokens(access, refresh)
-    await setSession(user)
-    await redirect('/profile')
+    await setCredentialsAction(res.data)
   }
 
   async function signOut() {
-    await clearSession()
-    await clearTokens()
-
-    if (pathname !== '/') {
-      await setCallbackUrl(pathname)
-      await redirect('/sign-in', { useCallbackUrl: false })
-    }
+    if (pathname !== '/') await setCallbackUrl(pathname)
+    await signOutAction()
   }
 
   return {
