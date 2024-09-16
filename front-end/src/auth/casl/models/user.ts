@@ -1,10 +1,10 @@
 import { string } from '@/lib/zod'
+import { fiscalIdentificationSchema } from '@/types/fiscal-identification'
+import { phoneNumberSchema } from '@/types/phone-number'
 import { z } from 'zod'
 
-import { fiscalIdentificationSchema } from '../fiscal-identification'
-import { phoneNumberSchema } from '../phone-number'
-
 export const userSchema = z.object({
+  __typename: z.literal('User').default('User'),
   id: z.number(),
   avatarUrl: z.string().nullable(),
   username: string({ name: 'Nome de usuário', min: 1 }),
