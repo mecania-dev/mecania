@@ -35,9 +35,11 @@ export function SidebarRoutes() {
         { icon: BiSolidCar, href: '/profile/vehicles', children: 'Veículos', I: 'create', a: 'Vehicle' },
         {
           icon: BiSolidCarMechanic,
-          href: '/profile/mechanics',
+          href: '/profile/requests',
           children: 'Solicitações',
-          onClick: onRequestsClick
+          onClick: onRequestsClick,
+          I: ['message_mechanic', 'message_user'],
+          a: 'Chat'
         }
       ] as RouteProps[],
     [onRequestsClick]

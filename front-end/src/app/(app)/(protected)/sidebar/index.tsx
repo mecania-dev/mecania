@@ -3,6 +3,7 @@
 import { Sidebar, useSidebar } from '@/components/sidebar'
 import { SidebarToggle } from '@/components/sidebar/sidebar-toggle'
 import { usePathnameChange } from '@/hooks/use-pathname-change'
+import { Can } from '@/providers/ability-provider'
 import { create } from 'zustand'
 
 import { SidebarAIButton } from './ai-button'
@@ -53,7 +54,9 @@ export function ProtectedSidebar({ children, className }: ProtectedSidebarProps)
     >
       <Sidebar.Header className="justify-between">
         <SidebarToggle />
-        <SidebarAIButton />
+        <Can I="ask_ai" a="Chat">
+          <SidebarAIButton />
+        </Can>
       </Sidebar.Header>
       <Sidebar.Body className="flex-row-reverse group-data-[open-complete=true]:group-data-[routes=false]:flex-row">
         <SidebarRoutes />

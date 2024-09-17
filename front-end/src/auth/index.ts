@@ -13,8 +13,13 @@ export * from './casl'
 export * from './get-user-permissions'
 
 export async function isAuthenticated() {
-  const { access, refresh } = await getTokens()
-  return !!access || !!refresh
+  const { refresh } = await getTokens()
+  // This logic ensures the user is authenticated if either:
+  // 1. There is a refresh token (allowing the client to get a new access token).
+  // 2. Both access and refresh tokens are present.
+  // Checking only `!!access && !!refresh` would prevent the client from refreshing
+  // the access token if it's missing or expired. Prioritizing the refresh token ensures session renewal when possible.
+  return !!refresh
 }
 
 export async function auth({ groups, unauthorizedGroups, redirectUrl, custom }: AuthProps = {}) {
