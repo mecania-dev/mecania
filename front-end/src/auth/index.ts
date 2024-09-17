@@ -22,7 +22,7 @@ export async function isAuthenticated() {
   return !!refresh
 }
 
-export async function auth({ groups, unauthorizedGroups, redirectUrl, custom }: AuthProps = {}) {
+export async function auth({ admin, groups, unauthorizedGroups, redirectUrl, custom }: AuthProps = {}) {
   const session = await getSession()
   const isAuthed = await isAuthenticated()
   let authorized = isAuthed
@@ -31,6 +31,10 @@ export async function auth({ groups, unauthorizedGroups, redirectUrl, custom }: 
 
   if (session) {
     user = session
+
+    if (admin) {
+      authorized = session.isSuperuser
+    }
 
     if (groups?.length) {
       authorized = groups.some(g => session.groups.includes(g))

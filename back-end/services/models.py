@@ -26,7 +26,7 @@ class Service(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     category = models.CharField(max_length=50, choices=CATEGORIES_CHOICES)
-    vehicle_type = models.CharField(max_length=20, choices=VEHICLE_TYPE_CHOICES, default="CAR")
+    vehicle_type = models.CharField(max_length=20, choices=VEHICLE_TYPE_CHOICES, default="Car")
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

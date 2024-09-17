@@ -13,6 +13,7 @@ export interface AuthCustomProps {
 }
 
 export interface AuthProps {
+  admin?: boolean
   groups?: User['groups']
   unauthorizedGroups?: User['groups']
   redirectUrl?: string

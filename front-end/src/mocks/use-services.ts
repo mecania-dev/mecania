@@ -8,7 +8,7 @@ export const initialServices: Service[] = [
     name: 'Troca de Óleo',
     description: 'Trocar o óleo e o filtro de óleo',
     category: 'Manutenção',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -17,7 +17,7 @@ export const initialServices: Service[] = [
     name: 'Rodízio de Pneus',
     description: 'Rodiziar os pneus',
     category: 'Manutenção',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -26,7 +26,7 @@ export const initialServices: Service[] = [
     name: 'Substituição das Pastilhas de Freio',
     description: 'Substituir as pastilhas de freio',
     category: 'Reparo',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -35,7 +35,7 @@ export const initialServices: Service[] = [
     name: 'Diagnóstico de Motor',
     description: 'Diagnosticar problemas no motor',
     category: 'Problemas Mecânicos - Motor e Exaustão',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -44,7 +44,7 @@ export const initialServices: Service[] = [
     name: 'Alinhamento e Balanceamento',
     description: 'Alinhar e balancear as rodas',
     category: 'Manutenção',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -53,7 +53,7 @@ export const initialServices: Service[] = [
     name: 'Revisão de Suspensão',
     description: 'Revisar e ajustar a suspensão do veículo',
     category: 'Manutenção',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -62,7 +62,7 @@ export const initialServices: Service[] = [
     name: 'Troca de Bateria',
     description: 'Substituir a bateria do veículo',
     category: 'Manutenção',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -71,7 +71,7 @@ export const initialServices: Service[] = [
     name: 'Reparação de Sistema Elétrico',
     description: 'Reparar problemas no sistema elétrico',
     category: 'Reparo',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -80,7 +80,7 @@ export const initialServices: Service[] = [
     name: 'Inspeção de Emissões',
     description: 'Verificar as emissões do veículo',
     category: 'Inspeção',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -89,7 +89,7 @@ export const initialServices: Service[] = [
     name: 'Troca de Velas',
     description: 'Substituir as velas de ignição',
     category: 'Manutenção',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -98,7 +98,7 @@ export const initialServices: Service[] = [
     name: 'Reparo de Transmissão',
     description: 'Reparar a transmissão do veículo',
     category: 'Reparo',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -107,7 +107,7 @@ export const initialServices: Service[] = [
     name: 'Troca de Correia Dentada',
     description: 'Substituir a correia dentada',
     category: 'Manutenção',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -116,7 +116,7 @@ export const initialServices: Service[] = [
     name: 'Reparo de Ar-Condicionado',
     description: 'Reparar o sistema de ar-condicionado',
     category: 'Reparo',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -125,7 +125,7 @@ export const initialServices: Service[] = [
     name: 'Revisão de Freios',
     description: 'Revisar e ajustar os freios do veículo',
     category: 'Manutenção',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
@@ -134,7 +134,7 @@ export const initialServices: Service[] = [
     name: 'Pintura e Funilaria',
     description: 'Reparar e pintar a carroceria do veículo',
     category: 'Reparo',
-    vehicles: ['car'],
+    vehicleType: 'Car',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   }

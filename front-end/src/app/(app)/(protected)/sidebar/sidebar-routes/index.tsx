@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { IconType } from 'react-icons'
 import { BiSolidCar, BiSolidCarMechanic } from 'react-icons/bi'
 import { CgProfile } from 'react-icons/cg'
+import { FaTools } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
@@ -40,7 +41,8 @@ export function SidebarRoutes() {
           onClick: onRequestsClick,
           I: ['message_mechanic', 'message_user'],
           a: 'Chat'
-        }
+        },
+        { icon: FaTools, href: '/services', children: 'Serviços', I: 'create', a: 'Service' }
       ] as RouteProps[],
     [onRequestsClick]
   )

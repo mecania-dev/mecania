@@ -26,7 +26,8 @@ export function ProfilePopover() {
   const routes = [
     { label: 'Falar com IA', path: '/chat', I: 'ask_ai', a: 'Chat' },
     { label: 'Meus dados', path: '/profile', I: 'update', a: 'User' },
-    { label: 'Solicitações', path: '/profile/requests', I: ['message_mechanic', 'message_user'], a: 'Chat' }
+    { label: 'Solicitações', path: '/profile/requests', I: ['message_mechanic', 'message_user'], a: 'Chat' },
+    { label: 'Serviços', path: '/services', I: 'create', a: 'Service' }
   ] as RouteProps[]
 
   return (

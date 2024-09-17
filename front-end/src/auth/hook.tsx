@@ -26,7 +26,7 @@ export function useAuth() {
   const [handleValidateAuthState, isLoading] = useIsLoading(getValidAccessToken)
   const isMounted = useIsMounted(handleValidateAuthState)
   const isAuthenticated = isMounted && !isLoading ? getIsAuthenticated() : false
-  const user = useSWRCustom<User>(isAuthenticated ? 'users/me' : null, {
+  const user = useSWRCustom<User>(isAuthenticated ? 'users/me/' : null, {
     onError: signOut,
     onSuccess: setSession
   })
