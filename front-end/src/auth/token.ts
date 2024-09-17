@@ -8,6 +8,8 @@ import { clearSession, setSession } from './session'
 export const ACCESS_TOKEN_NAME = 'access_token'
 export const REFRESH_TOKEN_NAME = 'refresh_token'
 
+let isRefreshing = false
+
 export async function getValidAccessToken(forceRefresh = false) {
   const { access, refresh } = await getTokens()
   if (!refresh) {
@@ -18,18 +20,28 @@ export async function getValidAccessToken(forceRefresh = false) {
 
   if (access && !forceRefresh && !isTokenExpired(access)) return access
 
-  const res = await refreshToken({ refresh })
+  if (isRefreshing) {
+    while (isRefreshing) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+    const { access: newAccess } = await getTokens()
+    return newAccess
+  } else {
+    isRefreshing = true
+    const res = await refreshToken({ refresh })
+    isRefreshing = false
 
-  if (!res.ok) {
-    await clearSession()
-    await clearTokens()
-    return
+    if (!res.ok) {
+      await clearSession()
+      await clearTokens()
+      return
+    }
+
+    const { access: newAccess, refresh: newRefresh, user } = res.data
+    await setTokens(newAccess, newRefresh)
+    await setSession(user, newAccess)
+    return newAccess
   }
-
-  const { access: newAccess, refresh: newRefresh, user } = res.data
-  await setTokens(newAccess, newRefresh)
-  await setSession(user, newAccess)
-  return newAccess
 }
 
 export function isTokenExpired(token: string) {
