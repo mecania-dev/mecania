@@ -16,6 +16,7 @@ export const serviceCreateSchema = serviceSchema.pick({
   name: true,
   description: true,
   category: true,
+  vehicleType: true,
   durationMinutes: true
 })
 
