@@ -40,7 +40,7 @@ export function ChatHistory() {
             classNames={{ text: 'truncate' }}
             endContent={
               <LuTrash2
-                className="hidden h-5 w-5 shrink-0 text-danger group-data-[active=true]:block group-data-[hover=true]:block hover:scale-105"
+                className="hidden h-5 w-5 shrink-0 text-danger hover:scale-105 group-data-[active=true]:block group-data-[hover=true]:block"
                 onClick={handleChatRemove(chat.id)}
               />
             }
