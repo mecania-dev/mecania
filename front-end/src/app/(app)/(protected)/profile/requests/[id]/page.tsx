@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { MechanicRequest } from '.'
 
 type Props = {
-  params: { id?: string; reqId?: string }
+  params: { id?: string }
   searchParams: { [key: string]: string | string[] | undefined }
 }
 
@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 }
 
 export default function Page({ params }: Props) {
-  if (!isValid(params.id) || !isValid(params.reqId)) redirect('/profile')
+  if (!isValid(params.id)) redirect('/profile')
 
-  return <MechanicRequest mechanicId={Number(params.id)} requestId={Number(params.reqId)} />
+  return <MechanicRequest id={Number(params.id)} />
 }
 
 function isValid(value?: string | string[]) {

@@ -30,7 +30,7 @@ export function RequestsHistory() {
     <div className="w-0 space-y-1 overflow-hidden transition-width group-data-[requests=true]:w-full">
       {sortedReqs.map((req, i) => (
         <SidebarRoute
-          href={`/profile/mechanics/${req.mechanic.id}/requests/${req.id}`}
+          href={`/profile/requests/${req.id}`}
           variant="ghost"
           activeVariant="solid"
           classNames={{ text: 'truncate' }}

@@ -40,7 +40,7 @@ export function ProtectedSidebar({ children, className }: ProtectedSidebarProps)
 
   usePathnameChange(pathname => {
     const isChatOpen = pathname.startsWith('/chat')
-    const isRequestsOpen = pathname.startsWith('/profile/mechanics')
+    const isRequestsOpen = pathname.startsWith('/profile/requests')
     useProtectedSidebar.setState({ isRoutesOpen: !isChatOpen && !isRequestsOpen, isChatOpen, isRequestsOpen })
   })
 
