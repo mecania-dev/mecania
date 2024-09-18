@@ -25,11 +25,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Centro',
+        district: 'Centro',
         street: 'Rua das Flores',
         number: '123',
         complement: 'Apto 1',
-        zip: '80000-000',
+        zipCode: '80000-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -61,11 +61,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Santa Felicidade',
+        district: 'Santa Felicidade',
         street: 'Avenida Manoel Ribas',
         number: '456',
         complement: 'Casa',
-        zip: '82000-000',
+        zipCode: '82000-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -97,11 +97,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Ecoville',
+        district: 'Ecoville',
         street: 'Rua Professor Pedro Viriato Parigot de Souza',
         number: '789',
         complement: 'Bloco 2',
-        zip: '81200-000',
+        zipCode: '81200-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -133,11 +133,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Batel',
+        district: 'Batel',
         street: 'Avenida do Batel',
         number: '101',
         complement: 'Sala 5',
-        zip: '80420-090',
+        zipCode: '80420-090',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -169,11 +169,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Santo Inácio',
+        district: 'Santo Inácio',
         street: 'Rua Mato Grosso',
         number: '202',
         complement: 'Loja 1',
-        zip: '80330-000',
+        zipCode: '80330-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -205,11 +205,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Água Verde',
+        district: 'Água Verde',
         street: 'Rua Guilherme Pugsley',
         number: '404',
         complement: 'Bloco 3',
-        zip: '80240-020',
+        zipCode: '80240-020',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -241,11 +241,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Juvevê',
+        district: 'Juvevê',
         street: 'Rua Alberto Bolliger',
         number: '505',
         complement: 'Casa',
-        zip: '80035-010',
+        zipCode: '80035-010',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -277,11 +277,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Rebouças',
+        district: 'Rebouças',
         street: 'Avenida Silva Jardim',
         number: '1510',
         complement: 'Apto 4',
-        zip: '80230-000',
+        zipCode: '80230-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -313,11 +313,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Portão',
+        district: 'Portão',
         street: 'Rua João Bettega',
         number: '222',
         complement: 'Bloco A',
-        zip: '81070-000',
+        zipCode: '81070-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -349,11 +349,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Boqueirão',
+        district: 'Boqueirão',
         street: 'Rua Paulo Setúbal',
         number: '303',
         complement: 'Apto 15',
-        zip: '81730-000',
+        zipCode: '81730-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -385,11 +385,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Pinheirinho',
+        district: 'Pinheirinho',
         street: 'Rua Nicola Pelanda',
         number: '404',
         complement: 'Loja 3',
-        zip: '81830-000',
+        zipCode: '81830-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -421,11 +421,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Fazendinha',
+        district: 'Fazendinha',
         street: 'Rua Carlos Klemtz',
         number: '505',
         complement: 'Casa',
-        zip: '81320-000',
+        zipCode: '81320-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -457,11 +457,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Mercês',
+        district: 'Mercês',
         street: 'Rua Jacarezinho',
         number: '606',
         complement: 'Apto 6',
-        zip: '80810-000',
+        zipCode: '80810-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -493,11 +493,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Vila Izabel',
+        district: 'Vila Izabel',
         street: 'Rua Bororós',
         number: '707',
         complement: 'Bloco C',
-        zip: '80320-000',
+        zipCode: '80320-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -529,11 +529,11 @@ const initialMechanics: Mechanic[] = [
         country: 'Brasil',
         state: 'PR',
         city: 'Curitiba',
-        neighborhood: 'Ahú',
+        district: 'Ahú',
         street: 'Rua Colombo',
         number: '808',
         complement: 'Loja 2',
-        zip: '80540-000',
+        zipCode: '80540-000',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }

@@ -39,7 +39,7 @@ export function MechanicRecommendation(mechanic: MechanicWithDistance) {
         />
         <div className="grow overflow-hidden">
           <p className="truncate whitespace-nowrap font-semibold">{mechanic.firstName}</p>
-          <p className="truncate whitespace-nowrap">{`${mechanic.addresses[0].city}, ${mechanic.addresses[0].neighborhood}`}</p>
+          <p className="truncate whitespace-nowrap">{`${mechanic.addresses[0].city}, ${mechanic.addresses[0].district}`}</p>
           <Rating rating={mechanic.rating ?? 0} hideLabel />
           <p className="truncate whitespace-nowrap">{mechanic.distance} km</p>
         </div>

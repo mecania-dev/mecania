@@ -15,7 +15,7 @@ const alert = tv({
       success: { base: 'bg-success-200 text-success-foreground', icon: 'text-green-500 dark:text-green-300' },
       error: { base: 'bg-danger-200 text-red-900 dark:text-danger-foreground', icon: 'text-red-500 dark:text-inherit' },
       alert: { base: 'bg-warning-200 text-warning-foreground', icon: 'text-yellow-500 dark:text-yellow-300' },
-      info: { base: 'bg-info-light dark:bg-info-dark text-black', icon: 'text-blue-500 dark:text-blue-100' }
+      info: { base: 'bg-info-200 text-info-foreground', icon: 'text-blue-500 dark:text-blue-100' }
     }
   }
 })

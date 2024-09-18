@@ -1,4 +1,4 @@
-import { nextui } from '@nextui-org/react'
+import { nextui, ThemeColors } from '@nextui-org/react'
 import { tailwindScrollbar } from '@raulscoelho/tailwind-scrollbar'
 import type { Config } from 'tailwindcss'
 
@@ -43,6 +43,20 @@ const config: Config = {
               900: '#735B25',
               DEFAULT: '#FFD455',
               foreground: '#000000'
+            },
+            ['info' as keyof ThemeColors]: {
+              50: '#D1F4FF',
+              100: '#A3E8FF',
+              200: '#75DDFF',
+              300: '#47D1FF',
+              400: '#19C6FF',
+              500: '#00A8E0',
+              600: '#0084B3',
+              700: '#006087',
+              800: '#003C5A',
+              900: '#00182D',
+              DEFAULT: '#00A8E0',
+              foreground: '#000000'
             }
           }
         },
@@ -75,6 +89,20 @@ const config: Config = {
               900: '#FFF8E5',
               DEFAULT: '#FFC020',
               foreground: '#000000'
+            },
+            ['info' as keyof ThemeColors]: {
+              50: '#00182D',
+              100: '#003C5A',
+              200: '#006087',
+              300: '#0084B3',
+              400: '#00A8E0',
+              500: '#19C6FF',
+              600: '#47D1FF',
+              700: '#75DDFF',
+              800: '#A3E8FF',
+              900: '#D1F4FF',
+              DEFAULT: '#19C6FF',
+              foreground: '#FFFFFF'
             }
           }
         }

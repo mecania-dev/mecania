@@ -9,7 +9,10 @@ import { fetcher } from './fetcher'
 export type SWRKey = (() => string | undefined | null) | string | undefined | null
 export type SWRCustom<T = any> = ReturnType<typeof useSWRCustom<T>>
 export type SWRRequestMutate<T, RES> = (props: { res: ApiResponse<RES>; state?: T }) => T
-export type SWRCustomRequestConfig<T, RES> = ApiRequestConfig<RES> & { mutate?: SWRRequestMutate<T, RES> }
+export type SWRCustomRequestConfig<T, RES> = Omit<ApiRequestConfig<RES>, 'url'> & {
+  url?: string | ((currentUrl: string) => string)
+  mutate?: SWRRequestMutate<T, RES>
+}
 
 export type SWRCustomConfigs<T> = Parameters<typeof useSWR<T>>[2] & {
   fetcherConfig?: ApiRequestConfig<T>
@@ -50,24 +53,28 @@ export function useSWRCustom<T>(key: SWRKey, { fetcherConfig, ...config }: SWRCu
   }
 
   async function get<RES = T>(configs: SWRCustomRequestConfig<T, RES> = {}) {
+    configs.url = typeof configs.url === 'function' ? configs.url(url) : configs.url
     const { url: otherUrl, mutate, ...restConfigs } = configs
     return await baseRequest(api.get<RES>(otherUrl || url, restConfigs), setIsGetLoading, mutate)
   }
   get.isLoading = isGetLoading
 
   async function post<RES = T>(body: any, configs: SWRCustomRequestConfig<T, RES> = {}) {
+    configs.url = typeof configs.url === 'function' ? configs.url(url) : configs.url
     const { url: otherUrl, mutate, ...restConfigs } = configs
     return await baseRequest(api.post<RES>(otherUrl || url, body, restConfigs), setIsPostLoading, mutate)
   }
   post.isLoading = isPostLoading
 
   async function put<RES = T>(body: any, configs: SWRCustomRequestConfig<T, RES> = {}) {
+    configs.url = typeof configs.url === 'function' ? configs.url(url) : configs.url
     const { url: otherUrl, mutate, ...restConfigs } = configs
     return await baseRequest(api.put<RES>(otherUrl || url, body, restConfigs), setIsPutLoading, mutate)
   }
   put.isLoading = isPutLoading
 
   async function remove<RES = T>(configs: SWRCustomRequestConfig<T, RES> = {}) {
+    configs.url = typeof configs.url === 'function' ? configs.url(url) : configs.url
     const { url: otherUrl, mutate, ...restConfigs } = configs
     return await baseRequest(api.delete<RES>(otherUrl || url, restConfigs), setIsRemoveLoading, mutate)
   }

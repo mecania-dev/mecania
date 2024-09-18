@@ -8,7 +8,7 @@ import { Spinner } from '@nextui-org/react'
 import { Input, InputProps } from '.'
 
 export type ZipCodeInputProps = Omit<InputProps, 'type'> & {
-  onZipCodeChange?(address?: ZipCodeResponse): void
+  onZipCodeChange?(address?: ZipCodeResponse, zipCode?: string): void
 }
 
 export const ZipCodeInput = forwardRef<HTMLInputElement, ZipCodeInputProps>(function ZipCodeInput(
@@ -21,7 +21,7 @@ export const ZipCodeInput = forwardRef<HTMLInputElement, ZipCodeInputProps>(func
   const [handleAddressChange, isAddressLoading] = useIsLoading(async (value: string) => {
     if (isValidCEP(value) && value !== actualValue && onZipCodeChange) {
       const res = await getZipCode(value)
-      onZipCodeChange(res.ok ? res.data : undefined)
+      onZipCodeChange(res.ok ? res.data : undefined, res.ok ? value : undefined)
     }
   })
 

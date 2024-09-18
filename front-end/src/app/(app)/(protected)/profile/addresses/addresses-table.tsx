@@ -9,66 +9,66 @@ import { TableTopContent } from '@/components/table/types'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { confirmationModal } from '@/hooks/use-confirmation-modal'
 import { toast } from '@/hooks/use-toast'
-import { Service, ServiceCreate } from '@/types/entities/service'
+import { useUser } from '@/providers/user-provider'
+import { Address, AddressCreate } from '@/types/entities/address'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
 
-import { NewServiceModalButton } from './service-modal'
+import { NewAddressModalButton } from './address-modal'
 
-export function ServicesTable() {
-  const services = useSWRCustom<Service[]>('services/')
+export function AddressesTable() {
+  const { user } = useUser()
+  const addresses = useSWRCustom<Address[]>(user ? `users/${user.id}/addresses/` : null)
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]))
 
-  const onCreateService = useCallback(
-    async (service: ServiceCreate) => {
-      const res = await services.post(service)
+  const onCreateAddress = useCallback(
+    async (address: AddressCreate) => {
+      const res = await addresses.post(address)
       if (res.ok) {
-        toast({ message: 'Serviço adicionado com sucesso', type: 'success' })
+        toast({ message: 'Endereço adicionado com sucesso', type: 'success' })
       } else {
-        toast({ message: 'Erro ao criar serviço', type: 'error' })
+        toast({ message: 'Erro ao adicionar endereço', type: 'error' })
       }
     },
-    [services]
+    [addresses]
   )
 
   const handleDelete = useCallback(
-    (service: Service) => () => {
+    (address: Address) => () => {
       confirmationModal({
         size: 'sm',
-        title: 'Remover serviço',
-        question: `Tem certeza que deseja deletar o serviço ${service.name}?`,
+        title: 'Remover endereço',
+        question: `Tem certeza que deseja deletar o endereço ${address.street}, ${address.number} - ${address.district}?`,
         async onConfirm() {
-          const res = await services.remove({ url: url => url + service.id })
+          const res = await addresses.remove({ url: url => url + address.id })
           if (res.ok) {
-            toast({ message: 'Serviço deletado com sucesso', type: 'success' })
+            toast({ message: 'Endereço deletado com sucesso', type: 'success' })
           } else {
-            toast({ message: 'Erro ao deletar serviço', type: 'error' })
+            toast({ message: 'Erro ao deletar endereço', type: 'error' })
           }
         }
       })
     },
-    [services]
+    [addresses]
   )
 
   const renderCell = useCallback(
-    (service: Service, columnKey: keyof Service | 'actions') => {
+    (address: Address, columnKey: keyof Address | 'actions') => {
       if (columnKey === 'actions')
         return (
           <div className="relative flex items-center justify-around gap-2">
             <Tooltip color="danger" content="Remover veículo">
-              <span className="cursor-pointer text-lg text-danger active:opacity-50" onClick={handleDelete(service)}>
+              <span className="cursor-pointer text-lg text-danger active:opacity-50" onClick={handleDelete(address)}>
                 <LuTrash2 size={24} />
               </span>
             </Tooltip>
           </div>
         )
 
-      const cellValue = String(service[columnKey])
+      const cellValue = String(address[columnKey])
 
       switch (columnKey) {
-        case 'name':
-          return <p className="font-bold">{cellValue}</p>
-        case 'description':
-          return <p className="max-w-72 truncate md:max-w-96">{cellValue}</p>
+        case 'street':
+          return <p className="font-bold">{`${cellValue}, ${address.number} - ${address.district}`}</p>
         default:
           return cellValue
       }
@@ -76,22 +76,22 @@ export function ServicesTable() {
     [handleDelete]
   )
 
-  const topContent: TableTopContent<Service> = useCallback(
+  const topContent: TableTopContent<Address> = useCallback(
     ({ filterFields, columns, TableSearch, TableColumnSelector }) => (
       <FlexWrap className="justify-between">
         <div className="flex gap-2">
           <TableColumnSelector columns={columns} />
-          <NewServiceModalButton onSubmit={onCreateService} />
+          <NewAddressModalButton onSubmit={onCreateAddress} />
         </div>
         <TableSearch filterFields={filterFields} columns={columns} />
       </FlexWrap>
     ),
-    [onCreateService]
+    [onCreateAddress]
   )
 
   return (
     <Table
-      aria-label="Tabela de serviços"
+      aria-label="Tabela de endereços"
       color="secondary"
       selectionMode="none"
       classNames={{
@@ -99,24 +99,25 @@ export function ServicesTable() {
         wrapper: 'bg-default-200 dark:bg-default-100',
         th: 'dark:bg-default-200'
       }}
-      items={services.state.data || []}
+      items={addresses.state.data || []}
       selectedKeys={selectedKeys}
       onSelectionChange={setSelectedKeys}
       topContent={topContent}
       renderCell={renderCell}
-      filterFields={['name', 'description', 'category', 'durationMinutes']}
-      initialVisibleColumns={['name', 'category', 'description', 'actions']}
+      filterFields={['street', 'country', 'state', 'city', 'zipCode']}
+      initialVisibleColumns={['street', 'city', 'zipCode', 'actions']}
       bodyProps={{
-        emptyContent: services.state.isLoading ? ' ' : 'Nenhum serviço encontrado.',
-        isLoading: services.state.isLoading,
+        emptyContent: addresses.state.isLoading ? ' ' : 'Nenhum endereço encontrado.',
+        isLoading: addresses.state.isLoading,
         loadingContent: <Spinner color="primary" />
       }}
       columns={[
         { name: 'ID', uid: 'id', sortable: true },
-        { name: 'NOME', uid: 'name', sortable: true },
-        { name: 'CATEGORIA', uid: 'category', sortable: true },
-        { name: 'DESCRIÇÃO', uid: 'description', sortable: true },
-        { name: 'DURAÇÃO', uid: 'durationMinutes', sortable: true },
+        { name: 'RUA', uid: 'street', sortable: true },
+        { name: 'CIDADE', uid: 'city', sortable: true },
+        { name: 'PAÍS', uid: 'country', sortable: true },
+        { name: 'ESTADO', uid: 'state', sortable: true },
+        { name: 'CEP', uid: 'zipCode', sortable: true },
         { name: 'CRIADO EM', uid: 'createdAt', sortable: true },
         { name: 'ATUALIZADO EM', uid: 'updatedAt', sortable: true },
         { name: 'AÇÕES', uid: 'actions' }
