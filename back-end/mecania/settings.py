@@ -20,6 +20,7 @@ SECRET_KEY = env("SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG", False)
+DEVELOPMENT = env("DEVELOPMENT", False)
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", "*", split=";")
 CORS_URLS_REGEX = r"^/api/.*"
@@ -96,7 +97,7 @@ WSGI_APPLICATION = "mecania.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-if DEBUG:
+if DEVELOPMENT:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -177,7 +178,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-if DEBUG:
+if DEVELOPMENT:
     STATIC_URL = "static/"
     STATIC_ROOT = BASE_DIR / "static"
     MEDIA_URL = "media/"
