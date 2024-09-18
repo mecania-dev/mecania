@@ -13,9 +13,7 @@ def avatar_url_path(instance, filename):
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(
-        null=True, blank=True, unique=True, max_length=25, validators=[MinLengthValidator(14)]
-    )
+    phone_number = models.CharField(null=True, blank=True, max_length=25, validators=[MinLengthValidator(14)])
     fiscal_identification = models.CharField(
         null=True, blank=True, unique=True, max_length=18, validators=[MinLengthValidator(14)]
     )
