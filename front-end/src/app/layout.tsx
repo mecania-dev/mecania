@@ -10,9 +10,6 @@ export const metadata: Metadata = {
   title: {
     default: 'Home - MecanIA',
     template: '%s - MecanIA'
-  },
-  icons: {
-    icon: '/logo.svg'
   }
 }
 
