@@ -16,8 +16,6 @@ export function ProfileFormBody() {
   const { defaultValues, errors } = formState
   const values = watch()
 
-  console.log(errors)
-
   function setProfileImg(image: File) {
     setValue('avatarUrl', image ?? null, { shouldDirty: true })
   }
