@@ -1,4 +1,3 @@
-// auth/AbilityContext.tsx
 import { createContext, useContext } from 'react'
 
 import { AppAbility } from '@/auth'
