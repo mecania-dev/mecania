@@ -1,5 +1,6 @@
 'use client'
 
+import { FaInbox } from 'react-icons/fa6'
 import { LuTrash2 } from 'react-icons/lu'
 
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
@@ -28,6 +29,13 @@ export function RequestsHistory() {
 
   return (
     <div className="w-0 space-y-1 overflow-hidden transition-width group-data-[requests=true]:w-full">
+      {sortedReqs.length === 0 && (
+        <div className="mt-20 flex w-full flex-col items-center justify-center whitespace-nowrap text-center text-default-500">
+          <FaInbox className="mb-3 h-12 w-12" />
+          <p className="text-small">Você ainda não tem solicitações</p>
+          <p className="text-xs text-default-400">Suas futuras solicitações aparecerão aqui</p>
+        </div>
+      )}
       {sortedReqs.map((req, i) => (
         <SidebarRoute
           href={`/profile/requests/${req.id}`}
