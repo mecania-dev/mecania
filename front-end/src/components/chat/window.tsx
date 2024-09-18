@@ -6,10 +6,7 @@ import { ScrollShadow, ScrollShadowProps, SlotsToClasses, tv } from '@nextui-org
 
 const chatWindow = tv({
   slots: {
-    base: [
-      'flex w-full grow flex-col-reverse',
-      'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-default-400 scrollbar-thumb-rounded-full'
-    ],
+    base: 'flex w-full grow flex-col-reverse',
     content: 'mx-auto mb-4 w-full space-y-4 px-5 md:max-w-3xl lg:max-w-[40rem] xl:max-w-[48rem]'
   }
 })

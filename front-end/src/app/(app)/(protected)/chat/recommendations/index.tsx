@@ -46,7 +46,7 @@ export function ChatRecommendations() {
             <p className="px-6 pb-1 text-center text-small text-foreground-500 sm:text-medium">
               Selecione as oficinas que deseja enviar mensagem
             </p>
-            <ScrollShadow className="px-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-default-400 scrollbar-thumb-rounded-full">
+            <ScrollShadow className="px-6">
               <CheckboxGroup
                 value={recs.selectedMechanics.map(m => String(m.id))}
                 onChange={recs.setSelectedMechanics}
