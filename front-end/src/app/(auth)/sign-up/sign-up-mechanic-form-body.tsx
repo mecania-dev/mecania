@@ -54,12 +54,14 @@ export function SignUpMechanicFormBody() {
         errorMessage={errors.fiscalIdentification?.message}
         onCNPJChange={!values.firstName ? onCNPJChange : undefined}
         onCNPJNotFound={onCNPJNotFound}
+        autoComplete="cnpj"
         {...register('fiscalIdentification')}
       />
       <PasswordInput
         placeholder="Senha"
         value={values.password}
         errorMessage={errors.password?.message}
+        autoComplete="new-password"
         {...register('password')}
       />
       <PasswordInput

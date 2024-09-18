@@ -1,10 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinLengthValidator
-from django.db.models.fields.files import ImageFieldFile
 
 from services.models import Service
-from utils.image import compress_image
 
 
 def avatar_url_path(instance, filename):
@@ -23,14 +21,3 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ["date_joined"]
-
-    def save(self, *args, **kwargs):
-        self.email = self.email.lower()
-
-        if self.password and not self.password.startswith(("pbkdf2_", "argon2", "bcrypt_sha256", "sha1")):
-            self.set_password(self.password)
-
-        if self.avatar_url and isinstance(self.avatar_url, ImageFieldFile):
-            self.avatar_url = compress_image(self.avatar_url)
-
-        super().save(*args, **kwargs)

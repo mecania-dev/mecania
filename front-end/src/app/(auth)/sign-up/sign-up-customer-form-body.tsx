@@ -42,12 +42,14 @@ export function SignUpCustomerFormBody() {
         placeholder="CPF"
         value={values.fiscalIdentification}
         errorMessage={errors.fiscalIdentification?.message}
+        autoComplete="cpf"
         {...register('fiscalIdentification')}
       />
       <PasswordInput
         placeholder="Senha"
         value={values.password}
         errorMessage={errors.password?.message}
+        autoComplete="new-password"
         {...register('password')}
       />
       <PasswordInput

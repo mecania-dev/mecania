@@ -35,8 +35,12 @@ export function useAuth() {
     const res = await signUpRequest(payload, {
       raiseToast: true,
       errorMessage: error => {
+        if (error.response?.status === 500) {
+          return error.response.statusText
+        }
+
         const message = Object.values(error.response?.data ?? [])[0]
-        return Array.isArray(message) ? message[0] : 'Erro ao criar conta'
+        return Array.isArray(message) ? message[0] : message || 'Erro ao criar conta'
       }
     })
 

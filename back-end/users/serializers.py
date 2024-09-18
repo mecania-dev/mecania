@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import Group, Permission
 
 from .models import User
+from .forms import UserForm
 from addresses.serializers import AddressSerializer
 from vehicles.serializers import VehicleSerializer
 from services.serializers import ServiceSerializer
@@ -59,30 +60,10 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "updated_at"]
 
     def validate(self, data):
-        request = self.context.get("request")
-        group_names = [group.name for group in data.get("groups", [])]
-        errors = {}
+        form = UserForm(data=data, request=self.context.get("request"))
 
-        if request and request.method == "POST":
-            password = data.get("password")
-            confirm_password = data.get("confirm_password")
-
-            if not password or not confirm_password:
-                errors["password" if not password else "confirm_password"] = "This field is required."
-            elif password != confirm_password:
-                errors["password"] = "Password fields didn't match."
-
-        if "Mechanic" in group_names and request and request.method != "PATCH":
-            fiscal_identification = data.get("fiscal_identification")
-            phone_number = data.get("phone_number")
-
-            if not fiscal_identification:
-                errors["fiscal_identification"] = "This field is required for mechanics."
-            if not phone_number:
-                errors["phone_number"] = "This field is required for mechanics."
-
-        if errors:
-            raise serializers.ValidationError(errors)
+        if not form.is_valid():
+            raise serializers.ValidationError(form.errors)
 
         return data
 
