@@ -1,3 +1,4 @@
+import { auth } from '@/auth'
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
@@ -14,7 +15,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default function Page({ params }: Props) {
+export default async function Page({ params }: Props) {
+  const isAuthenticated = await auth({ redirectUrl: '/profile', groups: ['Driver'] })
+  if (!isAuthenticated) return null
+
   const chatId = params.id ? Number(params.id.at(0)) : undefined
   const isValid = !params.id || !isNaN(params.id.at(0) as any)
 

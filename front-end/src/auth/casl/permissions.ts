@@ -37,6 +37,7 @@ export const permissions: Record<Group, PermissionsByGroup> = {
     can(['get', 'provide'], 'Service')
     // Chat
     can('manage', 'Chat')
+    cannot('ask_ai', 'Chat')
     cannot('message_mechanic', 'Chat')
   }
 }
