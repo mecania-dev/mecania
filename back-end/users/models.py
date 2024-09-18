@@ -27,6 +27,8 @@ class User(AbstractUser):
         ordering = ["date_joined"]
 
     def save(self, *args, **kwargs):
+        self.email = self.email.lower()
+
         if self.password and not self.password.startswith(("pbkdf2_", "argon2", "bcrypt_sha256", "sha1")):
             self.set_password(self.password)
 

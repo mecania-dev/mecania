@@ -1,5 +1,6 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from django.contrib.auth.models import Group
 
 from .models import User
 from .permissions import IsSelfOrAdmin
@@ -41,3 +42,21 @@ class LoggedUserView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class MechanicsListView(generics.ListAPIView):
+    serializer_class = UserRetrieveDestroySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        mechanics_group = Group.objects.get(name="Mechanic")
+        return User.objects.filter(groups=mechanics_group)
+
+
+class DriversListView(generics.ListAPIView):
+    serializer_class = UserRetrieveDestroySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        drivers_group = Group.objects.get(name="Driver")
+        return User.objects.filter(groups=drivers_group)
