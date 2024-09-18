@@ -9,6 +9,7 @@ import { TableTopContent } from '@/components/table/types'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { confirmationModal } from '@/hooks/use-confirmation-modal'
 import { toast } from '@/hooks/use-toast'
+import { formatDate } from '@/lib/date'
 import { Service, ServiceCreate } from '@/types/entities/service'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
 
@@ -69,6 +70,10 @@ export function ServicesTable() {
           return <p className="font-bold">{cellValue}</p>
         case 'description':
           return <p className="max-w-72 truncate md:max-w-96">{cellValue}</p>
+        case 'createdAt':
+          return <p>{formatDate(cellValue)}</p>
+        case 'updatedAt':
+          return <p>{formatDate(cellValue)}</p>
         default:
           return cellValue
       }

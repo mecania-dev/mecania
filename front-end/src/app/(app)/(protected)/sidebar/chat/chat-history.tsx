@@ -5,8 +5,8 @@ import { LuTrash2 } from 'react-icons/lu'
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { confirmationModal } from '@/hooks/use-confirmation-modal'
+import { compareDates } from '@/lib/date'
 import { useChats } from '@/mocks/use-chats'
-import { compareDesc, parseISO } from 'date-fns'
 
 import { NewChatButton } from './new-chat-button'
 
@@ -14,7 +14,7 @@ export function ChatHistory() {
   // TODO: Remover depois que implementar o backend
   const { chats, removeChat } = useChats()
   const {} = useSWRCustom(null, { fallbackData: chats })
-  const sortedChats = chats.sort((a, b) => compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt)))
+  const sortedChats = chats.sort((a, b) => compareDates(a.updatedAt, b.updatedAt, 'desc'))
 
   const handleChatRemove = (chatId?: number) => (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     e.stopPropagation()

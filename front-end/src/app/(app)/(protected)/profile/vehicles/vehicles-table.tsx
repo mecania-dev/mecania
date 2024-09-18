@@ -8,6 +8,7 @@ import { Table } from '@/components/table'
 import { TableTopContent } from '@/components/table/types'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { confirmationModal } from '@/hooks/use-confirmation-modal'
+import { formatDate } from '@/lib/date'
 import { useVehicles } from '@/mocks/use-vehicles'
 import { Vehicle } from '@/types/entities/vehicle'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
@@ -51,6 +52,10 @@ export function VehiclesTable() {
       switch (columnKey) {
         case 'brand':
           return <p className="font-bold">{cellValue}</p>
+        case 'createdAt':
+          return <p>{formatDate(cellValue)}</p>
+        case 'updatedAt':
+          return <p>{formatDate(cellValue)}</p>
         default:
           return cellValue
       }

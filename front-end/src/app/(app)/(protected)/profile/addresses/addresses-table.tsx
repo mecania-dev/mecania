@@ -9,6 +9,7 @@ import { TableTopContent } from '@/components/table/types'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { confirmationModal } from '@/hooks/use-confirmation-modal'
 import { toast } from '@/hooks/use-toast'
+import { formatDate } from '@/lib/date'
 import { useUser } from '@/providers/user-provider'
 import { Address, AddressCreate } from '@/types/entities/address'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
@@ -69,6 +70,10 @@ export function AddressesTable() {
       switch (columnKey) {
         case 'street':
           return <p className="font-bold">{`${cellValue}, ${address.number} - ${address.district}`}</p>
+        case 'createdAt':
+          return <p>{formatDate(cellValue)}</p>
+        case 'updatedAt':
+          return <p>{formatDate(cellValue)}</p>
         default:
           return cellValue
       }

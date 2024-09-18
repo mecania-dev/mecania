@@ -2,9 +2,9 @@ import { forwardRef } from 'react'
 
 import { Card } from '@/components/card'
 import { Logo } from '@/components/icons/logo'
+import { formatDate } from '@/lib/date'
 import { Message } from '@/types/entities/message'
 import { Skeleton, SlotsToClasses, tv, VariantProps } from '@nextui-org/react'
-import { format } from 'date-fns'
 
 const chatMessage = tv({
   slots: {
@@ -46,7 +46,7 @@ export const ChatMessage = forwardRef<HTMLDivElement, ChatMessageProps>(function
     <Card className={classes.card({ class: classNames?.card })} radius="sm" shadow="sm">
       <p className={classes.sender({ class: classNames?.sender })}>{sender === 'AI' ? 'MecanIA' : sender.username}</p>
       <p className={classes.message({ class: classNames?.message })}>{message}</p>
-      <p className={classes.date({ class: classNames?.date })}>{format(sendDate, 'HH:mm')}</p>
+      <p className={classes.date({ class: classNames?.date })}>{formatDate(sendDate, { timeStyle: 'short' })}</p>
     </Card>
   )
 

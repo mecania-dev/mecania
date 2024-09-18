@@ -5,14 +5,14 @@ import { LuTrash2 } from 'react-icons/lu'
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { confirmationModal } from '@/hooks/use-confirmation-modal'
+import { compareDates } from '@/lib/date'
 import { useRequests } from '@/mocks/use-requests'
-import { compareDesc, parseISO } from 'date-fns'
 
 export function RequestsHistory() {
   // TODO: Remover depois que implementar o backend
   const { requests, removeRequest } = useRequests()
   const {} = useSWRCustom(null)
-  const sortedReqs = requests.sort((a, b) => compareDesc(parseISO(a.updatedAt), parseISO(b.updatedAt)))
+  const sortedReqs = requests.sort((a, b) => compareDates(a.updatedAt, b.updatedAt, 'desc'))
 
   const handleChatRemove = (requestId?: number) => (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     e.stopPropagation()
