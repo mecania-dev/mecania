@@ -46,3 +46,4 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
