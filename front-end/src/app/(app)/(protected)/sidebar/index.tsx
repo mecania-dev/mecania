@@ -54,9 +54,13 @@ export function ProtectedSidebar({ children, className }: ProtectedSidebarProps)
     >
       <Sidebar.Header className="justify-between">
         <SidebarToggle />
-        <Can I="ask_ai" a="Chat">
+        {isRequestsOpen ? (
           <SidebarAIButton />
-        </Can>
+        ) : (
+          <Can I="ask_ai" a="Chat">
+            <SidebarAIButton />
+          </Can>
+        )}
       </Sidebar.Header>
       <Sidebar.Body className="flex-row-reverse group-data-[open-complete=true]:group-data-[routes=false]:flex-row">
         <SidebarRoutes />
