@@ -17,11 +17,19 @@ export const newPasswordSchema = z
     const { newPassword, confirmPassword } = data
 
     if (newPassword !== confirmPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'A senha de confirmação não corresponde à sua senha',
-        path: ['newPassword', 'confirmPassword']
-      })
+      if (!newPassword || !confirmPassword) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: !newPassword ? 'Preencha a nova senha' : 'Preencha a senha de confirmação',
+          path: [!newPassword ? 'newPassword' : 'confirmPassword']
+        })
+      } else {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'A senha de confirmação não corresponde à nova senha',
+          path: ['confirmPassword']
+        })
+      }
     }
 
     return true
