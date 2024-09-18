@@ -12,11 +12,11 @@ function getSuccessMessage<T>(res: any = {}, successMessageKey?: ApiRequestConfi
 }
 
 export async function handleSuccess<T>(res: AxiosResponse<T>, config: ApiRequestConfig<T>) {
-  await maybePromise(config.onSuccess, res)
+  const onSuccessResponse = await maybePromise(config.onSuccess, res)
 
   raiseToastFeedback({
     messageParam: res,
-    message: config.successMessage || getSuccessMessage(res, config.successMessageKey),
+    message: onSuccessResponse ?? (config.successMessage || getSuccessMessage(res, config.successMessageKey)),
     raiseToast: config.raiseToast,
     type: 'success'
   })
@@ -37,11 +37,11 @@ export async function handleError<T>(error: any, config: ApiRequestConfig<T>) {
   const status = error.response?.status || 400
   const errorMessage = getErrorMessage(error)
 
-  await maybePromise(config.onError, error)
+  const onErrorResponse = await maybePromise(config.onError, error)
 
   raiseToastFeedback({
     messageParam: error,
-    message: config.errorMessage || errorMessage,
+    message: onErrorResponse ?? (config.errorMessage || errorMessage),
     raiseToast: config.raiseToast,
     type: 'error'
   })

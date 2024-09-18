@@ -3,21 +3,22 @@ import { fiscalIdentificationSchema } from '@/types/fiscal-identification'
 import { phoneNumberSchema } from '@/types/phone-number'
 import { z } from 'zod'
 
-export const userUpdateSchema = z
-  .object({
-    avatarUrl: z.instanceof(File).or(z.string()).nullable().optional(),
-    username: string({ name: 'Nome de usuário', min: 1 }),
-    password: string({ name: 'Senha', min: 6, max: 64 }),
-    confirmPassword: string({ name: 'Confirme a Senha', min: 6, max: 64 }),
-    email: z.string().email('Insira um e-mail válido'),
-    firstName: string({ name: 'Nome', min: 1 }),
-    lastName: string({ name: 'Sobrenome', min: 1, allowEmpty: true }),
-    phoneNumber: phoneNumberSchema,
-    fiscalIdentification: fiscalIdentificationSchema,
-    isSuperuser: z.boolean(),
-    isStaff: z.boolean(),
-    isActive: z.boolean()
-  })
+const userUpdateRawSchema = z.object({
+  avatarUrl: z.instanceof(File).or(z.string()).nullable().optional(),
+  username: string({ name: 'Nome de usuário', min: 1 }),
+  password: string({ name: 'Senha', min: 6, max: 64 }),
+  confirmPassword: string({ name: 'Confirme a Senha', min: 6, max: 64 }),
+  email: z.string().email('Insira um e-mail válido'),
+  firstName: string({ name: 'Nome', min: 1 }),
+  lastName: string({ name: 'Sobrenome', min: 1, allowEmpty: true }),
+  phoneNumber: phoneNumberSchema,
+  fiscalIdentification: fiscalIdentificationSchema,
+  isSuperuser: z.boolean(),
+  isStaff: z.boolean(),
+  isActive: z.boolean()
+})
+
+export const userUpdateSchema = userUpdateRawSchema
   .partial()
   .superRefine((data, ctx) => {
     const { password, confirmPassword } = data
@@ -45,6 +46,8 @@ export const userUpdateSchema = z
     }
     return { avatarUrl, ...data }
   })
+
+export const userUpdateFields = Object.keys(userUpdateRawSchema.shape)
 
 export type UserUpdateInput = z.input<typeof userUpdateSchema>
 export type UserUpdateOutput = z.output<typeof userUpdateSchema>

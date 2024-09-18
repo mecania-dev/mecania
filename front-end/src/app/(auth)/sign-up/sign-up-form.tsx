@@ -1,8 +1,8 @@
 'use client'
 
 import { Form } from '@/components/form'
-import { useForm } from '@/hooks/use-form'
-import { SignUpRequest, signUpSchema } from '@/http'
+import { setFormErrors, useForm } from '@/hooks/use-form'
+import { signUpFields, SignUpRequest, signUpSchema } from '@/http'
 import { useUser } from '@/providers/user-provider'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
@@ -15,7 +15,11 @@ export function SignUpForm() {
   const form = useForm<SignUpRequest>({ resolver: zodResolver(signUpSchema), defaultValues: { groups: ['Driver'] } })
 
   async function onSubmit(props: SignUpRequest) {
-    await signUp(props)
+    await signUp(props, {
+      onError(error) {
+        setFormErrors(form, error.response.data, signUpFields)
+      }
+    })
   }
 
   return (

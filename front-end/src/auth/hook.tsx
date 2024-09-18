@@ -31,18 +31,8 @@ export function useAuth() {
     onSuccess: setSession
   })
 
-  async function signUp(payload: SignUpRequest) {
-    const res = await signUpRequest(payload, {
-      raiseToast: true,
-      errorMessage: error => {
-        if (error.response?.status === 500) {
-          return error.response.statusText
-        }
-
-        const message = Object.values(error.response?.data ?? [])[0]
-        return Array.isArray(message) ? message[0] : message || 'Erro ao criar conta'
-      }
-    })
+  async function signUp(payload: SignUpRequest, config?: Parameters<typeof signUpRequest>[1]) {
+    const res = await signUpRequest(payload, config)
 
     if (res.ok) {
       await signIn({ login: payload.email, password: payload.password }, false)
@@ -76,3 +66,5 @@ export function useAuth() {
     signOut
   }
 }
+
+export type UseAuth = ReturnType<typeof useAuth>

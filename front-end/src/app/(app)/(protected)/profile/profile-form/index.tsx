@@ -1,8 +1,8 @@
 'use client'
 
 import { Form } from '@/components/form'
-import { useForm } from '@/hooks/use-form'
-import { updateUser, UserUpdateInput, UserUpdateOutput, userUpdateSchema } from '@/http'
+import { setFormErrors, useForm } from '@/hooks/use-form'
+import { updateUser, userUpdateFields, UserUpdateInput, UserUpdateOutput, userUpdateSchema } from '@/http'
 import { useUser } from '@/providers/user-provider'
 import { User } from '@/types/entities/user'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,10 +18,14 @@ export function ProfileForm() {
   })
 
   async function onSubmit(userUpdate: UserUpdateOutput) {
-    const res = await updateUser(user!.id, userUpdate, { raiseToast: true })
-    if (res.ok) {
-      form.reset(getDefaultValues(res.data))
-    }
+    await updateUser(user!.id, userUpdate, {
+      onSuccess(res) {
+        form.reset(getDefaultValues(res.data))
+      },
+      onError(error) {
+        setFormErrors(form, error.response.data, userUpdateFields)
+      }
+    })
   }
 
   return (

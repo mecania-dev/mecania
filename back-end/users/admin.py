@@ -4,7 +4,7 @@ from .models import User
 from .forms import UserForm
 
 
-class Admin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):
     form = UserForm
     filter_horizontal = (
         "groups",
@@ -12,4 +12,4 @@ class Admin(admin.ModelAdmin):
     )
 
 
-admin.site.register(User, Admin)
+admin.site.register(User, UserAdmin)

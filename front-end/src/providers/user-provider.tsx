@@ -4,8 +4,7 @@ import { ReactNode, createContext, useContext } from 'react'
 
 import Loading from '@/app/loading'
 import { getUserPermissions } from '@/auth'
-import { useAuth } from '@/auth/hook'
-import { SignInRequest, SignUpRequest } from '@/http'
+import { UseAuth, useAuth } from '@/auth/hook'
 import { User } from '@/types/entities/user'
 import { SWRResponse } from 'swr'
 
@@ -16,9 +15,9 @@ export interface UserContextProps {
   userState: SWRResponse<User>
   isAuthenticated: boolean
   isMechanic: boolean
-  signUp(props: SignUpRequest): Promise<void>
-  signIn(props: SignInRequest): Promise<void>
-  signOut(): Promise<void>
+  signUp: UseAuth['signUp']
+  signIn: UseAuth['signIn']
+  signOut: UseAuth['signOut']
 }
 
 export const UserContext = createContext({} as UserContextProps)

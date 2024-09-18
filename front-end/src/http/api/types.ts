@@ -18,8 +18,8 @@ export interface ApiRequestConfig<T = any> extends AxiosRequestConfig<T> {
   successMessageKey?: LiteralUnion<keyof T, string>
   raiseToast?: boolean
   raw?: boolean
-  onSuccess?: MaybePromise<(res: AxiosResponse<T>) => void>
-  onError?: MaybePromise<(error: any) => void>
+  onSuccess?: MaybePromise<(res: AxiosResponse<T>) => RaiseToastProps<T> | undefined | void>
+  onError?: MaybePromise<(error: any) => RaiseToastProps<T> | undefined | void>
 }
 
 export interface ApiResponse<T = any> extends Omit<AxiosResponse<T>, 'headers' | 'config'> {

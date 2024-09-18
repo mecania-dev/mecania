@@ -28,3 +28,24 @@ export function useForm<
 
   return { ...form, errorMessage, setErrorMessage }
 }
+
+type FieldError = string[]
+type InvalidFieldsError = Record<string, FieldError>
+
+export function isInvalidFieldsError(error: any): error is InvalidFieldsError {
+  if (typeof error !== 'object' || error === null) return false
+
+  return Object.values(error).every(value => Array.isArray(value) && value.every(item => typeof item === 'string'))
+}
+
+export function setFormErrors<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = any,
+  TTransformedValues extends FieldValues | undefined = undefined
+>(form: FormReturn<TFieldValues, TContext, TTransformedValues>, errorData: any, fields?: string[]) {
+  if (!isInvalidFieldsError(errorData)) return
+  Object.entries(errorData).forEach(([field, messages]) => {
+    if (fields && !fields.includes(field)) return
+    form.setError(field as any, { type: 'server', message: messages[0] })
+  })
+}
