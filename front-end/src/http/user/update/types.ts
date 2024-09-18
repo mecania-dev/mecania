@@ -24,11 +24,19 @@ export const userUpdateSchema = userUpdateRawSchema
     const { password, confirmPassword } = data
 
     if (password !== confirmPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'A senha de confirmação não corresponde à sua senha',
-        path: ['password', 'confirmPassword']
-      })
+      if (!password || !confirmPassword) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: !password ? 'Preencha a senha' : 'Preencha a senha de confirmação',
+          path: [!password ? 'password' : 'confirmPassword']
+        })
+      } else {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'A senha de confirmação não corresponde à sua senha',
+          path: ['confirmPassword']
+        })
+      }
     }
 
     return true
