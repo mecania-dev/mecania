@@ -48,8 +48,9 @@ export function useAuth() {
   async function signIn(payload: SignInRequest, raiseToast = true) {
     const res = await signInRequest(payload)
 
-    if (!res.ok && raiseToast) {
-      toast({ message: 'Login ou senha inválidos', type: 'error' })
+    if (!res.ok) {
+      raiseToast && toast({ message: 'Login ou senha inválidos', type: 'error' })
+      return
     }
 
     await setCredentialsAction(res.data)
@@ -58,6 +59,7 @@ export function useAuth() {
   async function signOut() {
     if (pathname !== '/') await setCallbackUrl(pathname)
     await signOutAction(pathname !== '/')
+    user.state.mutate(undefined, false)
   }
 
   return {
