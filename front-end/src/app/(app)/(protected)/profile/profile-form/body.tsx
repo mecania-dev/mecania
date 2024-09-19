@@ -27,8 +27,8 @@ export function ProfileFormBody() {
         label={values.username}
         classNames={{
           base: 'items-center mb-5',
-          wrapper: 'w-[min(400px,_100%)]',
-          innerWrapper: 'aspect-[4/3]',
+          wrapper: 'w-[min(350px,_100%)]',
+          innerWrapper: 'aspect-[5/3.5]',
           img: 'object-cover'
         }}
         setImage={setProfileImg}
