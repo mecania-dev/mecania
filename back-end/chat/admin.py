@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import Chat, Message, Issue, Recommendation
+from .models import *
 
-admin.site.register([Chat, Message, Issue, Recommendation])
+admin.site.register([ChatGroup, GroupMessage, Chat, Message, Issue, Recommendation])

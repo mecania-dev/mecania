@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from rest_framework import generics, mixins
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Chat, Message, Issue
+from .models import ChatGroup, Chat, Message, Issue
+from .forms import GroupMessageCreateForm
 from .serializers import ChatListSerializer, ChatCreateSerializer
 from .chatgpt_utils import ask_gpt
 
@@ -12,8 +14,12 @@ def index(request):
     return render(request, "chat/index.html")
 
 
+@login_required
 def room(request, room_name):
-    return render(request, "chat/room.html", {"room_name": room_name})
+    chat_group = get_object_or_404(ChatGroup, group_name=room_name)
+    group_messages = chat_group.group_messages.all()
+    form = GroupMessageCreateForm()
+    return render(request, "chat/room.html", {"room_name": room_name, "group_messages": group_messages, "form": form})
 
 
 class ChatListCreateDeleteView(

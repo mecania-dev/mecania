@@ -1,5 +1,17 @@
 from rest_framework import serializers
-from .models import Chat, Message
+from .models import GroupMessage, Chat, Message
+
+
+class GroupMessageSerializer(serializers.ModelSerializer):
+    sender = serializers.SerializerMethodField()
+    sender_id = serializers.IntegerField(source="sender.id", read_only=True)
+
+    class Meta:
+        model = GroupMessage
+        fields = ["sender_id", "sender", "content", "sent_at"]
+
+    def get_sender(self, obj):
+        return obj.sender.username
 
 
 class MessageSerializer(serializers.ModelSerializer):

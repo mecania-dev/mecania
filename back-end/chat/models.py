@@ -4,6 +4,27 @@ from vehicles.models import Vehicle
 from services.models import Service
 
 
+class ChatGroup(models.Model):
+    group_name = models.CharField(max_length=128, unique=True)
+
+    def __str__(self):
+        return self.group_name
+
+
+class GroupMessage(models.Model):
+    chat_group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE, related_name="group_messages")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.CharField(max_length=300)
+    sent_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["sent_at"]
+
+    def __str__(self):
+        return self.content
+
+
 class Chat(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chats")
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="chats")

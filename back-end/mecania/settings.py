@@ -93,8 +93,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "mecania.wsgi.application"
-
 ASGI_APPLICATION = "mecania.asgi.application"
 
 if DEVELOPMENT:
