@@ -3,7 +3,8 @@
 import { ReactNode, createContext, useContext } from 'react'
 
 import Loading from '@/app/loading'
-import { AbilityProvider, getUserPermissions, UseAuth, useAuth } from '@/auth'
+import { getUserPermissions } from '@/auth'
+import { AbilityProvider, useAuth, UseAuth } from '@/auth/client'
 import { User } from '@/types/entities/user'
 import { SWRResponse } from 'swr'
 
