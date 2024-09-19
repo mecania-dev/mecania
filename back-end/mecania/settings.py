@@ -39,6 +39,7 @@ OPENAI_API_KEY = env("OPENAI_API_KEY")
 
 # Application definition
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -51,7 +52,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
     "storages",
-    "channels",
     # internal apps
     "api",
     "authentication",
@@ -94,6 +94,20 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "mecania.wsgi.application"
+
+ASGI_APPLICATION = "mecania.asgi.application"
+
+if DEVELOPMENT:
+    CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [(env("REDIS_HOST"), env("REDIS_PORT"))],
+            },
+        }
+    }
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

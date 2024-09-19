@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import generics, mixins
 from rest_framework.response import Response
 from rest_framework import status
@@ -5,6 +6,14 @@ from rest_framework import status
 from .models import Chat, Message, Issue
 from .serializers import ChatListSerializer, ChatCreateSerializer
 from .chatgpt_utils import ask_gpt
+
+
+def index(request):
+    return render(request, "chat/index.html")
+
+
+def room(request, room_name):
+    return render(request, "chat/room.html", {"room_name": room_name})
 
 
 class ChatListCreateDeleteView(
