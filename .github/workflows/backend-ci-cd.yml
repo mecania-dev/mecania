@@ -29,6 +29,7 @@ jobs:
           cd back-end
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          python manage.py collectstatic --noinput
 
       # Step 4: Run migrations on production database
       - name: Run Migrations
