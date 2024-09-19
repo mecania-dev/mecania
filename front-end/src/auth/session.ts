@@ -4,11 +4,19 @@ import { User } from '@/types/entities/user'
 
 import { getTokenExpiration } from './token'
 
+const sessionRequiredFields: (keyof User)[] = ['id', 'groups', 'isSuperuser']
+
 export async function getSession() {
   const sessionJson = await cookies('session')
   if (sessionJson) {
     try {
-      return JSON.parse(sessionJson) as User
+      const session = JSON.parse(sessionJson) as User
+
+      if (sessionRequiredFields.some(key => !(key in session))) {
+        throw new Error('Invalid session')
+      }
+
+      return session
     } catch {}
   }
 }

@@ -5,8 +5,8 @@ import { CgProfile } from 'react-icons/cg'
 import { FaTools } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 
+import { Can, CanProps } from '@/auth'
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
-import { Can, CanProps } from '@/providers/ability-provider'
 
 import { useProtectedSidebar } from '..'
 

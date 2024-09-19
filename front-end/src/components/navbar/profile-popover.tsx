@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 
+import { Can, CanProps } from '@/auth'
 import { useIsLoading } from '@/hooks/use-is-loading'
-import { Can, CanProps } from '@/providers/ability-provider'
 import { useUser } from '@/providers/user-provider'
 import { tv, Avatar, Button, Popover, PopoverContent, PopoverTrigger, ScrollShadow } from '@nextui-org/react'
 import Link from 'next/link'

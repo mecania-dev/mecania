@@ -9,6 +9,9 @@ import { serviceSubject } from './subjects/service'
 import { userSubject } from './subjects/user'
 import { vehicleSubject } from './subjects/vehicle'
 
+export * from './ability-context'
+export * from './get-user-permissions'
+
 const appAbilitiesSchema = z.union([
   userSubject,
   addressSubject,

@@ -1,9 +1,9 @@
 'use client'
 
+import { Can } from '@/auth'
 import { Sidebar, useSidebar } from '@/components/sidebar'
 import { SidebarToggle } from '@/components/sidebar/sidebar-toggle'
 import { usePathnameChange } from '@/hooks/use-pathname-change'
-import { Can } from '@/providers/ability-provider'
 import { create } from 'zustand'
 
 import { SidebarAIButton } from './ai-button'

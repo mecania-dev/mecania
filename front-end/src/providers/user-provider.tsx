@@ -3,12 +3,9 @@
 import { ReactNode, createContext, useContext } from 'react'
 
 import Loading from '@/app/loading'
-import { getUserPermissions } from '@/auth'
-import { UseAuth, useAuth } from '@/auth/hook'
+import { AbilityProvider, getUserPermissions, UseAuth, useAuth } from '@/auth'
 import { User } from '@/types/entities/user'
 import { SWRResponse } from 'swr'
-
-import { AbilityProvider } from './ability-provider'
 
 export interface UserContextProps {
   user?: User

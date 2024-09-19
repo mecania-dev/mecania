@@ -1,6 +1,8 @@
 import { MaybePromise } from '@/lib/promise'
 import { User } from '@/types/entities/user'
 
+import { AppAbility } from './casl'
+
 export interface Tokens {
   access: string
   refresh: string
@@ -8,6 +10,7 @@ export interface Tokens {
 
 export interface AuthCustomProps {
   user?: User
+  ability?: AppAbility
   isAuthenticated: boolean
   setRedirectUrl: (url?: string) => void
 }

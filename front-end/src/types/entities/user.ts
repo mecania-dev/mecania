@@ -27,6 +27,8 @@ export const userSchema = z.object({
   permissions: z.array(z.enum(permissions))
 })
 
+export const userFields = Object.keys(userSchema.shape)
+
 export type User = z.infer<typeof userSchema>
 
 function getPermissions() {
