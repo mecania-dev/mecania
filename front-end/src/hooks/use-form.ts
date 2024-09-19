@@ -33,7 +33,7 @@ type FieldError = string[]
 type InvalidFieldsError = Record<string, FieldError>
 
 export function isInvalidFieldsError(error: any): error is InvalidFieldsError {
-  if (typeof error !== 'object' || error === null) return false
+  if (typeof error !== 'object') return false
 
   return Object.values(error).every(value => Array.isArray(value) && value.every(item => typeof item === 'string'))
 }

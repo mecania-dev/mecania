@@ -23,7 +23,7 @@ export function ProfileForm() {
         form.reset(getDefaultValues(res.data))
       },
       onError(error) {
-        setFormErrors(form, error.response.data, userUpdateFields)
+        setFormErrors(form, error?.response?.data, userUpdateFields)
       }
     })
   }

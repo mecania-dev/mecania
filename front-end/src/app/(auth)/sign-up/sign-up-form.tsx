@@ -17,7 +17,7 @@ export function SignUpForm() {
   async function onSubmit(props: SignUpRequest) {
     await signUp(props, {
       onError(error) {
-        setFormErrors(form, error.response.data, signUpFields)
+        setFormErrors(form, error?.response?.data, signUpFields)
       }
     })
   }
