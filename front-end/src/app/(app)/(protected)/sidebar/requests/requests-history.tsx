@@ -1,6 +1,5 @@
 'use client'
 
-import { FaInbox } from 'react-icons/fa6'
 import { LuTrash2 } from 'react-icons/lu'
 
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
@@ -8,6 +7,8 @@ import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { confirmationModal } from '@/hooks/use-confirmation-modal'
 import { compareDates } from '@/lib/date'
 import { useRequests } from '@/mocks/use-requests'
+
+import { EmptyHistory } from '../empty-history'
 
 export function RequestsHistory() {
   // TODO: Remover depois que implementar o backend
@@ -30,11 +31,7 @@ export function RequestsHistory() {
   return (
     <div className="w-0 space-y-1 overflow-hidden transition-width group-data-[requests=true]:w-full">
       {sortedReqs.length === 0 && (
-        <div className="mt-20 flex w-full flex-col items-center justify-center whitespace-nowrap text-center text-default-500">
-          <FaInbox className="mb-3 h-12 w-12" />
-          <p className="text-small">Você ainda não tem solicitações</p>
-          <p className="text-xs text-default-400">Suas futuras solicitações aparecerão aqui</p>
-        </div>
+        <EmptyHistory title="Você ainda não tem solicitações" description="Suas futuras solicitações aparecerão aqui" />
       )}
       {sortedReqs.map((req, i) => (
         <SidebarRoute

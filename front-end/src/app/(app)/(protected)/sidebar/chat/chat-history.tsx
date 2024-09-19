@@ -8,6 +8,7 @@ import { confirmationModal } from '@/hooks/use-confirmation-modal'
 import { compareDates } from '@/lib/date'
 import { useChats } from '@/mocks/use-chats'
 
+import { EmptyHistory } from '../empty-history'
 import { NewChatButton } from './new-chat-button'
 
 export function ChatHistory() {
@@ -32,6 +33,12 @@ export function ChatHistory() {
     <div className="w-0 space-y-3 overflow-hidden transition-width group-data-[chat=true]:w-full">
       <NewChatButton />
       <div className="space-y-1">
+        {sortedChats.length === 0 && (
+          <EmptyHistory
+            title="Nenhuma conversa iniciada"
+            description="Inicie uma nova conversa para descrever o problema do seu carro e receba recomendações"
+          />
+        )}
         {sortedChats.map((chat, i) => (
           <SidebarRoute
             href={`/chat/${chat.id}`}
