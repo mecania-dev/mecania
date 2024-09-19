@@ -102,7 +102,12 @@ else:
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
-                "hosts": [(env("REDIS_HOST"), env("REDIS_PORT"))],
+                "hosts": [
+                    {
+                        "address": env("REDIS_URL"),
+                        "ssl_cert_reqs": None,
+                    }
+                ]
             },
         }
     }
