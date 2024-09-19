@@ -36,7 +36,7 @@ export function ChatHistory() {
         {sortedChats.length === 0 && (
           <EmptyHistory
             title="Nenhuma conversa iniciada"
-            description="Inicie uma nova conversa para descrever o problema do seu carro e receba recomendações"
+            description="Inicie uma nova conversa para descrever o problema do seu veículo e receba recomendações"
           />
         )}
         {sortedChats.map((chat, i) => (
