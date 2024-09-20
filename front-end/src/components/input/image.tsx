@@ -1,4 +1,4 @@
-import { forwardRef, useMemo, useRef, useState } from 'react'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { FaUndo } from 'react-icons/fa'
 import { FaCamera } from 'react-icons/fa6'
 import { FcEditImage, FcRemoveImage } from 'react-icons/fc'
@@ -24,6 +24,7 @@ export interface ImageInputProps {
   setImage(file?: ImageInputFile): void
   classNames?: ImageInputClassNames
   className?: string
+  isOriginal?: boolean
   isDisabled?: boolean
   hideRemove?: boolean
 }
@@ -38,10 +39,10 @@ const imageInput = tv({
 })
 
 export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(function ImageInput(
-  { label, image, setImage, classNames, className, isDisabled, hideRemove },
+  { label, image, setImage, classNames, className, isOriginal, isDisabled, hideRemove },
   ref
 ) {
-  const [original] = useState(image)
+  const [original, setOriginal] = useState(image)
   const [isOriginalSelected, setIsOriginalSelected] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -49,6 +50,14 @@ export const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(function
   const isImageFile = image instanceof File
   const imageSrc = useMemo(() => (isImageFile ? URL.createObjectURL(image) : image), [image, isImageFile])
   const imageAlt = useMemo(() => label || (isImageFile ? image.name : image), [image, isImageFile, label])
+
+  useEffect(() => {
+    if (isOriginal && isOriginal !== isOriginalSelected) {
+      setIsOriginalSelected(isOriginal)
+      setOriginal(image)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOriginal])
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]

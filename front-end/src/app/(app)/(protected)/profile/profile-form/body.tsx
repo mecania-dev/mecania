@@ -12,7 +12,7 @@ import { useUser } from '@/providers/user-provider'
 
 export function ProfileFormBody() {
   const { isMechanic } = useUser()
-  const { watch, register, setValue, formState } = useFormContext<UserUpdateInput>()
+  const { watch, register, setValue, getFieldState, formState } = useFormContext<UserUpdateInput>()
   const { defaultValues, errors } = formState
   const values = watch()
 
@@ -32,6 +32,7 @@ export function ProfileFormBody() {
           img: 'object-cover'
         }}
         setImage={setProfileImg}
+        isOriginal={!getFieldState('avatarUrl').isDirty}
       />
       <FlexWrap>
         <Input

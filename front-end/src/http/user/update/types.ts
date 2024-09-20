@@ -42,6 +42,8 @@ export const userUpdateSchema = userUpdateRawSchema
     return true
   })
   .transform(({ avatarUrl, ...data }) => {
+    if (avatarUrl === null) return { avatarUrl, ...data }
+
     if (avatarUrl instanceof File) {
       const formData = new FormData()
       formData.append('avatarUrl', avatarUrl)
@@ -52,7 +54,8 @@ export const userUpdateSchema = userUpdateRawSchema
       })
       return formData
     }
-    return { avatarUrl, ...data }
+
+    return data
   })
 
 export const userUpdateFields = Object.keys(userUpdateRawSchema.shape)
