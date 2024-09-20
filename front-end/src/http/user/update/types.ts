@@ -42,6 +42,12 @@ export const userUpdateSchema = userUpdateRawSchema
     return true
   })
   .transform(({ avatarUrl, ...data }) => {
+    for (const [key, value] of Object.entries(data)) {
+      if (value === '' || value == null) {
+        delete data[key as keyof typeof data]
+      }
+    }
+
     if (avatarUrl === null) return { avatarUrl, ...data }
 
     if (avatarUrl instanceof File) {
