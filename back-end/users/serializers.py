@@ -74,6 +74,11 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
 
         if request:
             user: User = request.user
+            fiscal_identification = data.get("fiscal_identification", getattr(user, "fiscal_identification", None))
+            phone_number = data.get("phone_number", getattr(user, "phone_number", None))
+            groups = data.get("groups", getattr(user, "groups", None))
+            if isinstance(groups, list):
+                groups = Group.objects.filter(name__in=[group.name for group in groups])
 
             if request.method == "POST":
                 if not password:
@@ -81,10 +86,7 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
                 if not confirm_password:
                     errors["confirm_password"] = "This field is required."
 
-            if request.method != "PATCH" and user.groups.filter(name="Mechanic").exists():
-                fiscal_identification = data.get("fiscal_identification")
-                phone_number = data.get("phone_number")
-
+            if groups.filter(name="Mechanic").exists():
                 if not fiscal_identification:
                     errors["fiscal_identification"] = "This field is required for mechanics."
                 if not phone_number:
