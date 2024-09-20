@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.core.exceptions import ValidationError
+from rest_framework.utils import model_meta
 from django.contrib.auth.models import Group, Permission
 
 from .models import User
@@ -30,7 +30,7 @@ class UserRetrieveDestroySerializer(serializers.ModelSerializer):
             "is_superuser",
             "is_staff",
             "is_active",
-            "date_joined",
+            "created_at",
             "updated_at",
             "groups",
             "permissions",
@@ -51,19 +51,21 @@ class UserRetrieveDestroySerializer(serializers.ModelSerializer):
 
 
 class UserCreateUpdateSerializer(serializers.ModelSerializer):
+    # password = serializers.CharField(write_only=True)  # Mark password as write-only
     confirm_password = serializers.CharField(write_only=True, required=False)
     groups = serializers.SlugRelatedField(many=True, slug_field="name", queryset=Group.objects.all(), required=False)
 
     class Meta:
         model = User
         fields = "__all__"
-        read_only_fields = ["id", "updated_at"]
+        extra_kwargs = {
+            "password": {"write_only": True},  # Prevent password from being included in the response
+        }
 
     def validate(self, data):
         request = self.context.get("request")
-        user: User = request.user
         password = data.get("password")
-        confirm_password = data.get("confirm_password")
+        confirm_password = data.pop("confirm_password", None)
         errors = {}
 
         if password and confirm_password and password != confirm_password:
@@ -71,6 +73,8 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
             errors["confirm_password"] = "Password fields didn't match."
 
         if request:
+            user: User = request.user
+
             if request.method == "POST":
                 if not password:
                     errors["password"] = "This field is required."
@@ -91,16 +95,29 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
 
         return data
 
-    def save(self, **kwargs):
-        if "confirm_password" in self.validated_data:
-            self.validated_data.pop("confirm_password")
+    def create(self, validated_data):
+        info = model_meta.get_field_info(self.Meta.model)
+        is_superuser: bool = validated_data.get("is_superuser")
+        groups: list = validated_data.get("groups")
 
-        try:
-            return super().save(**kwargs)
-        except ValidationError as e:
-            raise serializers.ValidationError(e.message_dict)
+        # Set default group if user is not a superuser and no groups are provided
+        if not is_superuser and not len(groups):
+            default_group, _ = Group.objects.get_or_create(name="Driver")
+            validated_data["groups"] = [default_group]
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation.pop("password", None)
-        return representation
+        # Remove many-to-many fields from validated_data
+        many_to_many = {}
+        for field_name, relation_info in info.relations.items():
+            if relation_info.to_many and (field_name in validated_data):
+                many_to_many[field_name] = validated_data.pop(field_name)
+
+        # Create user
+        user = User.objects.create_user(**validated_data)
+
+        # Set many-to-many fields
+        if many_to_many:
+            for field_name, value in many_to_many.items():
+                field = getattr(user, field_name)
+                field.set(value)
+
+        return user

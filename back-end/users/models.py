@@ -1,36 +1,75 @@
 from django.db import models
-from django.contrib.auth.models import UserManager, AbstractUser
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.core.validators import MinLengthValidator
+from django.db.models.fields.files import ImageFieldFile
 
 from services.models import Service
+from utils.image import compress_image
 
 
-class CustomUserManager(UserManager):
-    def _create_user(self, username, email, password, **kwargs):
-        if not username:
-            raise ValueError("The given username must be set")
+class UserManager(BaseUserManager):
+    def create_user(self, username, email, password, set_unusable_password=False, **kwargs):
+        user: User = self.model(username=username, email=self.normalize_email(email).lower(), **kwargs)
 
-        user = self.model(username=username, email=self.normalize_email(email), password=password, **kwargs)
+        user.set_password(password) if not set_unusable_password else user.set_unusable_password()
 
         user.save(using=self._db)
+
         return user
+
+    def create_superuser(self, username, email, password, set_unusable_password=False, **kwargs):
+        return self.create_user(
+            username=username,
+            email=email,
+            password=password,
+            is_staff=True,
+            is_superuser=True,
+            set_unusable_password=set_unusable_password,
+            **kwargs,
+        )
 
 
 def avatar_url_path(instance, filename):
     return f"users/{instance.id}/{filename}"
 
 
-class User(AbstractUser):
+class User(AbstractBaseUser, PermissionsMixin):
+    # Required Fields
+    username = models.CharField(max_length=30, unique=True)
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(null=True, blank=True, max_length=25, validators=[MinLengthValidator(14)])
-    fiscal_identification = models.CharField(
-        null=True, blank=True, unique=True, max_length=18, validators=[MinLengthValidator(14)]
-    )
-    avatar_url = models.ImageField(upload_to=avatar_url_path, null=True, blank=True)
-    services = models.ManyToManyField(Service, related_name="users", blank=True)
+    # Optional Fields
+    first_name = models.CharField(max_length=30, null=True)
+    last_name = models.CharField(max_length=30, null=True)
+    phone_number = models.CharField(max_length=25, validators=[MinLengthValidator(14)], null=True)
+    fiscal_identification = models.CharField(unique=True, max_length=18, validators=[MinLengthValidator(14)], null=True)
+    avatar_url = models.ImageField(upload_to=avatar_url_path, null=True)
+    # Auto Generated Fields
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # Relationships
+    services = models.ManyToManyField(Service, related_name="users", blank=True)
+    # Flags
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-    objects = CustomUserManager()
+    objects = UserManager()
+
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = []
 
     class Meta:
-        ordering = ["date_joined"]
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return self.username
+
+    def save(self, *args, **kwargs):
+        if not self._state.adding:
+            old_instance = User.objects.get(pk=self.pk)
+            if self.password and self.password != old_instance.password:
+                self.set_password(self.password)
+
+        if self.avatar_url and isinstance(self.avatar_url, ImageFieldFile):
+            self.avatar_url = compress_image(self.avatar_url)
+
+        super().save(*args, **kwargs)

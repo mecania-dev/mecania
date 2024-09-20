@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
         # Create a driver if it doesn't exist
         if not User.objects.filter(username="driver").exists():
-            driver = User.objects.create_user(
+            driver: User = User.objects.create_user(
                 username="driver", email="driver@example.com", password=env("ADMIN_PASSWORD", "driver")
             )
             driver_group, _ = Group.objects.get_or_create(name="Driver")
@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
         # Create a mechanic if it doesn't exist
         if not User.objects.filter(username="mechanic").exists():
-            mechanic = User.objects.create_user(
+            mechanic: User = User.objects.create_user(
                 username="mechanic", email="mechanic@example.com", password=env("ADMIN_PASSWORD", "mechanic")
             )
             mechanic_group, _ = Group.objects.get_or_create(name="Mechanic")
@@ -42,11 +42,13 @@ class Command(BaseCommand):
 
         # Create an AI "user" if it doesn't exist
         if not User.objects.filter(username="MecanIA").exists():
-            mecania = User.objects.create_user(
-                username="MecanIA", email="mecania.dev@gmail.com", password="mecania", is_active=False
+            mecania: User = User.objects.create_user(
+                username="MecanIA",
+                email="mecania.dev@gmail.com",
+                password="mecania",
+                is_active=False,
+                set_unusable_password=True,
             )
-            mecania.set_unusable_password()
-            mecania.save()
             ai_group, _ = Group.objects.get_or_create(name="AI")
             mecania.groups.set([ai_group])
             self.stdout.write(self.style.SUCCESS("Successfully created MecanIA user."))
