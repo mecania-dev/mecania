@@ -33,7 +33,7 @@
 
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#group_messages').innerHTML += `<li>${data.sender}: ${data.content}</li>`;
+            document.querySelector('#group_messages').innerHTML += `<li>${data.sender.username}: ${data.content}</li>`;
         };
 
         chatSocket.onclose = function (e) {

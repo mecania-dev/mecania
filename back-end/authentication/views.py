@@ -11,7 +11,7 @@ from users.serializers import UserRetrieveDestroySerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
-        login = request.data["login"]
+        login = request.data.get("login") or request.data.get("username")
         user = (
             User.objects.filter(email__iexact=login.lower()).first()
             or User.objects.filter(username__iexact=login.lower()).first()

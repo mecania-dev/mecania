@@ -13,7 +13,7 @@ def user_pre_save(sender, instance: User, **kwargs):
 
     instance.validate_unique()
 
-    if instance.password:
+    if instance.password and instance.username != "MecanIA":
         if instance._state.adding:
             instance.set_password(instance.password)
         else:
