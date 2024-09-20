@@ -10,6 +10,16 @@ export const REFRESH_TOKEN_NAME = 'refresh_token'
 
 let isRefreshing = false
 
+export async function waitTokenRefresh() {
+  if (isRefreshing) {
+    while (isRefreshing) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+    await new Promise(resolve => setTimeout(resolve, 250))
+    await waitTokenRefresh()
+  }
+}
+
 export async function getValidAccessToken(forceRefresh = false) {
   const { access, refresh } = await getTokens()
   if (!refresh) {
@@ -21,9 +31,7 @@ export async function getValidAccessToken(forceRefresh = false) {
   if (access && !forceRefresh && !isTokenExpired(access)) return access
 
   if (isRefreshing) {
-    while (isRefreshing) {
-      await new Promise(resolve => setTimeout(resolve, 100))
-    }
+    await waitTokenRefresh()
     const { access: newAccess } = await getTokens()
     return newAccess
   } else {
