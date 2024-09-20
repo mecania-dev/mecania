@@ -4,15 +4,15 @@ import { phoneNumberSchema } from '@/types/phone-number'
 import { z } from 'zod'
 
 const userUpdateRawSchema = z.object({
-  avatarUrl: z.instanceof(File).or(z.string()).nullable().optional(),
   username: string({ name: 'Nome de usuário', min: 1 }),
-  password: string({ name: 'Senha', min: 6, max: 64 }),
-  confirmPassword: string({ name: 'Confirme a Senha', min: 6, max: 64 }),
-  email: z.string().email('Insira um e-mail válido'),
   firstName: string({ name: 'Nome', min: 1 }),
   lastName: string({ name: 'Sobrenome', min: 1, allowEmpty: true }),
-  phoneNumber: phoneNumberSchema,
-  fiscalIdentification: fiscalIdentificationSchema,
+  email: z.string().email('Insira um e-mail válido'),
+  phoneNumber: phoneNumberSchema.nullable(),
+  fiscalIdentification: fiscalIdentificationSchema.nullable(),
+  avatarUrl: z.instanceof(File).or(z.string()).nullable().optional(),
+  password: string({ name: 'Senha', min: 6, max: 64 }),
+  confirmPassword: string({ name: 'Confirme a Senha', min: 6, max: 64 }),
   isSuperuser: z.boolean(),
   isStaff: z.boolean(),
   isActive: z.boolean()

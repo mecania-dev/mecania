@@ -37,11 +37,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -73,11 +74,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -109,11 +111,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -145,11 +148,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -181,11 +185,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -217,11 +222,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -253,11 +259,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -289,11 +296,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -325,11 +333,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -361,11 +370,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -397,11 +407,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -433,11 +444,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -469,11 +481,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -505,11 +518,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   },
   {
@@ -541,11 +555,12 @@ const initialMechanics: Mechanic[] = [
     services: sampleSize(initialServices, 5),
     groups: ['Mechanic'],
     permissions: [],
+    vehicles: [],
     isActive: true,
     isStaff: false,
     isSuperuser: false,
     lastLogin: new Date().toISOString(),
-    dateJoined: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   }
 ]

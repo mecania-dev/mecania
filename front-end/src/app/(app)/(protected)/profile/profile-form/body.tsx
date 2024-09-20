@@ -37,16 +37,16 @@ export function ProfileFormBody() {
       <FlexWrap>
         <Input
           label="Nome"
-          value={values.firstName}
-          placeholder={defaultValues?.firstName}
+          value={values.firstName ?? ''}
+          placeholder={defaultValues?.firstName ?? ''}
           errorMessage={errors.firstName?.message}
           {...register('firstName')}
         />
         {!isMechanic && (
           <Input
             label="Sobrenome"
-            value={values.lastName}
-            placeholder={defaultValues?.lastName}
+            value={values.lastName ?? ''}
+            placeholder={defaultValues?.lastName ?? ''}
             errorMessage={errors.lastName?.message}
             {...register('lastName')}
           />
@@ -55,36 +55,36 @@ export function ProfileFormBody() {
       <Input
         label="Nome de usuário"
         value={values.username}
-        placeholder={defaultValues?.username}
+        placeholder={defaultValues?.username ?? ''}
         errorMessage={errors.username?.message}
         {...register('username')}
       />
       <Input
         label="Email"
         value={values.email}
-        placeholder={defaultValues?.email}
+        placeholder={defaultValues?.email ?? ''}
         errorMessage={errors.email?.message}
         {...register('email')}
       />
       <PhoneNumberInput
         label="Telefone"
-        value={values.phoneNumber}
-        placeholder={defaultValues?.phoneNumber}
+        value={values.phoneNumber ?? ''}
+        placeholder={defaultValues?.phoneNumber ?? ''}
         errorMessage={errors.phoneNumber?.message}
         {...register('phoneNumber')}
       />
       <FiscalIdentificationInput
         type={isMechanic ? 'CNPJ' : 'CPF'}
         label={isMechanic ? 'CNPJ' : 'CPF'}
-        value={values.fiscalIdentification}
-        placeholder={defaultValues?.fiscalIdentification}
+        value={values.fiscalIdentification ?? ''}
+        placeholder={defaultValues?.fiscalIdentification ?? ''}
         errorMessage={errors.fiscalIdentification?.message}
         {...register('fiscalIdentification')}
       />
       <PasswordInput
         label="Senha"
         value={values.password ?? ''}
-        placeholder={defaultValues?.password}
+        placeholder={defaultValues?.password ?? ''}
         errorMessage={errors.password?.message}
         autoComplete="new-password"
         {...register('password', { setValueAs: value => defaultStringValue(value, undefined) })}
@@ -92,7 +92,7 @@ export function ProfileFormBody() {
       <PasswordInput
         label="Confirme a Senha"
         value={values.confirmPassword ?? ''}
-        placeholder={defaultValues?.confirmPassword}
+        placeholder={defaultValues?.confirmPassword ?? ''}
         errorMessage={errors.confirmPassword?.message}
         {...register('confirmPassword', { setValueAs: value => defaultStringValue(value, undefined) })}
       />

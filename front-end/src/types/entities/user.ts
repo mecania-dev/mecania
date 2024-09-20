@@ -3,28 +3,34 @@ import { z } from 'zod'
 
 import { fiscalIdentificationSchema } from '../fiscal-identification'
 import { phoneNumberSchema } from '../phone-number'
+import { addressSchema } from './address'
+import { serviceSchema } from './service'
+import { vehicleSchema } from './vehicle'
 
 export const permissions = getPermissions()
 export type Permissions = (typeof permissions)[number]
 
 export const userSchema = z.object({
   id: z.number(),
-  avatarUrl: z.string().nullable(),
   username: string({ name: 'Nome de usuário', min: 1 }),
-  email: z.string().email('Insira um e-mail válido'),
   firstName: string({ name: 'Nome', min: 1 }),
   lastName: string({ name: 'Sobrenome', min: 1, allowEmpty: true }),
-  phoneNumber: phoneNumberSchema,
-  fiscalIdentification: fiscalIdentificationSchema,
+  email: z.string().email('Insira um e-mail válido'),
+  phoneNumber: phoneNumberSchema.nullable(),
+  fiscalIdentification: fiscalIdentificationSchema.nullable(),
+  avatarUrl: z.string().nullable(),
   rating: z.number().nullable().optional(),
   isSuperuser: z.boolean(),
   isStaff: z.boolean(),
   isActive: z.boolean(),
   lastLogin: z.string(),
-  dateJoined: z.string(),
+  createdAt: z.string(),
   updatedAt: z.string(),
-  groups: z.array(z.enum(['Mechanic', 'Driver'])),
-  permissions: z.array(z.enum(permissions))
+  groups: z.array(z.enum(['Mechanic', 'Driver', 'AI'])),
+  permissions: z.array(z.enum(permissions)),
+  addresses: z.array(addressSchema).default([]),
+  vehicles: z.array(vehicleSchema).default([]),
+  services: z.array(serviceSchema).default([])
 })
 
 export const userFields = Object.keys(userSchema.shape)
