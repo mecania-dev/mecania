@@ -13,7 +13,7 @@ const signUpRawSchema = z.object({
   lastName: string({ name: 'Sobrenome', min: 1, allowEmpty: true }).optional(),
   phoneNumber: phoneNumberSchema,
   fiscalIdentification: fiscalIdentificationSchema,
-  password: string({ name: 'Senha', min: 6, max: 64 }, { required_error: 'Por favor, insira uma senha' }),
+  password: string({ name: 'Senha', min: 5, max: 64 }, { required_error: 'Por favor, insira uma senha' }),
   confirmPassword: string({ name: 'Confirme a Senha', min: 6, max: 64 }, { required_error: 'Confirme sua senha' }),
   groups: z.array(z.enum(['Mechanic', 'Driver']))
 })

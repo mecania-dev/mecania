@@ -10,7 +10,7 @@ export interface SignInResponse {
 
 export const signInSchema = z.object({
   login: string({ name: 'Email ou nome de usuário', min: 1 }),
-  password: string({ name: 'Senha', min: 6, max: 64 }, { required_error: 'Por favor, insira uma senha' })
+  password: string({ name: 'Senha', min: 5, max: 64 }, { required_error: 'Por favor, insira uma senha' })
 })
 
 export type SignInRequest = z.input<typeof signInSchema>
