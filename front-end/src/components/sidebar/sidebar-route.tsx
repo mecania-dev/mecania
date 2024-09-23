@@ -66,13 +66,13 @@ export const SidebarRoute = forwardRef<HTMLButtonElement, SidebarRouteProps>(fun
         ref={ref}
         as={Link}
         data-active={isActive}
-        data-is-open={isOpen}
+        data-subroute-open={isOpen}
         size={size}
         variant={isActive ? activeVariant : variant}
         startContent={
           subRoutes ? (
             <FaChevronRight
-              className="shrink-0 transition-transform group-data-[is-open=true]:rotate-90"
+              className="shrink-0 transition-transform group-data-[open=false]:hidden group-data-[subroute-open=true]:rotate-90"
               onClick={toggleOpen}
             />
           ) : undefined
@@ -86,7 +86,7 @@ export const SidebarRoute = forwardRef<HTMLButtonElement, SidebarRouteProps>(fun
         <p className={classes.text({ class: classNames?.text })}>{children}</p>
       </Button>
       {subRoutes && (
-        <Collapse isOpen={isOpen} className="space-y-1 px-1">
+        <Collapse isOpen={isOpen} className="space-y-1 px-1 group-data-[open=false]:hidden">
           {subRoutes.map((route, i) => (
             <SidebarRoute key={i} {...route} isSubRoute />
           ))}

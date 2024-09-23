@@ -8,7 +8,7 @@ export const sidebarRoute = tv({
   },
   variants: {
     isSubRoute: {
-      true: { icon: 'h-4 w-4' }
+      true: { base: 'p-1.5', icon: 'h-4 w-4' }
     }
   }
 })
