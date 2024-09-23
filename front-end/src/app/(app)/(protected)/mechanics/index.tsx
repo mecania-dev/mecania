@@ -2,19 +2,18 @@
 
 import { FaTools } from 'react-icons/fa'
 
-import Loading from '@/app/loading'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { Mechanic } from '@/types/entities/mechanic'
+import { range } from 'lodash'
 
 import { MechanicCard } from './mechanic-card'
 
 export function MechanicsList() {
   const { state } = useSWRCustom<Mechanic[]>(`users/mechanics/`)
   const mechanics = state.data
+  const isEmpty = !state.isLoading && (!mechanics || mechanics.length === 0)
 
-  if (state.isLoading) return <Loading />
-
-  if (!mechanics || mechanics.length === 0) {
+  if (isEmpty) {
     return (
       <div className="flex flex-col items-center justify-center space-y-4 p-10 text-center">
         <FaTools className="animate-pulse text-6xl text-default-400" />
@@ -26,9 +25,11 @@ export function MechanicsList() {
 
   return (
     <div className="grid grid-cols-1 gap-6 p-5 md:grid-cols-2 xl:grid-cols-3">
-      {mechanics.map(mechanic => (
-        <MechanicCard mechanic={mechanic} href={`/mechanics/${mechanic.id}`} key={mechanic.id} />
-      ))}
+      {state.isLoading
+        ? range(20).map(i => <MechanicCard key={i} isLoaded={!state.isLoading} />)
+        : mechanics?.map(mechanic => (
+            <MechanicCard mechanic={mechanic} href={`/mechanics/${mechanic.id}`} key={mechanic.id} />
+          ))}
     </div>
   )
 }
