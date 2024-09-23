@@ -27,24 +27,29 @@ export function AddressesTable() {
 
   const onCreateAddress = useCallback(
     async (address: AddressCreateOutput) => {
-      const res = await addresses.post(address)
-      if (res.ok) {
-        toast({ message: 'Endereço adicionado com sucesso', type: 'success' })
-      } else {
-        toast({ message: 'Erro ao adicionar endereço', type: 'error' })
-      }
+      await addresses.post(address, {
+        onSuccess() {
+          toast({ message: 'Endereço adicionado com sucesso', type: 'success' })
+        },
+        onError() {
+          toast({ message: 'Erro ao adicionar endereço', type: 'error' })
+        }
+      })
     },
     [addresses]
   )
 
   const onUpdateAddress = useCallback(
     async (address: AddressUpdateOutput) => {
-      const res = await addresses.put(address, { url: url => url + `${address.id}/` })
-      if (res.ok) {
-        toast({ message: 'Endereço atualizado com sucesso', type: 'success' })
-      } else {
-        toast({ message: 'Erro ao atualizar endereço', type: 'error' })
-      }
+      await addresses.put(address, {
+        url: url => url + `${address.id}/`,
+        onSuccess() {
+          toast({ message: 'Endereço atualizado com sucesso', type: 'success' })
+        },
+        onError() {
+          toast({ message: 'Erro ao atualizar endereço', type: 'error' })
+        }
+      })
     },
     [addresses]
   )

@@ -13,11 +13,11 @@ export function AddressModalBody() {
 
   async function onCEPChange(address?: ZipCodeResponse, zipCode?: string) {
     const opts = { shouldValidate: !!address, shouldDirty: true }
-    zipCode && setValue('zipCode', zipCode as string, opts)
-    setValue('state', address?.state as string, opts)
-    setValue('city', address?.city as string, opts)
-    setValue('district', address?.neighborhood as string, opts)
-    setValue('street', address?.street as string, opts)
+    zipCode && setValue('zipCode', zipCode, opts)
+    setValue('state', address?.state ?? '', opts)
+    setValue('city', address?.city ?? '', opts)
+    setValue('district', address?.neighborhood ?? '', opts)
+    setValue('street', address?.street ?? '', opts)
   }
 
   return (

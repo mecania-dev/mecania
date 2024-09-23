@@ -29,7 +29,7 @@ export function AddressModal<T extends Address | undefined = undefined>({
   const { user } = useUser()
   const form = useForm<AddressCreateInput>({
     resolver: zodResolver(address ? addressUpdateSchema : addressCreateSchema),
-    defaultValues: address ?? { userId: user?.id, country: 'BR' }
+    defaultValues: { userId: user?.id, country: 'BR', ...address }
   })
 
   async function handleOnSubmit(address: T extends undefined ? AddressCreateOutput : AddressUpdateOutput) {
