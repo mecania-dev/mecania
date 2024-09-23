@@ -15,7 +15,7 @@ export function MechanicDetails({ id }: MechanicDetailsProps) {
   const { state } = useSWRCustom<Mechanic>(`users/${id}`)
   const mechanic = state.data
 
-  if (!mechanic) return null
+  if (!mechanic && !state.isLoading) return null
 
   return (
     <div className="flex flex-col items-center space-y-6 p-5">
@@ -29,7 +29,7 @@ export function MechanicDetails({ id }: MechanicDetailsProps) {
       {!state.isLoading && (
         <>
           {/* Services Section */}
-          {mechanic.services && mechanic.services.length > 0 && (
+          {mechanic?.services && mechanic.services.length > 0 && (
             <Card className="w-full max-w-3xl sm:p-4" shadow="lg" isHoverable={false}>
               <Card.Header className="pb-0 text-large font-bold sm:text-xl">Serviços Oferecidos</Card.Header>
               <Card.Body>
@@ -46,7 +46,7 @@ export function MechanicDetails({ id }: MechanicDetailsProps) {
             </Card>
           )}
           {/* Address Section */}
-          {mechanic.addresses && mechanic.addresses.length > 0 && (
+          {mechanic?.addresses && mechanic.addresses.length > 0 && (
             <Card className="w-full max-w-3xl sm:p-4" shadow="lg" isHoverable={false}>
               <Card.Header className="pb-0 text-large font-bold sm:text-xl">Endereços</Card.Header>
               <Card.Body>
