@@ -14,7 +14,7 @@ export function SignUpMechanicFormBody() {
 
   function onCNPJChange(cnpj?: CNPJApiResponse) {
     if (!values.firstName && cnpj?.razao_social) {
-      setValue('firstName', cnpj.razao_social, { shouldValidate: true })
+      setValue('firstName', cnpj.razao_social, { shouldValidate: true, shouldDirty: true })
     }
   }
 

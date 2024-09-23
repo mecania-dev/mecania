@@ -2,7 +2,7 @@ import { string } from '@/lib/zod'
 import { z } from 'zod'
 
 export const addressCreateSchema = z.object({
-  userId: z.number(),
+  userId: z.number().optional(),
   zipCode: string({ name: 'CEP', min: 1 }),
   country: string({ name: 'País', min: 1 }),
   state: string({ name: 'Estado', min: 1 }),

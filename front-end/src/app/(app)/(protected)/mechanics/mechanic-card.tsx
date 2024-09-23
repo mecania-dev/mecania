@@ -10,6 +10,7 @@ interface MechanicCardProps extends Omit<CardProps, 'ref' | 'classNames'> {
   mechanic: Mechanic
   href?: string
   classNames?: SlotsToClasses<keyof ReturnType<typeof mechanicCard>> & CardProps['classNames']
+  hideAvatar?: boolean
 }
 
 const mechanicCard = tv({
@@ -27,7 +28,15 @@ const mechanicCard = tv({
   }
 })
 
-export function MechanicCard({ mechanic, href, shadow = 'lg', classNames, ...rest }: MechanicCardProps) {
+export function MechanicCard({
+  children,
+  mechanic,
+  href,
+  shadow = 'lg',
+  classNames,
+  hideAvatar,
+  ...rest
+}: MechanicCardProps) {
   const classes = mechanicCard()
 
   return (
@@ -45,11 +54,13 @@ export function MechanicCard({ mechanic, href, shadow = 'lg', classNames, ...res
     >
       <Card.Body>
         <div className={classes.wrapper({ class: classNames?.wrapper })}>
-          <Avatar
-            src={mechanic?.avatarUrl ?? ''}
-            alt={mechanic?.username}
-            className={classes.avatar({ class: classNames?.avatar })}
-          />
+          {!hideAvatar && (
+            <Avatar
+              src={mechanic?.avatarUrl ?? ''}
+              alt={mechanic?.username}
+              className={classes.avatar({ class: classNames?.avatar })}
+            />
+          )}
           <div className={classes.infosWrapper({ class: classNames?.infosWrapper })}>
             <h1 className={classes.username({ class: classNames?.username })}>{mechanic?.username}</h1>
             <div className={classes.infos({ class: classNames?.infos })}>
@@ -71,6 +82,7 @@ export function MechanicCard({ mechanic, href, shadow = 'lg', classNames, ...res
           <span className={classes.ratingText({ class: classNames?.ratingText })}>Rating</span>
           <Rating rating={mechanic?.rating} />
         </div>
+        {children}
       </Card.Body>
     </Card>
   )

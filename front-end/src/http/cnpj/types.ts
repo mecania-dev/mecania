@@ -35,7 +35,7 @@ export interface CNPJApiResponse {
   numero: string
   complemento: string
   bairro: string
-  cep: number
+  cep: string
   uf: string
   codigo_municipio: number
   municipio: string

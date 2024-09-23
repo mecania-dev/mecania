@@ -109,8 +109,8 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         info = model_meta.get_field_info(self.Meta.model)
-        is_superuser: bool = validated_data.get("is_superuser")
-        groups: list = validated_data.get("groups")
+        is_superuser: bool = validated_data.get("is_superuser", False)
+        groups: list = validated_data.get("groups", [])
 
         # Set default group if user is not a superuser and no groups are provided
         if not is_superuser and not len(groups):

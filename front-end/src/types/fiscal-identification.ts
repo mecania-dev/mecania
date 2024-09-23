@@ -9,3 +9,10 @@ export const fiscalIdentificationSchema = string({ name: 'Número de Identifica�
     const isCNPJValid = isValidFiscalIdentification(value, 'CNPJ', true)
     return isCPFValid || isCNPJValid
   }, 'Insira um número de identificação válido')
+
+export const requiredFiscalIdentificationSchema = string({ name: 'Número de Identificação', min: 1 }).refine(value => {
+  if (!value) return true
+  const isCPFValid = isValidFiscalIdentification(value, 'CPF', true)
+  const isCNPJValid = isValidFiscalIdentification(value, 'CNPJ', true)
+  return isCPFValid || isCNPJValid
+}, 'Insira um número de identificação válido')

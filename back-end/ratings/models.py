@@ -4,7 +4,10 @@ from users.models import User
 
 class Rating(models.Model):
     driver = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="given_ratings", limit_choices_to={"groups__name": "Driver"}
+        User,
+        on_delete=models.CASCADE,
+        related_name="given_ratings",
+        limit_choices_to={"groups__name": "Driver", "is_superuser": True},
     )
     mechanic = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="received_ratings", limit_choices_to={"groups__name": "Mechanic"}

@@ -10,7 +10,7 @@ class RatingSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         user = self.context["request"].user
-        if user.groups.filter(name="Driver").exists() is False:
+        if not user.is_superuser and not user.groups.filter(name="Driver").exists():
             raise serializers.ValidationError("Only drivers can rate mechanics.")
         return data
 

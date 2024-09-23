@@ -20,7 +20,7 @@ export function MechanicRequest({ id }: MechanicRequestProps) {
   if (!request) return redirect('/profile')
 
   return (
-    <div className="relative flex max-h-[calc(100dvh-64px)] grow flex-col">
+    <div className="relative flex max-h-[calc(100dvh-4rem)] grow flex-col">
       <RequestChatHeader request={request} />
       <RequestChatWindow request={request} />
       <RequestChatInput request={request} />

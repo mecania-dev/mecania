@@ -25,7 +25,7 @@ export function Chat({ chatId }: ChatProps) {
   if (!isNew && chatState.isLoading) return <Loading />
 
   return (
-    <div className="relative flex max-h-[calc(100dvh-64px)] grow flex-col">
+    <div className="relative flex max-h-[calc(100dvh-4rem)] grow flex-col">
       <AIChatHeader chat={chat} />
       <AIChatWindow chat={chat} />
       <AIChatInput chat={chat} />

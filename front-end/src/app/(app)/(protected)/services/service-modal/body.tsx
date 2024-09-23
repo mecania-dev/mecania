@@ -16,7 +16,7 @@ export function ServiceModalBody() {
   const values = watch()
 
   function onCategoryChange(keys: SharedSelection) {
-    setValue('category', keys.currentKey!, { shouldDirty: true, shouldValidate: true })
+    setValue('category', keys.currentKey!, { shouldValidate: true, shouldDirty: true })
   }
 
   return (

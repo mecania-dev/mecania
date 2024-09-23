@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Button } from '@/components/button'
+import { Button, ButtonProps } from '@/components/button'
 import { Modal } from '@/components/modal'
 import { useForm } from '@/hooks/use-form'
 import { AddressCreateInput, AddressCreateOutput, addressCreateSchema } from '@/http/address/create'
@@ -45,15 +45,15 @@ export function AddressModal<T extends Address | undefined = undefined>({
   )
 }
 
-interface NewAddressModalButtonProps {
+interface NewAddressModalButtonProps extends Omit<ButtonProps, 'ref' | 'children' | 'onPress' | 'onSubmit'> {
   onSubmit?: MaybePromise<(address: AddressCreateOutput) => void>
 }
 
-export function NewAddressModalButton({ onSubmit }: NewAddressModalButtonProps) {
+export function NewAddressModalButton({ color = 'secondary', onSubmit, ...rest }: NewAddressModalButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <Button color="secondary" onPress={() => setIsOpen(true)}>
+    <Button color={color} onPress={() => setIsOpen(true)} {...rest}>
       Novo
       {isOpen && <AddressModal isOpen={isOpen} setIsOpen={setIsOpen} onSubmit={onSubmit} />}
     </Button>
