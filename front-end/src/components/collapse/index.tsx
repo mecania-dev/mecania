@@ -7,17 +7,17 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { CollapseVariantProps, collapse } from './variants'
 
 export interface CollapseProps extends MergeTypes<ComponentPropsWithoutRef<typeof motion.div>, CollapseVariantProps> {
-  open: boolean
+  isOpen: boolean
   animate?: boolean
 }
 
 export const Collapse = forwardRef<HTMLDivElement, CollapseProps>(function Collapse(
-  { children, open, animate = true, className, ...rest },
+  { children, isOpen, animate = true, className, ...rest },
   ref
 ) {
   return (
     <AnimatePresence>
-      {open && (
+      {isOpen && (
         <motion.div
           ref={ref}
           animate="enter"

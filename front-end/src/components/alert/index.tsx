@@ -8,7 +8,7 @@ import { SlotsToClasses } from '@nextui-org/react'
 import { Collapse } from '../collapse'
 import { AlertSlots, AlertVariantProps, alert } from './variants'
 
-export interface AlertProps extends ComponentPropsWithoutRef<typeof Collapse, AlertVariantProps, 'open'> {
+export interface AlertProps extends ComponentPropsWithoutRef<typeof Collapse, AlertVariantProps, 'isOpen'> {
   title?: string
   message?: string
   classNames?: SlotsToClasses<AlertSlots>
@@ -31,7 +31,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   const Icon = iconMap[type]
 
   return (
-    <Collapse ref={ref} open={!!message} className={classes.collapse({ class: classNames?.collapse })} {...rest}>
+    <Collapse ref={ref} isOpen={!!message} className={classes.collapse({ class: classNames?.collapse })} {...rest}>
       <div className={classes.base({ class: [classNames?.base, className, title && 'py-2'] })}>
         <Icon size={20} className={classes.icon({ class: classNames?.icon })} />
         <div className={classes.messageWrapper({ class: classNames?.messageWrapper })}>

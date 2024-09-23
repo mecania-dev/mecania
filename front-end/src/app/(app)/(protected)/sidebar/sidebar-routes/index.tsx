@@ -1,21 +1,12 @@
 import { useCallback, useMemo } from 'react'
-import { IconType } from 'react-icons'
 import { BiSolidCar, BiSolidCarMechanic } from 'react-icons/bi'
 import { CgProfile } from 'react-icons/cg'
 import { FaTools } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 
-import { Can, CanProps } from '@/auth/client'
-import { SidebarRoute } from '@/components/sidebar/sidebar-route'
+import { SidebarRoute, SidebarRouteProps } from '@/components/sidebar/sidebar-route'
 
 import { useProtectedSidebar } from '..'
-
-type RouteProps = CanProps & {
-  icon: IconType
-  href: string
-  children: React.ReactNode
-  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-}
 
 export function SidebarRoutes() {
   const { setIsRequestsOpen } = useProtectedSidebar()
@@ -31,30 +22,45 @@ export function SidebarRoutes() {
   const routes = useMemo(
     () =>
       [
-        { icon: CgProfile, href: '/profile', children: 'Meus dados', I: 'update', a: 'User' },
-        { icon: FaLocationDot, href: '/profile/addresses', children: 'Endereços', I: 'create', a: 'Address' },
-        { icon: BiSolidCar, href: '/profile/vehicles', children: 'Veículos', I: 'create', a: 'Vehicle' },
+        { icon: CgProfile, href: '/profile', children: 'Meus dados', canProps: { I: 'update', a: 'User' } },
+        {
+          icon: FaLocationDot,
+          href: '/profile/addresses',
+          children: 'Endereços',
+          canProps: { I: 'create', a: 'Address' }
+        },
+        { icon: BiSolidCar, href: '/profile/vehicles', children: 'Veículos', canProps: { I: 'create', a: 'Vehicle' } },
         {
           icon: BiSolidCarMechanic,
           href: '/profile/requests',
           children: 'Solicitações',
           onClick: onRequestsClick,
-          I: ['message_mechanic', 'message_user'],
-          a: 'Chat'
+          canProps: {
+            I: ['message_mechanic', 'message_user'],
+            a: 'Chat'
+          }
         },
-        { icon: FaTools, href: '/services', children: 'Serviços', I: 'create', a: 'Service' }
-      ] as RouteProps[],
+        { icon: FaTools, href: '/services', children: 'Serviços', canProps: { I: 'create', a: 'Service' } },
+        {
+          icon: BiSolidCarMechanic,
+          href: '/mechanics',
+          children: 'Oficinas',
+          canProps: {
+            I: 'create',
+            a: 'Mechanic'
+          },
+          subRoutes: [{ icon: BiSolidCarMechanic, href: '/mechanics/register', children: 'Cadastrar oficinas' }]
+        }
+      ] as SidebarRouteProps[],
     [onRequestsClick]
   )
 
   return (
     <div className="w-0 space-y-1 overflow-hidden transition-width group-data-[routes=true]:w-full">
-      {routes.map(({ children, icon, href, onClick, ...canProps }, i) => (
-        <Can key={i} {...canProps}>
-          <SidebarRoute icon={icon} href={href} onClick={onClick}>
-            {children}
-          </SidebarRoute>
-        </Can>
+      {routes.map(({ children, ...rest }, i) => (
+        <SidebarRoute {...rest} key={i}>
+          {children}
+        </SidebarRoute>
       ))}
     </div>
   )
