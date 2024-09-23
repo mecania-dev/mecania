@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.utils import model_meta
+from django.db.models import Avg
 from django.contrib.auth.models import Group, Permission
 
 from .models import User
@@ -14,6 +15,7 @@ class UserRetrieveDestroySerializer(serializers.ModelSerializer):
     addresses = AddressSerializer(many=True, read_only=True)
     vehicles = VehicleSerializer(many=True, read_only=True)
     services = ServiceSerializer(many=True, read_only=True)
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -26,6 +28,7 @@ class UserRetrieveDestroySerializer(serializers.ModelSerializer):
             "phone_number",
             "fiscal_identification",
             "avatar_url",
+            "rating",
             "last_login",
             "is_superuser",
             "is_staff",
@@ -38,6 +41,13 @@ class UserRetrieveDestroySerializer(serializers.ModelSerializer):
             "vehicles",
             "services",
         ]
+
+    def get_rating(self, obj):
+        avg_rating = obj.received_ratings.aggregate(Avg("score"))["score__avg"]
+        if avg_rating is not None:
+            avg_rating = round(avg_rating * 2) / 2
+            return avg_rating
+        return None
 
     def get_groups(self, obj):
         return [group.name for group in obj.groups.all()]
