@@ -22,6 +22,13 @@ export const fetcher = {
         if (!res.ok) throw res.data
         return res.data
       }),
+  patch:
+    <T = any>(config?: ApiRequestConfig<T>) =>
+    (url: string, { arg }: { arg: any }) =>
+      api.patch<T>(url, arg, config).then(res => {
+        if (!res.ok) throw res.data
+        return res.data
+      }),
   delete:
     <T = any>(config?: ApiRequestConfig<T>) =>
     (url: string) =>

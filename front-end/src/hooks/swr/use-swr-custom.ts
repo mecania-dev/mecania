@@ -27,6 +27,7 @@ export function useSWRCustom<T>(key: SWRKey, { fetcherConfig, ...config }: SWRCu
   const [isGetLoading, setIsGetLoading] = useState(false)
   const [isPostLoading, setIsPostLoading] = useState(false)
   const [isPutLoading, setIsPutLoading] = useState(false)
+  const [isPatchLoading, setIsPatchLoading] = useState(false)
   const [isRemoveLoading, setIsRemoveLoading] = useState(false)
   const state = useSWR(key, fetcher.get<T>(fetcherConfig), config)
   const { add: addMutation } = useQueue<MutationQueue<T>>(async ({ res, mutate }) => {
@@ -73,6 +74,13 @@ export function useSWRCustom<T>(key: SWRKey, { fetcherConfig, ...config }: SWRCu
   }
   put.isLoading = isPutLoading
 
+  async function patch<RES = T>(body: any, configs: SWRCustomRequestConfig<T, RES> = {}) {
+    configs.url = typeof configs.url === 'function' ? configs.url(url) : configs.url
+    const { url: otherUrl, mutate, ...restConfigs } = configs
+    return await baseRequest(api.patch<RES>(otherUrl || url, body, restConfigs), setIsPatchLoading, mutate)
+  }
+  patch.isLoading = isPatchLoading
+
   async function remove<RES = T>(configs: SWRCustomRequestConfig<T, RES> = {}) {
     configs.url = typeof configs.url === 'function' ? configs.url(url) : configs.url
     const { url: otherUrl, mutate, ...restConfigs } = configs
@@ -85,6 +93,7 @@ export function useSWRCustom<T>(key: SWRKey, { fetcherConfig, ...config }: SWRCu
     get,
     post,
     put,
+    patch,
     remove,
     isAnyLoading: state.isLoading || isGetLoading || isPostLoading || isPutLoading || isRemoveLoading
   }

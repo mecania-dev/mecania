@@ -36,13 +36,13 @@ export function ServicesTable() {
       confirmationModal({
         size: 'sm',
         title: 'Remover serviço',
-        question: `Tem certeza que deseja deletar o serviço ${service.name}?`,
+        question: `Tem certeza que deseja remover o serviço ${service.name}?`,
         async onConfirm() {
           const res = await services.remove({ url: url => url + service.id })
           if (res.ok) {
             toast({ message: 'Serviço deletado com sucesso', type: 'success' })
           } else {
-            toast({ message: 'Erro ao deletar serviço', type: 'error' })
+            toast({ message: 'Erro ao remover serviço', type: 'error' })
           }
         }
       })
@@ -55,7 +55,7 @@ export function ServicesTable() {
       if (columnKey === 'actions')
         return (
           <div className="relative flex items-center justify-around gap-2">
-            <Tooltip color="danger" content="Remover veículo">
+            <Tooltip color="danger" content="Remover serviço">
               <span className="cursor-pointer text-lg text-danger active:opacity-50" onClick={handleDelete(service)}>
                 <LuTrash2 size={24} />
               </span>

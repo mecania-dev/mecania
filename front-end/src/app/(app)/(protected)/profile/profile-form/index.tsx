@@ -38,15 +38,15 @@ export function ProfileForm() {
 
 function getDefaultValues(user?: User): UserUpdateInput {
   return {
-    username: user?.username,
-    email: user?.email,
-    avatarUrl: user?.avatarUrl,
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-    phoneNumber: user?.phoneNumber,
-    fiscalIdentification: user?.fiscalIdentification,
-    isSuperuser: user?.isSuperuser,
-    isStaff: user?.isStaff,
-    isActive: user?.isActive
+    username: user?.username ?? '',
+    email: user?.email ?? '',
+    avatarUrl: user?.avatarUrl ?? '',
+    firstName: user?.firstName ?? '',
+    lastName: user?.lastName ?? '',
+    phoneNumber: user?.phoneNumber ?? '',
+    fiscalIdentification: user?.fiscalIdentification ?? '',
+    isSuperuser: !!user?.isSuperuser,
+    isStaff: !!user?.isStaff,
+    isActive: !!user?.isActive
   }
 }

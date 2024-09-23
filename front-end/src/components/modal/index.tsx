@@ -52,6 +52,7 @@ export function Modal({
   fullScreen = true,
   classNames,
   className,
+  form,
   onFormSubmit,
   ...rest
 }: ModalProps) {
@@ -69,7 +70,7 @@ export function Modal({
       className={modal({ fullScreen, isSmallScreen, className })}
       {...rest}
     >
-      <ModalContent as={onFormSubmit ? Form : undefined} className={classNames?.content} onSubmit={onFormSubmit}>
+      <ModalContent as={form ? Form : undefined} className={classNames?.content} form={form} onSubmit={onFormSubmit}>
         {onClose => {
           return (
             <>

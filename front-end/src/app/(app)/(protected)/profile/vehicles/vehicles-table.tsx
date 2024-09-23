@@ -25,7 +25,7 @@ export function VehiclesTable() {
       confirmationModal({
         size: 'sm',
         title: 'Remover veículo',
-        question: `Tem certeza que deseja deletar o veículo ${vehicle.brand} ${vehicle.model}?`,
+        question: `Tem certeza que deseja remover o veículo ${vehicle.brand} ${vehicle.model}?`,
         async onConfirm() {
           removeVehicle(vehiclesState.data?.indexOf(vehicle) || 0)
         }

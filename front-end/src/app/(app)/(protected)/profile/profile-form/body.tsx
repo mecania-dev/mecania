@@ -6,7 +6,8 @@ import { FiscalIdentificationInput } from '@/components/input/fiscal-identificat
 import { ImageInput } from '@/components/input/image'
 import { PasswordInput } from '@/components/input/password'
 import { PhoneNumberInput } from '@/components/input/phone-number'
-import { UserUpdateInput } from '@/http'
+import { toast } from '@/hooks/use-toast'
+import { CNPJApiResponse, UserUpdateInput } from '@/http'
 import { defaultStringValue } from '@/lib/string'
 import { useUser } from '@/providers/user-provider'
 
@@ -18,6 +19,19 @@ export function ProfileFormBody() {
 
   function setProfileImg(image: File) {
     setValue('avatarUrl', image ?? null, { shouldDirty: true })
+  }
+
+  function onCNPJChange(cnpj?: CNPJApiResponse) {
+    if (cnpj?.razao_social) {
+      setValue('firstName', cnpj.razao_social, { shouldValidate: true })
+    }
+  }
+
+  function onCNPJNotFound(cnpj: string) {
+    toast({
+      message: `Dados para o CNPJ ${cnpj} não encontrados. Preencha o campo "Nome da oficina" manualmente.`,
+      type: 'error'
+    })
   }
 
   return (
@@ -37,8 +51,8 @@ export function ProfileFormBody() {
       <FlexWrap>
         <Input
           label="Nome"
-          value={values.firstName ?? ''}
-          placeholder={defaultValues?.firstName ?? ''}
+          value={values.firstName}
+          placeholder={defaultValues?.firstName}
           errorMessage={errors.firstName?.message}
           {...register('firstName')}
         />
@@ -55,14 +69,14 @@ export function ProfileFormBody() {
       <Input
         label="Nome de usuário"
         value={values.username}
-        placeholder={defaultValues?.username ?? ''}
+        placeholder={defaultValues?.username}
         errorMessage={errors.username?.message}
         {...register('username')}
       />
       <Input
         label="Email"
         value={values.email}
-        placeholder={defaultValues?.email ?? ''}
+        placeholder={defaultValues?.email}
         errorMessage={errors.email?.message}
         {...register('email')}
       />
@@ -79,20 +93,22 @@ export function ProfileFormBody() {
         value={values.fiscalIdentification ?? ''}
         placeholder={defaultValues?.fiscalIdentification ?? ''}
         errorMessage={errors.fiscalIdentification?.message}
+        onCNPJChange={isMechanic ? onCNPJChange : undefined}
+        onCNPJNotFound={isMechanic ? onCNPJNotFound : undefined}
         {...register('fiscalIdentification')}
       />
       <PasswordInput
         label="Senha"
-        value={values.password ?? ''}
-        placeholder={defaultValues?.password ?? ''}
+        value={values.password}
+        placeholder={defaultValues?.password}
         errorMessage={errors.password?.message}
         autoComplete="new-password"
         {...register('password', { setValueAs: value => defaultStringValue(value, undefined) })}
       />
       <PasswordInput
         label="Confirme a Senha"
-        value={values.confirmPassword ?? ''}
-        placeholder={defaultValues?.confirmPassword ?? ''}
+        value={values.confirmPassword}
+        placeholder={defaultValues?.confirmPassword}
         errorMessage={errors.confirmPassword?.message}
         {...register('confirmPassword', { setValueAs: value => defaultStringValue(value, undefined) })}
       />
