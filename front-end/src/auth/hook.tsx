@@ -47,12 +47,14 @@ export function useAuth() {
     }
 
     await setCredentialsAction(res.data)
+    setIsAuthenticated(true)
   }
 
   async function signOut() {
     if (pathname !== '/') await setCallbackUrl(pathname)
     await signOutAction(pathname !== '/')
-    user.state.mutate(undefined, false)
+    await user.state.mutate(undefined, false)
+    setIsAuthenticated(false)
   }
 
   return {
