@@ -7,7 +7,7 @@ class Rating(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name="given_ratings",
-        limit_choices_to={"groups__name": "Driver", "is_superuser": True},
+        limit_choices_to=models.Q(groups__name="Driver") | models.Q(is_superuser=True),
     )
     mechanic = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="received_ratings", limit_choices_to={"groups__name": "Mechanic"}
