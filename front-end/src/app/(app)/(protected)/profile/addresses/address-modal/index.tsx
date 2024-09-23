@@ -45,16 +45,21 @@ export function AddressModal<T extends Address | undefined = undefined>({
   )
 }
 
-interface NewAddressModalButtonProps extends Omit<ButtonProps, 'ref' | 'children' | 'onPress' | 'onSubmit'> {
+interface NewAddressModalButtonProps extends Omit<ButtonProps, 'ref' | 'onPress' | 'onSubmit'> {
   onSubmit?: MaybePromise<(address: AddressCreateOutput) => void>
 }
 
-export function NewAddressModalButton({ color = 'secondary', onSubmit, ...rest }: NewAddressModalButtonProps) {
+export function NewAddressModalButton({
+  children,
+  color = 'secondary',
+  onSubmit,
+  ...rest
+}: NewAddressModalButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
     <Button color={color} onPress={() => setIsOpen(true)} {...rest}>
-      Novo
+      {children ?? 'Novo'}
       {isOpen && <AddressModal isOpen={isOpen} setIsOpen={setIsOpen} onSubmit={onSubmit} />}
     </Button>
   )

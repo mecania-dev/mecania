@@ -9,6 +9,7 @@ import { toast } from '@/hooks/use-toast'
 import { CNPJApiResponse, getZipCode } from '@/http'
 import { MechanicCreateInput } from '@/http/user/create-mechanic'
 import { phoneNumberMask } from '@/lib/masks/phone-number'
+import { CEPMask } from '@/lib/masks/zip-code'
 import { defaultStringValue } from '@/lib/string'
 
 export function MechanicFormBody() {
@@ -21,30 +22,38 @@ export function MechanicFormBody() {
       setValue('firstName', cnpj.razao_social, { shouldValidate: true, shouldDirty: true })
     }
 
+    if (cnpj?.nome_fantasia) {
+      setValue('username', cnpj.nome_fantasia, { shouldValidate: true, shouldDirty: true })
+    }
+
     if (cnpj?.ddd_telefone_1) {
       setValue('phoneNumber', phoneNumberMask(cnpj.ddd_telefone_1), { shouldValidate: true, shouldDirty: true })
     }
 
     if (cnpj?.cep && cnpj.numero) {
       const addressRes = await getZipCode(cnpj.cep)
+
       if (addressRes.ok) {
-        const address = addressRes.data
-        setValue(
-          'addresses',
-          [
-            {
-              street: address.street,
-              number: cnpj.numero,
-              district: address.neighborhood,
-              city: address.city,
-              state: address.state,
-              zipCode: address.cep,
-              country: 'BR',
-              complement: cnpj.complemento
-            }
-          ],
-          { shouldValidate: true, shouldDirty: true }
-        )
+        const { street, neighborhood, city, state, cep } = addressRes.data
+
+        if (street && neighborhood && city && state && cep) {
+          setValue(
+            'addresses',
+            [
+              {
+                street: street,
+                number: cnpj.numero,
+                district: neighborhood,
+                city: city,
+                state: state,
+                zipCode: CEPMask(cep),
+                country: 'BR',
+                complement: cnpj.complemento
+              }
+            ],
+            { shouldValidate: true, shouldDirty: true }
+          )
+        }
       }
     }
   }
