@@ -6,14 +6,7 @@ import { Button } from '@/components/button'
 import { Mecania } from '@/components/icons/mecania'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { useUser } from '@/providers/user-provider'
-import {
-  Navbar as NextUINavbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarItem
-} from '@nextui-org/react'
+import { Navbar as NextUINavbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react'
 import Link from 'next/link'
 
 import { NavLink } from './nav-link'
@@ -28,7 +21,6 @@ export function Navbar() {
   return (
     <NextUINavbar className="bg-background/60 text-foreground" isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
       <NavbarBrand className="h-full space-x-2">
-        <NavbarMenuToggle className="sm:hidden" />
         <Link href="/" className="flex h-full items-center justify-center gap-2">
           <Mecania className="h-2/5 w-auto" />
         </Link>
@@ -54,14 +46,6 @@ export function Navbar() {
           )}
         </NavbarItem>
       </NavbarContent>
-
-      <NavbarMenu className="bg-background/60">
-        {menuItems.map((item, index) => (
-          <NavLink href={item.href} key={`${item.label}-${index}`} isMenu>
-            {item.label}
-          </NavLink>
-        ))}
-      </NavbarMenu>
     </NextUINavbar>
   )
 }

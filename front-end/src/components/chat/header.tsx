@@ -12,7 +12,7 @@ const chatHeader = tv({
   }
 })
 
-interface ChatHeaderProps extends CardProps {
+type ChatHeaderProps = CardProps & {
   classNames?: SlotsToClasses<keyof ReturnType<typeof chatHeader>>
 }
 

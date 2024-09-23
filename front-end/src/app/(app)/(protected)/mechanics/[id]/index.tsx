@@ -1,12 +1,11 @@
 'use client'
 
-import { FaEnvelope, FaPhone } from 'react-icons/fa6'
-
 import { Card } from '@/components/card'
-import { Rating } from '@/components/rating'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { Mechanic } from '@/types/entities/mechanic'
-import { Avatar, cn, Divider } from '@nextui-org/react'
+import { cn } from '@nextui-org/react'
+
+import { MechanicCard } from '../mechanic-card'
 
 interface MechanicDetailsProps {
   id: Number
@@ -16,40 +15,18 @@ export function MechanicDetails({ id }: MechanicDetailsProps) {
   const { state } = useSWRCustom<Mechanic>(`users/${id}`)
   const mechanic = state.data
 
+  if (!mechanic) return null
+
   return (
     <div className="flex flex-col items-center space-y-6 p-5">
       {/* Profile Section */}
-      <Card className="w-full max-w-3xl sm:p-4" shadow="lg" isHoverable={false}>
-        <Card.Body>
-          <div className="flex items-center space-x-4">
-            <Avatar
-              src={mechanic?.avatarUrl ?? ''}
-              alt={mechanic?.username}
-              className="h-14 w-14 shrink-0 text-large sm:h-20 sm:w-20"
-            />
-            <div>
-              <h1 className="text-large font-bold sm:text-2xl">{mechanic?.username}</h1>
-              <div className="flex space-x-2 text-default-600">
-                <FaPhone className="mt-1" />
-                <span>{mechanic?.phoneNumber}</span>
-              </div>
-              <div className="flex space-x-2 text-default-600">
-                <FaEnvelope className="mt-1" />
-                <span>{mechanic?.email}</span>
-              </div>
-              <span className="text-small text-default-500">CNPJ: {mechanic?.fiscalIdentification}</span>
-            </div>
-          </div>
-          {/* Rating Section */}
-          <Divider />
-          <div className="flex items-center justify-between">
-            <span className="text-large font-medium">Rating</span>
-            <Rating rating={mechanic?.rating} />
-          </div>
-        </Card.Body>
-      </Card>
+      <MechanicCard
+        mechanic={mechanic}
+        classNames={{ base: 'sm:p-4', avatar: 'sm:h-20 sm:w-20', username: 'sm:text-2xl' }}
+        isHoverable={false}
+      />
       {/* Services Section */}
-      {mechanic?.services && mechanic.services.length > 0 && (
+      {mechanic.services && mechanic.services.length > 0 && (
         <Card className="w-full max-w-3xl sm:p-4" shadow="lg" isHoverable={false}>
           <Card.Header className="pb-0 text-large font-bold sm:text-xl">Serviços Oferecidos</Card.Header>
           <Card.Body>
@@ -66,11 +43,11 @@ export function MechanicDetails({ id }: MechanicDetailsProps) {
         </Card>
       )}
       {/* Address Section */}
-      {mechanic?.addresses && mechanic.addresses.length > 0 && (
+      {mechanic.addresses && mechanic.addresses.length > 0 && (
         <Card className="w-full max-w-3xl sm:p-4" shadow="lg" isHoverable={false}>
           <Card.Header className="pb-0 text-large font-bold sm:text-xl">Endereços</Card.Header>
           <Card.Body>
-            {mechanic?.addresses.map((address, i) => (
+            {mechanic.addresses.map((address, i) => (
               <div key={address.id} className={cn(i !== mechanic.addresses.length - 1 && 'mb-2 border-b pb-2')}>
                 <p className="text-small sm:text-large">{`${address.street}, ${address.number} - ${address.district}, ${address.city} - ${address.state}`}</p>
                 <p className="text-xs text-default-500 sm:text-small">
