@@ -5,7 +5,7 @@ import { tv, VariantProps } from '@nextui-org/react'
 import { range } from 'lodash'
 
 interface RatingProps extends VariantProps<typeof ratingClasses> {
-  rating?: number
+  rating?: number | null
   onRatingChange?: (rating: number) => void
   isDisabled?: boolean
 }
@@ -39,7 +39,7 @@ export function Rating({
   hideLabel,
   isDisabled
 }: RatingProps) {
-  const [rating, setRating] = useControlledState(controlledRating, 0, onRatingChange)
+  const [rating, setRating] = useControlledState(controlledRating ?? 0, 0, onRatingChange)
   const roundedRating = Math.round(rating * 2) / 2
   const { base, label, star } = ratingClasses({ labelPosition, hideLabel })
 
