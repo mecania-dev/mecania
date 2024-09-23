@@ -1,5 +1,6 @@
 'use client'
 
+import Loading from '@/app/loading'
 import { Card } from '@/components/card'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { Mechanic } from '@/types/entities/mechanic'
@@ -14,6 +15,8 @@ interface MechanicDetailsProps {
 export function MechanicDetails({ id }: MechanicDetailsProps) {
   const { state } = useSWRCustom<Mechanic>(`users/${id}`)
   const mechanic = state.data
+
+  if (state.isLoading) return <Loading />
 
   if (!mechanic) return null
 

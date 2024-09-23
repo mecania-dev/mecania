@@ -2,6 +2,7 @@
 
 import { FaTools } from 'react-icons/fa'
 
+import Loading from '@/app/loading'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { Mechanic } from '@/types/entities/mechanic'
 
@@ -10,6 +11,8 @@ import { MechanicCard } from './mechanic-card'
 export function MechanicsList() {
   const { state } = useSWRCustom<Mechanic[]>(`users/mechanics/`)
   const mechanics = state.data
+
+  if (state.isLoading) return <Loading />
 
   if (!mechanics || mechanics.length === 0) {
     return (
