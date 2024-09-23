@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { AppAbility, getUserPermissions } from './casl'
 import { getSession } from './session'
-import { getTokens } from './token'
+import { getTokens, waitTokenRefresh } from './token'
 import { AuthProps } from './types'
 
 export async function isAuthenticated() {
@@ -18,6 +18,7 @@ export async function isAuthenticated() {
 }
 
 export async function auth({ admin, groups, unauthorizedGroups, redirectUrl, custom }: AuthProps = {}) {
+  await waitTokenRefresh()
   const session = await getSession()
   const isAuthed = await isAuthenticated()
   let authorized = isAuthed

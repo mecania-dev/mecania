@@ -2,6 +2,7 @@ import { env } from '@/env'
 import { refreshToken } from '@/http'
 import { cookies } from '@/lib/cookies'
 import { jwtDecode } from 'jwt-decode'
+import { unstable_noStore as noStore } from 'next/cache'
 
 import { clearSession, setSession } from './session'
 
@@ -11,6 +12,7 @@ export const REFRESH_TOKEN_NAME = 'refresh_token'
 let isRefreshing = false
 
 export async function waitTokenRefresh() {
+  noStore()
   if (isRefreshing) {
     while (isRefreshing) {
       await new Promise(resolve => setTimeout(resolve, 100))
@@ -21,6 +23,7 @@ export async function waitTokenRefresh() {
 }
 
 export async function getValidAccessToken(forceRefresh = false) {
+  noStore()
   const { access, refresh } = await getTokens()
   if (!refresh) {
     await clearSession()
