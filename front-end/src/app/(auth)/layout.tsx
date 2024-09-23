@@ -4,7 +4,7 @@ import { Mecania } from '@/components/icons/mecania'
 import { cookies } from '@/lib/cookies'
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
-  const isAuthenticated = await auth({
+  const isAuthorized = await auth({
     redirectUrl: '/',
     async custom({ isAuthenticated, setRedirectUrl }) {
       const callbackUrl = await cookies('callback-url')
@@ -13,7 +13,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
     }
   })
 
-  if (!isAuthenticated) return null
+  if (!isAuthorized) return null
 
   return (
     <div className="box-content flex grow flex-col items-center justify-center gap-6 p-5 sm:p-20">

@@ -16,8 +16,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
-  const isAuthenticated = await auth({ redirectUrl: '/profile', groups: ['Driver'] })
-  if (!isAuthenticated) return null
+  const isAuthorized = await auth({ redirectUrl: '/profile', groups: ['Driver'] })
+  if (!isAuthorized) return null
 
   const chatId = params.id ? Number(params.id.at(0)) : undefined
   const isValid = !params.id || !isNaN(params.id.at(0) as any)
