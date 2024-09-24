@@ -19,6 +19,7 @@ export function NewMechanicCard({ index, mechanic }: NewMechanicCardProps) {
   const { errorMessages } = errors.find(e => e.username === mechanic.username) ?? {}
 
   async function onSubmit(address: AddressCreateOutput) {
+    delete address.userId
     addAddress(index, address)
   }
 

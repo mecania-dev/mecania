@@ -38,7 +38,7 @@ export function AddressModal<T extends Address | undefined = undefined>({
   }
 
   return (
-    <Modal title="Modal de Endereço" form={form} isOpen={isOpen} onOpenChange={setIsOpen} onFormSubmit={handleOnSubmit}>
+    <Modal title="Endereço" form={form} isOpen={isOpen} onOpenChange={setIsOpen} onFormSubmit={handleOnSubmit}>
       <AddressModalBody />
       <AddressModalFooter />
     </Modal>

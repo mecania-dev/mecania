@@ -36,6 +36,17 @@ export const MechanicCard = forwardRef<HTMLDivElement, MechanicCardProps>(functi
 ) {
   const classes = mechanicCard()
 
+  if (!isLoaded)
+    return (
+      <MechanicCardSkeleton
+        shadow={shadow}
+        classNames={classNames}
+        hideAvatar={hideAvatar}
+        isLoaded={isLoaded}
+        {...rest}
+      />
+    )
+
   return (
     <Card
       ref={ref}
@@ -60,37 +71,29 @@ export const MechanicCard = forwardRef<HTMLDivElement, MechanicCardProps>(functi
             />
           )}
           <div className={classes.infosWrapper({ class: classNames?.infosWrapper })}>
-            <Skeleton className="h-5 w-[60%] rounded-small" isLoaded={isLoaded}>
-              <h1 className={classes.username({ class: classNames?.username })}>{mechanic?.username}</h1>
-            </Skeleton>
-            <div className={classes.infos({ class: classNames?.infos })}>
-              <FaPhone className={classes.infosIcon({ class: classNames?.infosIcon })} />
-              <Skeleton className="h-5 rounded-small" isLoaded={isLoaded}>
-                <span className={classes.infosText({ class: classNames?.infosText })}>
-                  {isLoaded ? mechanic?.phoneNumber : '(00) 0 0000-0000'}
-                </span>
-              </Skeleton>
-            </div>
-            <div className={classes.infos({ class: classNames?.infos })}>
-              <FaEnvelope className={classes.infosIcon({ class: classNames?.infosIcon })} />
-              <Skeleton className="h-5 rounded-small" isLoaded={isLoaded}>
-                <span className={classes.infosText({ class: classNames?.infosText })}>
-                  {isLoaded ? mechanic?.email : 'example@example.com'}
-                </span>
-              </Skeleton>
-            </div>
-            <div className="flex gap-1.5">
-              <b>CNPJ:</b>
-              <Skeleton className="h-5 rounded-small" isLoaded={isLoaded}>
-                <span className={classes.fiscalIdentification({ class: classNames?.fiscalIdentification })}>
-                  {isLoaded ? mechanic?.fiscalIdentification : '000.000.000-00'}
-                </span>
-              </Skeleton>
-            </div>
+            <h1 className={classes.username({ class: classNames?.username })}>{mechanic?.username}</h1>
+            {mechanic?.phoneNumber && (
+              <div className={classes.infos({ class: classNames?.infos })}>
+                <FaPhone className={classes.infosIcon({ class: classNames?.infosIcon })} />
+                <span className={classes.infosText({ class: classNames?.infosText })}>{mechanic.phoneNumber}</span>
+              </div>
+            )}
+            {mechanic?.email && (
+              <div className={classes.infos({ class: classNames?.infos })}>
+                <FaEnvelope className={classes.infosIcon({ class: classNames?.infosIcon })} />
+                <span className={classes.infosText({ class: classNames?.infosText })}>{mechanic.email}</span>
+              </div>
+            )}
+            {mechanic?.fiscalIdentification && (
+              <div className={classes.fiscalIdentification({ class: classNames?.fiscalIdentification })}>
+                <b>CNPJ: </b>
+                {mechanic.fiscalIdentification}
+              </div>
+            )}
           </div>
         </div>
         {/* Rating Section */}
-        <Divider />
+        <Divider className="my-2" />
         <div className={classes.ratingWrapper({ class: classNames?.ratingWrapper })}>
           <span className={classes.ratingText({ class: classNames?.ratingText })}>Rating</span>
           <Rating rating={mechanic?.rating} />
@@ -100,3 +103,69 @@ export const MechanicCard = forwardRef<HTMLDivElement, MechanicCardProps>(functi
     </Card>
   )
 })
+
+export function MechanicCardSkeleton({
+  children,
+  shadow = 'lg',
+  classNames,
+  hideAvatar,
+  isLoaded,
+  ...rest
+}: MechanicCardProps) {
+  const classes = mechanicCard()
+
+  return (
+    <Card
+      shadow={shadow}
+      classNames={{
+        base: ['w-full max-w-3xl', classNames?.base],
+        body: classNames?.body,
+        header: classNames?.header,
+        footer: classNames?.footer
+      }}
+      {...rest}
+    >
+      <Card.Body>
+        <div className={classes.wrapper({ class: classNames?.wrapper })}>
+          {!hideAvatar && <Avatar src="" alt="skeleton" className={classes.avatar({ class: classNames?.avatar })} />}
+          <div className={classes.infosWrapper({ class: classNames?.infosWrapper })}>
+            <Skeleton className="w-[60%] rounded-small" isLoaded={isLoaded}>
+              <h1 className={classes.username({ class: classNames?.username })}>Skeleton</h1>
+            </Skeleton>
+            <div className={classes.infos({ class: classNames?.infos })}>
+              <FaPhone className={classes.infosIcon({ class: classNames?.infosIcon })} />
+              <Skeleton className="rounded-small" isLoaded={isLoaded}>
+                <span className={classes.infosText({ class: classNames?.infosText })}>(00) 0 0000-0000</span>
+              </Skeleton>
+            </div>
+            <div className={classes.infos({ class: classNames?.infos })}>
+              <FaEnvelope className={classes.infosIcon({ class: classNames?.infosIcon })} />
+              <Skeleton className="rounded-small" isLoaded={isLoaded}>
+                <span className={classes.infosText({ class: classNames?.infosText })}>example@example.com</span>
+              </Skeleton>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <b className={classes.fiscalIdentification({ class: [classNames?.fiscalIdentification, 'grow-0'] })}>
+                CNPJ:
+              </b>
+              <Skeleton className="rounded-small" isLoaded={isLoaded}>
+                <span className={classes.fiscalIdentification({ class: classNames?.fiscalIdentification })}>
+                  000.000.000-00
+                </span>
+              </Skeleton>
+            </div>
+          </div>
+        </div>
+        {/* Rating Section */}
+        <Divider className="my-2" />
+        <div className={classes.ratingWrapper({ class: classNames?.ratingWrapper })}>
+          <span className={classes.ratingText({ class: classNames?.ratingText })}>Rating</span>
+          <Skeleton className="rounded-small" isLoaded={isLoaded}>
+            <Rating rating={0} />
+          </Skeleton>
+        </div>
+        {children}
+      </Card.Body>
+    </Card>
+  )
+}
