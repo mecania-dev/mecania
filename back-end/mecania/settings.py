@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "django_cleanup.apps.CleanupConfig",
     "corsheaders",
     "rest_framework",
-    "rest_framework_simplejwt.token_blacklist",
+    # "rest_framework_simplejwt.token_blacklist",
     "storages",
     # internal apps
     "api",
