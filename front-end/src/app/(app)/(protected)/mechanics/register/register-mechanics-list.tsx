@@ -8,13 +8,18 @@ import { NewMechanicCard } from './register-form/new-mechanic-card'
 import { useRegisterMechanics } from './register-form/use-register-mechanics'
 
 export function RegisterMechanicsList() {
-  const { mechanics, removeMechanic } = useRegisterMechanics()
+  const { mechanics, removeMechanic, addError } = useRegisterMechanics()
   const [onRegisterMechanics, isLoading] = useIsLoading(async () => {
-    for (const mechanic of mechanics) {
-      const res = await createMechanic(mechanic)
-      if (res.ok) {
-        removeMechanic(mechanics.indexOf(mechanic))
-      }
+    for (let i = 0; i < mechanics.length; i++) {
+      const mechanic = mechanics[i]
+      await createMechanic(mechanic, {
+        onSuccess: () => removeMechanic(i),
+        onError(error) {
+          if (error?.response?.data) {
+            addError(mechanic.username, error.response.data)
+          }
+        }
+      })
     }
   })
 

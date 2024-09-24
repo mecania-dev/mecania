@@ -70,6 +70,9 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
         fields = "__all__"
         extra_kwargs = {
             "password": {"write_only": True},  # Prevent password from being included in the response
+            "is_active": {"default": True},
+            "is_staff": {"default": False},
+            "is_superuser": {"default": False},
         }
 
     def validate(self, data):
@@ -84,6 +87,13 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
 
         if request:
             user: User = request.user
+
+            if not user.is_superuser and data.get("is_superuser", False):
+                errors["is_superuser"] = "You do not have permission to create superusers."
+
+            if not user.is_superuser and data.get("is_staff", False):
+                errors["is_staff"] = "You do not have permission to create staff users."
+
             fiscal_identification = data.get("fiscal_identification", getattr(user, "fiscal_identification", None))
             phone_number = data.get("phone_number", getattr(user, "phone_number", None))
             groups = data.get("groups", getattr(user, "groups", None))

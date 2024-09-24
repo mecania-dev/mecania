@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import { FaEnvelope, FaPhone } from 'react-icons/fa6'
 
 import { Card, CardProps } from '@/components/card'
@@ -29,20 +30,15 @@ const mechanicCard = tv({
   }
 })
 
-export function MechanicCard({
-  children,
-  mechanic,
-  href,
-  shadow = 'lg',
-  classNames,
-  hideAvatar,
-  isLoaded = true,
-  ...rest
-}: MechanicCardProps) {
+export const MechanicCard = forwardRef<HTMLDivElement, MechanicCardProps>(function MechanicCard(
+  { children, mechanic, href, shadow = 'lg', classNames, hideAvatar, isLoaded = true, ...rest },
+  ref
+) {
   const classes = mechanicCard()
 
   return (
     <Card
+      ref={ref}
       as={href ? Link : undefined}
       href={href}
       shadow={shadow}
@@ -103,4 +99,4 @@ export function MechanicCard({
       </Card.Body>
     </Card>
   )
-}
+})

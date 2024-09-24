@@ -3,6 +3,7 @@ import { useFormContext } from 'react-hook-form'
 import { FlexWrap } from '@/components/flex-wrap'
 import { Input } from '@/components/input'
 import { FiscalIdentificationInput } from '@/components/input/fiscal-identification'
+import { ImageInput } from '@/components/input/image'
 import { PasswordInput } from '@/components/input/password'
 import { PhoneNumberInput } from '@/components/input/phone-number'
 import { toast } from '@/hooks/use-toast'
@@ -16,6 +17,10 @@ export function MechanicFormBody() {
   const { watch, register, setValue, formState } = useFormContext<MechanicCreateInput>()
   const { defaultValues, errors } = formState
   const values = watch()
+
+  function setProfileImg(image: File) {
+    setValue('avatarUrl', image ?? undefined, { shouldDirty: true })
+  }
 
   async function onCNPJChange(cnpj?: CNPJApiResponse) {
     if (cnpj?.razao_social) {
@@ -67,6 +72,17 @@ export function MechanicFormBody() {
 
   return (
     <div className="space-y-2">
+      <ImageInput
+        image={values.avatarUrl}
+        label={values.username}
+        classNames={{
+          base: 'items-center mb-5',
+          wrapper: 'w-[min(350px,_100%)]',
+          innerWrapper: 'aspect-[5/3.5]',
+          img: 'object-cover'
+        }}
+        setImage={setProfileImg}
+      />
       <FlexWrap>
         <FiscalIdentificationInput
           type="CNPJ"
@@ -123,7 +139,7 @@ export function MechanicFormBody() {
           value={String(values.rating)}
           placeholder={String(defaultValues?.rating)}
           errorMessage={errors.rating?.message}
-          {...register('rating', { setValueAs: value => Number(value || 1) })}
+          {...register('rating', { setValueAs: value => (value ? Number(value) : undefined) })}
         />
       </FlexWrap>
       <FlexWrap>

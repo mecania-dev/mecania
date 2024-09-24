@@ -70,6 +70,12 @@ class User(AbstractBaseUser, PermissionsMixin):
             if self.password and self.password != old_instance.password:
                 self.set_password(self.password)
 
+        if self._state.adding and not self.pk:
+            temp_avatar_url = self.avatar_url
+            self.avatar_url = None  # Temporarily set to None to avoid saving the file at this point
+            super().save(*args, **kwargs)
+            self.avatar_url = temp_avatar_url  # Restore the avatar URL after the instance has been saved
+
         if self.avatar_url and isinstance(self.avatar_url, ImageFieldFile):
             self.avatar_url = compress_image(self.avatar_url)
 

@@ -1,3 +1,4 @@
+import { fileToBase64 } from '@/lib/file'
 import { number, string } from '@/lib/zod'
 import { addressSchema } from '@/types/entities/address'
 import { requiredFiscalIdentificationSchema } from '@/types/fiscal-identification'
@@ -5,6 +6,17 @@ import { requiredPhoneNumberSchema } from '@/types/phone-number'
 import { z } from 'zod'
 
 const mechanicCreateRawSchema = z.object({
+  avatarUrl: z
+    .instanceof(File)
+    .transform(async avatarUrl => {
+      const base64Avatar = await fileToBase64(avatarUrl)
+      return {
+        base64: base64Avatar ?? undefined,
+        filename: avatarUrl.name,
+        mimetype: avatarUrl.type
+      }
+    })
+    .optional(),
   username: string({ name: 'Nome de usuário', min: 1 }),
   firstName: string({ name: 'Nome', min: 1 }),
   email: z.string().email('Insira um e-mail válido'),
