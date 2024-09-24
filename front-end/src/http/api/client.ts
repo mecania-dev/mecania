@@ -1,4 +1,4 @@
-import { getValidAccessToken, waitTokenRefresh } from '@/auth'
+import { getValidAccessToken } from '@/auth'
 import { env } from '@/env'
 import axios, { AxiosError, CreateAxiosDefaults } from 'axios'
 
@@ -10,7 +10,6 @@ export const apiClient = getApiClient({ withCredentials: true })
 export const rawApiClient = getApiClient()
 
 apiClient.interceptors.request.use(async config => {
-  await waitTokenRefresh()
   const validToken = await getValidAccessToken()
 
   if (validToken) {

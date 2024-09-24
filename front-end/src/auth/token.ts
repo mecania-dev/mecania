@@ -18,28 +18,27 @@ export async function waitTokenRefresh() {
     while (isRefreshing) {
       await new Promise(resolve => setTimeout(resolve, 100))
     }
-    await new Promise(resolve => setTimeout(resolve, 250))
     console.log('Token refreshed!')
     await waitTokenRefresh()
   }
 }
 
 export async function getValidAccessToken(forceRefresh = false) {
-  noStore()
-  const { access, refresh } = await getTokens()
-  if (!refresh) {
-    await clearSession()
-    await clearTokens()
-    return
-  }
-
-  if (access && !forceRefresh && !isTokenExpired(access)) return access
-
   if (isRefreshing) {
     await waitTokenRefresh()
     const { access: newAccess } = await getTokens()
     return newAccess
   } else {
+    const { access, refresh } = await getTokens()
+
+    if (!refresh) {
+      await clearSession()
+      await clearTokens()
+      return
+    }
+
+    if (access && !forceRefresh && !isTokenExpired(access)) return access
+
     isRefreshing = true
     const res = await refreshToken({ refresh })
     isRefreshing = false
