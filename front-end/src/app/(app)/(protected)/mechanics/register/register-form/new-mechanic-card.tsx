@@ -3,7 +3,6 @@ import { FaTrash } from 'react-icons/fa6'
 import { MechanicCard } from '@/app/(app)/(protected)/mechanics/mechanic-card'
 import { NewAddressModalButton } from '@/app/(app)/(protected)/profile/addresses/address-modal'
 import { Button } from '@/components/button'
-import { isInvalidFieldsError } from '@/hooks/use-form'
 import { AddressCreateOutput } from '@/http/address/create'
 import { MechanicCreateOutput } from '@/http/user/create-mechanic'
 import { Divider, Tooltip } from '@nextui-org/react'
@@ -17,8 +16,7 @@ interface NewMechanicCardProps {
 
 export function NewMechanicCard({ index, mechanic }: NewMechanicCardProps) {
   const { errors, addAddress, removeMechanic, removeAddress } = useRegisterMechanics()
-  const { error } = errors.find(e => e.username === mechanic.username) ?? {}
-  const errorMessages = isInvalidFieldsError(error) ? Object.values(error).flatMap(v => v) : undefined
+  const { errorMessages } = errors.find(e => e.username === mechanic.username) ?? {}
 
   async function onSubmit(address: AddressCreateOutput) {
     addAddress(index, address)
@@ -50,7 +48,7 @@ export function NewMechanicCard({ index, mechanic }: NewMechanicCardProps) {
       <MechanicCard
         mechanic={mechanic as any}
         classNames={{
-          base: error && '!border-danger !border-2',
+          base: errorMessages && '!border-danger !border-2',
           username: '!text-small',
           infosIcon: '!h-3 !w-3',
           infosText: '!text-small',

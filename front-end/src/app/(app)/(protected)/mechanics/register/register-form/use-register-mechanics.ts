@@ -1,10 +1,11 @@
+import { isInvalidFieldsError } from '@/hooks/use-form'
 import { MechanicCreateInput, MechanicCreateOutput } from '@/http/user/create-mechanic'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 type RegisterMechanicsStore = {
   mechanics: MechanicCreateOutput[]
-  errors: { username: string; error: any }[]
+  errors: { username: string; errorMessages: string[] }[]
   addMechanic: (mechanic: MechanicCreateOutput) => void
   removeMechanic: (index?: number) => void
   addAddress: (mechanicIndex: number, address: NonNullable<MechanicCreateInput['addresses']>[number]) => void
@@ -52,14 +53,15 @@ export const useRegisterMechanics = create<RegisterMechanicsStore>()(
       },
       addError: (username, error) => {
         return set(state => {
-          const existingError = state.errors.find(error => error.username === username)
-          if (existingError) {
-            existingError.error = error
-            return { ...state }
-          } else {
-            state.errors.push({ username, error })
+          if (!isInvalidFieldsError(error)) return state
+          const errorMessages = Object.values(error).flatMap(v => v)
+          // Update existing error if found
+          const errors = state.errors.map(err => (err.username === username ? { ...err, errorMessages } : err))
+          // Add new error if not already present
+          if (!errors.some(err => err.username === username)) {
+            errors.push({ username, errorMessages })
           }
-          return { ...state }
+          return { ...state, errors }
         })
       }
     }),

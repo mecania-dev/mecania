@@ -12,14 +12,14 @@ export function RegisterMechanicsList() {
   const [onRegisterMechanics, isLoading] = useIsLoading(async () => {
     for (let i = 0; i < mechanics.length; i++) {
       const mechanic = mechanics[i]
-      await createMechanic(mechanic, {
-        onSuccess: () => removeMechanic(i),
+      const res = await createMechanic(mechanic, {
         onError(error) {
           if (error?.response?.data) {
             addError(mechanic.username, error.response.data)
           }
         }
       })
+      if (res.ok) removeMechanic(i)
     }
   })
 

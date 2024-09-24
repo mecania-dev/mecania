@@ -29,8 +29,8 @@ export function useForm<
   return { ...form, errorMessage, setErrorMessage }
 }
 
-type FieldError = string[]
-type InvalidFieldsError = Record<string, FieldError>
+export type FieldError = string[]
+export type InvalidFieldsError = Record<string, FieldError>
 
 export function isInvalidFieldsError(error: any): error is InvalidFieldsError {
   if (typeof error !== 'object') return false

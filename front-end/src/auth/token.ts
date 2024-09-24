@@ -14,10 +14,12 @@ let isRefreshing = false
 export async function waitTokenRefresh() {
   noStore()
   if (isRefreshing) {
+    console.log('Waiting for token refresh...')
     while (isRefreshing) {
       await new Promise(resolve => setTimeout(resolve, 100))
     }
     await new Promise(resolve => setTimeout(resolve, 250))
+    console.log('Token refreshed!')
     await waitTokenRefresh()
   }
 }
