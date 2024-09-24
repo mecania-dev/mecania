@@ -5,6 +5,6 @@ import { AddressCreateOutput } from './types'
 
 export * from './types'
 
-export async function createAddress(payload: AddressCreateOutput, config?: ApiRequestConfig<Address>) {
-  return await api.post<Address>(`addresses/`, payload, config)
+export async function createAddress({ userId, ...payload }: AddressCreateOutput, config?: ApiRequestConfig<Address>) {
+  return await api.post<Address>(`users/${userId}/addresses/`, payload, config)
 }
