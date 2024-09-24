@@ -7,14 +7,14 @@ import { z } from 'zod'
 export type SignUpResponse = User
 
 const signUpRawSchema = z.object({
-  username: string({ name: 'Nome de usuário', min: 1 }),
+  username: string({ name: 'Nome de usuário', min: 1, max: 30 }),
   email: z.string().email('Insira um e-mail válido'),
-  firstName: string({ name: 'Nome', min: 1 }),
-  lastName: string({ name: 'Sobrenome', min: 1, allowEmpty: true }).optional(),
+  firstName: string({ name: 'Nome', min: 1, max: 255 }),
+  lastName: string({ name: 'Sobrenome', min: 1, max: 255, allowEmpty: true }).optional(),
   phoneNumber: phoneNumberSchema,
   fiscalIdentification: fiscalIdentificationSchema,
   password: string({ name: 'Senha', min: 5, max: 64 }, { required_error: 'Por favor, insira uma senha' }),
-  confirmPassword: string({ name: 'Confirme a Senha', min: 6, max: 64 }, { required_error: 'Confirme sua senha' }),
+  confirmPassword: string({ name: 'Confirme a Senha', min: 5, max: 64 }, { required_error: 'Confirme sua senha' }),
   groups: z.array(z.enum(['Mechanic', 'Driver']))
 })
 

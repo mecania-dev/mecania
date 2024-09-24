@@ -17,14 +17,14 @@ const mechanicCreateRawSchema = z.object({
       }
     })
     .optional(),
-  username: string({ name: 'Nome de usuário', min: 1 }),
-  firstName: string({ name: 'Nome', min: 1 }),
+  username: string({ name: 'Nome de usuário', min: 1, max: 30 }),
+  firstName: string({ name: 'Nome', min: 1, max: 255 }),
   email: z.string().email('Insira um e-mail válido'),
   phoneNumber: requiredPhoneNumberSchema,
   fiscalIdentification: requiredFiscalIdentificationSchema,
   rating: number({ name: 'Avaliação', min: 1, max: 5 }).int(),
-  password: string({ name: 'Senha', min: 6, max: 64 }),
-  confirmPassword: string({ name: 'Confirme a Senha', min: 6, max: 64 }),
+  password: string({ name: 'Senha', min: 5, max: 64 }),
+  confirmPassword: string({ name: 'Confirme a Senha', min: 5, max: 64 }),
   addresses: z
     .array(
       addressSchema.pick({

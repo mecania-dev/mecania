@@ -3,11 +3,13 @@
 import { Button } from '@/components/button'
 import { useIsLoading } from '@/hooks/use-is-loading'
 import { createMechanic } from '@/http/user/create-mechanic'
+import { useRouter } from 'next/navigation'
 
 import { NewMechanicCard } from './register-form/new-mechanic-card'
 import { useRegisterMechanics } from './register-form/use-register-mechanics'
 
 export function RegisterMechanicsList() {
+  const { push } = useRouter()
   const { mechanics, removeMechanic, addError } = useRegisterMechanics()
   const [onRegisterMechanics, isLoading] = useIsLoading(async () => {
     for (let i = 0; i < mechanics.length; i++) {
@@ -19,7 +21,10 @@ export function RegisterMechanicsList() {
           }
         }
       })
-      if (res.ok) removeMechanic(i)
+      if (res.ok) {
+        removeMechanic(i)
+        push('/mechanics')
+      }
     }
   })
 
