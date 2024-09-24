@@ -26,7 +26,7 @@ export function MechanicsList() {
   return (
     <div className="grid grid-cols-1 gap-6 p-5 md:grid-cols-2 xl:grid-cols-3">
       {state.isLoading
-        ? range(20).map(i => <MechanicCard key={i} isLoaded={!state.isLoading} />)
+        ? range(10).map(i => <MechanicCard key={i} isLoaded={!state.isLoading} />)
         : mechanics?.map(mechanic => (
             <MechanicCard mechanic={mechanic} href={`/mechanics/${mechanic.id}`} key={mechanic.id} />
           ))}
