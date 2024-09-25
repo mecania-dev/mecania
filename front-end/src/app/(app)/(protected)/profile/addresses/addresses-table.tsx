@@ -93,7 +93,7 @@ export function AddressesTable() {
           </div>
         )
 
-      const cellValue = String(address[columnKey])
+      const cellValue = String(address[columnKey] ?? '')
 
       switch (columnKey) {
         case 'street':

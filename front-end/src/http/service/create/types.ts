@@ -1,11 +1,11 @@
-import { string } from '@/lib/zod'
+import { number, string } from '@/lib/zod'
 import { z } from 'zod'
 
 export const serviceCreateSchema = z.object({
   name: string({ name: 'Nome', min: 1 }),
   description: string({ name: 'Descrição', min: 1, allowEmpty: true }).optional(),
-  category: string({ name: 'Categoria', min: 1 }),
-  vehicleType: z.enum(['Car', 'Motorcycle']).default('Car'),
+  category: number({ name: 'Categoria', min: 1 }).or(string({ name: 'Categoria', min: 1 })),
+  vehicleType: z.enum(['Car', 'Motorcycle']).optional(),
   durationMinutes: z.number().nullable().optional()
 })
 

@@ -17,7 +17,7 @@ class Category(models.Model):
 class Service(models.Model):
     VEHICLE_TYPE_CHOICES = [("Car", "Carro"), ("Motorcycle", "Moto")]
 
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=255, blank=True, null=True)
     vehicle_type = models.CharField(max_length=20, choices=VEHICLE_TYPE_CHOICES, default="Car")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="services")

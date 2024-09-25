@@ -47,7 +47,7 @@ export function VehiclesTable() {
           </div>
         )
 
-      const cellValue = String(vehicle[columnKey])
+      const cellValue = String(vehicle[columnKey] ?? '')
 
       switch (columnKey) {
         case 'brand':

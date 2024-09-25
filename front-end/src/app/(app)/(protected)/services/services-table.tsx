@@ -68,7 +68,7 @@ export function ServicesTable() {
         return service.category.name
       }
 
-      const cellValue = String(service[columnKey])
+      const cellValue = String(service[columnKey] ?? '')
 
       switch (columnKey) {
         case 'name':

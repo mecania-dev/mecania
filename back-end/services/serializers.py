@@ -21,6 +21,21 @@ class ServiceRetrieveDestroySerializer(serializers.ModelSerializer):
 
 
 class ServiceCreateUpdateSerializer(serializers.ModelSerializer):
+    category = serializers.CharField()
+
     class Meta:
         model = Service
         fields = "__all__"
+
+    def validate(self, data):
+        category_data = data.get("category")
+
+        if category_data:
+            if category_data.isdigit():
+                category = Category.objects.filter(id=category_data).first()
+            else:
+                category = Category.objects.filter(name=category_data).first()
+
+            data["category"] = None if category is None else category
+
+        return data
