@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
+import { useInfiniteScroll, setIsLoadingMore } from '@/hooks/use-infinite-scroll'
 import { api } from '@/http'
 import { ScrollShadow, ScrollShadowProps, SlotsToClasses, Spinner, SpinnerProps, tv } from '@nextui-org/react'
 import { useAsyncList } from '@react-stately/data'
@@ -46,6 +46,7 @@ export function AsyncScroll<T>({
       const res = await api.get<ItemsResponse<T>>(cursor || url, { signal })
       setHasMore(res.ok ? !!res.data.next : false)
       setIsLoading(false)
+      setIsLoadingMore(false)
 
       return {
         items: res.ok ? res.data.results : [],

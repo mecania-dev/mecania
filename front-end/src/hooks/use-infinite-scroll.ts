@@ -1,7 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react'
 
-import { debounce } from 'lodash'
-
 export interface UseInfiniteScrollProps {
   /**
    * Whether the infinite scroll is enabled.
@@ -23,48 +21,47 @@ export interface UseInfiniteScrollProps {
   onLoadMore?: () => void
 }
 
+let isLoadingMore = false
+
+export function setIsLoadingMore(isLoading: boolean) {
+  isLoadingMore = isLoading
+}
+
 export function useInfiniteScroll(props: UseInfiniteScrollProps = {}) {
   const { hasMore = true, distance = 50, isEnabled = true, onLoadMore } = props
 
   const scrollContainerRef = useRef<HTMLElement>(null)
-  const isLoadingRef = useRef(false)
 
   const loadMore = useCallback(
     (element: HTMLElement) => {
-      let timer: ReturnType<typeof setTimeout>
       const { scrollHeight, clientHeight, scrollTop } = element
       const isNearBottom = scrollHeight - scrollTop <= clientHeight + distance
 
-      if (!isLoadingRef.current && isNearBottom && hasMore && onLoadMore) {
-        isLoadingRef.current = true
+      if (!isLoadingMore && isEnabled && hasMore && onLoadMore && isNearBottom) {
+        setIsLoadingMore(true)
         onLoadMore()
-        timer = setTimeout(() => {
-          isLoadingRef.current = false
-        }, 100) // Debounce time to prevent multiple calls
       }
-
-      return () => clearTimeout(timer)
     },
-    [distance, hasMore, onLoadMore]
+    [distance, isEnabled, hasMore, onLoadMore]
   )
 
   useEffect(() => {
-    if (!scrollContainerRef.current || !isEnabled || !hasMore) return
+    if (!scrollContainerRef.current) return
     const scrollContainerNode = scrollContainerRef.current
 
     loadMore(scrollContainerNode)
 
-    const debouncedCheckIfNearBottom = debounce((e: Event) => {
+    function checkIfNearBottom(e: Event) {
       const element = e.target as HTMLElement
       loadMore(element)
-    }, 100)
+    }
 
-    scrollContainerNode.addEventListener('scroll', debouncedCheckIfNearBottom)
+    scrollContainerNode.addEventListener('scroll', checkIfNearBottom)
 
     return () => {
-      scrollContainerNode.removeEventListener('scroll', debouncedCheckIfNearBottom)
+      scrollContainerNode.removeEventListener('scroll', checkIfNearBottom)
     }
-  }, [scrollContainerRef, isEnabled, hasMore, loadMore])
+  }, [scrollContainerRef, loadMore])
 
   return scrollContainerRef
 }
