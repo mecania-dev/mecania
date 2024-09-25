@@ -13,6 +13,7 @@ import { mutate } from 'swr'
 import { ServicesTable } from './services-table'
 
 export function ServicesPage() {
+  const [files, setFiles] = useState<File[]>()
   const [newServices, setNewServices] = useState<Record<string, string[]>>()
   const [notSaved, setNotSaved] = useState<Record<string, string[]>>()
   const [onSave, isSaving] = useIsLoading(async () => {
@@ -34,12 +35,14 @@ export function ServicesPage() {
     }
     await mutate('services/')
     setNewServices(undefined)
+    setFiles(undefined)
   })
   const serviceNumber = Object.values(newServices || {})
     .flat()
     .filter(v => v).length
 
   async function onFileChange(files?: File[]) {
+    setFiles(files)
     if (!files?.[0]) return onClear()
     const newServices = await processCSV(files[0])
     setNewServices(newServices)
@@ -54,7 +57,7 @@ export function ServicesPage() {
     <div className="space-y-4 p-5">
       <ServicesTable />
       <div className="flex items-end justify-between gap-2">
-        <FileInput accept=".csv" multiple={false} onValueChange={onFileChange}>
+        <FileInput accept=".csv" multiple={false} value={files} onValueChange={onFileChange}>
           Adicionar serviços via CSV
         </FileInput>
         {newServices && (
