@@ -64,6 +64,10 @@ export function ServicesTable() {
           </div>
         )
 
+      if (columnKey === 'category') {
+        return service.category.name
+      }
+
       const cellValue = String(service[columnKey])
 
       switch (columnKey) {
@@ -110,7 +114,7 @@ export function ServicesTable() {
       onSelectionChange={setSelectedKeys}
       topContent={topContent}
       renderCell={renderCell}
-      filterFields={['name', 'description', 'category', 'durationMinutes']}
+      filterFields={['name', 'description', 'durationMinutes']}
       initialVisibleColumns={['name', 'category', 'description', 'actions']}
       bodyProps={{
         emptyContent: services.state.isLoading ? ' ' : 'Nenhum serviço encontrado.',

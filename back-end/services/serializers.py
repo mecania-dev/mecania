@@ -10,6 +10,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ServiceSerializer(serializers.ModelSerializer):
     vehicle_type = serializers.SerializerMethodField()
+    category = CategorySerializer()
 
     class Meta:
         model = Service
