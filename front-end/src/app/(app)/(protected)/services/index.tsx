@@ -14,11 +14,22 @@ import { ServicesTable } from './services-table'
 
 export function ServicesPage() {
   const [newServices, setNewServices] = useState<Record<string, string[]>>()
+  const [notSaved, setNotSaved] = useState<Record<string, string[]>>()
   const [onSave, isSaving] = useIsLoading(async () => {
     for (const [key, value] of Object.entries(newServices || {})) {
       const res = await createCategory({ name: key })
       for (const v of value) {
-        v && (await createService({ category: res.ok ? String(res.data.id) : key, name: v }))
+        if (v) {
+          const serviceRes = await createService({ category: res.ok ? String(res.data.id) : key, name: v })
+          if (!serviceRes.ok) {
+            setNotSaved(prev => {
+              if (!prev) prev = {}
+              prev[key] = prev[key] || []
+              prev[key].push(`Erro ao adicionar ${v}`)
+              return { ...prev }
+            })
+          }
+        }
       }
     }
     await mutate('services/')
@@ -29,9 +40,14 @@ export function ServicesPage() {
     .filter(v => v).length
 
   async function onFileChange(files?: File[]) {
-    if (!files?.[0]) return setNewServices(undefined)
+    if (!files?.[0]) return onClear()
     const newServices = await processCSV(files[0])
     setNewServices(newServices)
+  }
+
+  function onClear() {
+    setNewServices(undefined)
+    setNotSaved(undefined)
   }
 
   return (
@@ -47,9 +63,9 @@ export function ServicesPage() {
           </Button>
         )}
       </div>
-      {newServices && (
+      {(newServices || notSaved) && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
-          {Object.entries(newServices || {}).map(([key, value]) => (
+          {Object.entries(newServices || notSaved || {}).map(([key, value]) => (
             <Card key={key}>
               <Card.Header className="pb-0 font-bold">{key}</Card.Header>
               <Card.Body as="ul" className="list-inside list-disc">
