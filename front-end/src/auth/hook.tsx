@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { ACCESS_TOKEN_NAME, getValidAccessToken, setSession as setSessionAuth } from '@/auth'
+import * as auth from '@/auth'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { useIsLoading } from '@/hooks/use-is-loading'
 import { useIsMounted } from '@/hooks/use-is-mounted'
@@ -12,23 +12,36 @@ import { getCookie } from 'cookies-next'
 
 import { setCredentialsAction, signOutAction } from './actions'
 
+let timeout: NodeJS.Timeout
+
+async function rotateToken(callback?: (accessToken?: string) => void) {
+  if (timeout) clearTimeout(timeout)
+  const accessToken = await auth.getValidAccessToken()
+  if (!accessToken) return callback?.()
+  // 30 seconds before expiration
+  timeout = setTimeout(rotateToken, auth.getTokenExpiresIn(accessToken, 1000 * 30))
+  callback?.(accessToken)
+}
+
 async function setSession(user?: User) {
-  const access = getCookie(ACCESS_TOKEN_NAME)
-  await setSessionAuth(user, access)
+  const access = getCookie(auth.ACCESS_TOKEN_NAME)
+  await auth.setSession(user, access)
 }
 
 export function useAuth() {
   const { pathname, setCallbackUrl } = useRedirect()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [handleValidateAuthState, isLoading] = useIsLoading(async () => {
-    const accessToken = await getValidAccessToken()
-    setIsAuthenticated(!!accessToken)
-  })
+  const [handleValidateAuthState, isLoading] = useIsLoading(validateAuthState)
   const isMounted = useIsMounted(handleValidateAuthState)
-  const user = useSWRCustom<User>(isAuthenticated ? 'users/me/' : null, {
-    onError: signOut,
-    onSuccess: setSession
-  })
+  const user = useSWRCustom<User>(isAuthenticated ? 'users/me/' : null, { onError: signOut, onSuccess: setSession })
+
+  async function validateAuthState() {
+    await rotateToken(accessToken => {
+      if (isAuthenticated !== !!accessToken) {
+        setIsAuthenticated(!!accessToken)
+      }
+    })
+  }
 
   async function signUp(payload: SignUpRequest, config?: Parameters<typeof signUpRequest>[1]) {
     const res = await signUpRequest(payload, config)
