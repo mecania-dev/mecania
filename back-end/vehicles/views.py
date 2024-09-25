@@ -7,9 +7,14 @@ from .models import Vehicle
 from .serializers import VehicleSerializer, VehicleCreateUpdateSerializer
 from users.models import User
 from users.permissions import IsSelfOrAdmin, IsInGroups
+from utils.mixins import FiltersMixin
+
+# REMOVE PAGINATION_CLASS = NONE WHEN FRONT END IS READY
 
 
-class UserVehiclesView(generics.GenericAPIView):
+class UserVehiclesView(FiltersMixin, generics.GenericAPIView):
+    pagination_class = None
+
     def get_permissions(self):
         return [IsSelfOrAdmin("user_id"), IsInGroups(["Driver"])]
 

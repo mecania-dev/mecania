@@ -2,6 +2,7 @@
 
 import { FaTools } from 'react-icons/fa'
 
+import { AsyncScroll } from '@/components/async-scroll'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { Mechanic } from '@/types/entities/mechanic'
 import { range } from 'lodash'
@@ -24,12 +25,16 @@ export function MechanicsList() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 p-5 md:grid-cols-2 xl:grid-cols-3">
-      {state.isLoading
-        ? range(10).map(i => <MechanicCard key={i} isLoaded={!state.isLoading} />)
-        : mechanics?.map(mechanic => (
-            <MechanicCard mechanic={mechanic} href={`/mechanics/${mechanic.id}`} key={mechanic.id} />
-          ))}
-    </div>
+    <AsyncScroll<Mechanic> url="users/mechanics/" className="grow">
+      {(mechanics, isLoading) => (
+        <div className="grid grid-cols-1 gap-6 p-5 md:grid-cols-2 xl:grid-cols-3">
+          {isLoading
+            ? range(10).map(i => <MechanicCard key={i} isLoaded={!isLoading} />)
+            : mechanics?.map(mechanic => (
+                <MechanicCard mechanic={mechanic} href={`/mechanics/${mechanic.id}`} key={mechanic.id} />
+              ))}
+        </div>
+      )}
+    </AsyncScroll>
   )
 }

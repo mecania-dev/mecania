@@ -7,5 +7,9 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  return <MechanicsList />
+  return (
+    <div className="flex h-[calc(100dvh-4rem)] flex-col">
+      <MechanicsList />
+    </div>
+  )
 }

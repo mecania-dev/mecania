@@ -47,10 +47,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # third party packages
-    "django_cleanup.apps.CleanupConfig",
     "corsheaders",
     "rest_framework",
-    # "rest_framework_simplejwt.token_blacklist",
+    "rest_framework_simplejwt",
+    "django_cleanup.apps.CleanupConfig",
     "storages",
     # internal apps
     "api",
@@ -142,6 +142,8 @@ REST_FRAMEWORK = {
         "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
         "djangorestframework_camel_case.parser.CamelCaseJSONParser",
     ),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 10,
 }
 
 SIMPLE_JWT = {
@@ -151,11 +153,6 @@ SIMPLE_JWT = {
     # "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
 }
-
-AUTH_COOKIE_SECURE = env("AUTH_COOKIE_SECURE", True)
-AUTH_COOKIE_HTTP_ONLY = True
-AUTH_COOKIE_PATH = "/"
-AUTH_COOKIE_SAMESITE = "None"
 
 # Custom user model
 AUTH_USER_MODEL = "users.User"

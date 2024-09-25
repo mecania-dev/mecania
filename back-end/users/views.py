@@ -1,14 +1,17 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from django.contrib.auth.models import Group
 
 from .models import User
 from .permissions import IsSelfOrAdmin
-from .serializers import UserRetrieveDestroySerializer, UserCreateUpdateSerializer
+from .serializers import UserListSerializer, UserRetrieveDestroySerializer, UserCreateUpdateSerializer
+from utils.mixins import FiltersMixin
+
+# REMOVE PAGINATION_CLASS = NONE WHEN FRONT END IS READY
 
 
-class UserListCreate(generics.ListCreateAPIView):
+class UserListCreate(FiltersMixin, generics.ListCreateAPIView):
     queryset = User.objects.all()
+    pagination_class = None
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -17,13 +20,14 @@ class UserListCreate(generics.ListCreateAPIView):
 
     def get_serializer_class(self):
         if self.request.method == "GET":
-            return UserRetrieveDestroySerializer
+            return UserListSerializer
         return UserCreateUpdateSerializer
 
 
-class UserRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+class UserRetrieveUpdateDestroy(FiltersMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     lookup_field = "pk"
+    pagination_class = None
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -44,19 +48,14 @@ class LoggedUserView(generics.RetrieveAPIView):
         return self.request.user
 
 
-class MechanicsListView(generics.ListAPIView):
-    serializer_class = UserRetrieveDestroySerializer
+class MechanicsListView(FiltersMixin, generics.ListAPIView):
+    queryset = User.objects.filter(groups__name="Mechanic")
+    serializer_class = UserListSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        mechanics_group = Group.objects.get(name="Mechanic")
-        return User.objects.filter(groups=mechanics_group)
 
-
-class DriversListView(generics.ListAPIView):
-    serializer_class = UserRetrieveDestroySerializer
+class DriversListView(FiltersMixin, generics.ListAPIView):
+    queryset = User.objects.filter(groups__name="Driver")
+    serializer_class = UserListSerializer
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        drivers_group = Group.objects.get(name="Driver")
-        return User.objects.filter(groups=drivers_group)
+    pagination_class = None

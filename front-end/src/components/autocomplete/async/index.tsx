@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { Autocomplete, AutocompleteProps } from '@/components/autocomplete'
-import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
+import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
 
 import { useAsyncAutocompleteList, UseAsyncAutocompleteListProps } from './use-async-autocomplete-list'
 
@@ -32,10 +32,9 @@ export function AsyncAutocomplete<T extends Record<string, any>>({
     filter
   })
 
-  const [, scrollerRef] = useInfiniteScroll({
+  const scrollerRef = useInfiniteScroll({
     hasMore,
     isEnabled: isOpen,
-    shouldUseLoader: false,
     onLoadMore
   })
 
