@@ -38,7 +38,7 @@ export function MechanicDetails({ id }: MechanicDetailsProps) {
                     <h3 className="text-large font-medium">{service.name}</h3>
                     {service.description && <p className="text-default-600 max-sm:text-small">{service.description}</p>}
                     <p className="text-xs text-default-500 sm:text-small">
-                      Categoria: {service.category} | Tipo de Veículo: {service.vehicleType}
+                      Categoria: {service.category.name} | Tipo de Veículo: {service.vehicleType}
                     </p>
                   </div>
                 ))}

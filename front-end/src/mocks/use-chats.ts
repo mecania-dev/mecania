@@ -110,7 +110,7 @@ export const useChats = create<ChatsStore>()(
 
           const recommendations = useServices
             .getState()
-            .services.filter(s => ['Problemas Mecânicos - Motor e Exaustão'].includes(s.category))
+            .services.filter(s => ['Problemas Mecânicos - Motor e Exaustão'].includes(s.category.name))
 
           chat!.recommendations = recommendations
         }
