@@ -10,7 +10,7 @@ import { MechanicCard } from './mechanic-card'
 
 export function MechanicsList() {
   return (
-    <AsyncScroll<Mechanic> url="users/mechanics/?limit=300" className="grow">
+    <AsyncScroll<Mechanic> url="users/mechanics/" className="grow">
       {(mechanics, isLoading) => {
         if (!isLoading && !mechanics?.length) {
           return (

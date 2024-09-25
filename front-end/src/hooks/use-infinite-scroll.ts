@@ -1,5 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 
+import { debounce } from 'lodash'
+
 export interface UseInfiniteScrollProps {
   /**
    * Whether the infinite scroll is enabled.
@@ -25,15 +27,23 @@ export function useInfiniteScroll(props: UseInfiniteScrollProps = {}) {
   const { hasMore = true, distance = 50, isEnabled = true, onLoadMore } = props
 
   const scrollContainerRef = useRef<HTMLElement>(null)
+  const isLoadingRef = useRef(false)
 
   const loadMore = useCallback(
     (element: HTMLElement) => {
+      let timer: ReturnType<typeof setTimeout>
       const { scrollHeight, clientHeight, scrollTop } = element
       const isNearBottom = scrollHeight - scrollTop <= clientHeight + distance
 
-      if (isNearBottom && hasMore && onLoadMore) {
+      if (!isLoadingRef.current && isNearBottom && hasMore && onLoadMore) {
+        isLoadingRef.current = true
         onLoadMore()
+        timer = setTimeout(() => {
+          isLoadingRef.current = false
+        }, 100) // Debounce time to prevent multiple calls
       }
+
+      return () => clearTimeout(timer)
     },
     [distance, hasMore, onLoadMore]
   )
@@ -44,15 +54,15 @@ export function useInfiniteScroll(props: UseInfiniteScrollProps = {}) {
 
     loadMore(scrollContainerNode)
 
-    function checkIfNearBottom(e: Event) {
+    const debouncedCheckIfNearBottom = debounce((e: Event) => {
       const element = e.target as HTMLElement
       loadMore(element)
-    }
+    }, 100)
 
-    scrollContainerNode.addEventListener('scroll', checkIfNearBottom)
+    scrollContainerNode.addEventListener('scroll', debouncedCheckIfNearBottom)
 
     return () => {
-      scrollContainerNode.removeEventListener('scroll', checkIfNearBottom)
+      scrollContainerNode.removeEventListener('scroll', debouncedCheckIfNearBottom)
     }
   }, [scrollContainerRef, isEnabled, hasMore, loadMore])
 
