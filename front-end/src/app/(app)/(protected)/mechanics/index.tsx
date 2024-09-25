@@ -11,8 +11,8 @@ import { MechanicCard } from './mechanic-card'
 export function MechanicsList() {
   return (
     <AsyncScroll<Mechanic> url="users/mechanics/" className="grow">
-      {(mechanics, isLoading) => {
-        if (!isLoading && !mechanics?.length) {
+      {(mechanics, { isMounted }) => {
+        if (isMounted && !mechanics?.length) {
           return (
             <div className="flex flex-col items-center justify-center space-y-4 p-10 text-center">
               <FaTools className="animate-pulse text-6xl text-default-400" />
@@ -24,8 +24,8 @@ export function MechanicsList() {
 
         return (
           <div className="grid grid-cols-1 gap-6 p-5 md:grid-cols-2 xl:grid-cols-3">
-            {isLoading
-              ? range(10).map(i => <MechanicCard key={i} isLoaded={!isLoading} />)
+            {!isMounted
+              ? range(10).map(i => <MechanicCard key={i} isLoaded={isMounted} />)
               : mechanics?.map(mechanic => (
                   <MechanicCard mechanic={mechanic} href={`/mechanics/${mechanic.id}`} key={mechanic.id} />
                 ))}

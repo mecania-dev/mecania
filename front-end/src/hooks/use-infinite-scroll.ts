@@ -21,7 +21,7 @@ export interface UseInfiniteScrollProps {
   onLoadMore?: () => void
 }
 
-let isLoadingMore = false
+export let isLoadingMore = false
 
 export function setIsLoadingMore(isLoading: boolean) {
   isLoadingMore = isLoading
