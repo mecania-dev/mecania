@@ -55,6 +55,8 @@ export async function middleware(req: NextRequest) {
       if (pathname.startsWith('/services')) {
         return !!ability?.can('manage', 'Service')
       }
+
+      return true
     }
   })
 
