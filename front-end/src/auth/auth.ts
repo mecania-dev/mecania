@@ -17,7 +17,14 @@ export async function isAuthenticated() {
   return !!refresh
 }
 
-export async function auth({ admin, groups, unauthorizedGroups, redirectUrl, custom }: AuthProps = {}) {
+export async function auth({
+  admin,
+  groups,
+  unauthorizedGroups,
+  redirect: doRedirect = true,
+  redirectUrl,
+  custom
+}: AuthProps = {}) {
   await waitTokenRefresh()
   const session = await getSession()
   const isAuthed = await isAuthenticated()
@@ -51,6 +58,6 @@ export async function auth({ admin, groups, unauthorizedGroups, redirectUrl, cus
     authorized = customRes
   }
 
-  if (!authorized && realRedirectUrl) redirect(realRedirectUrl)
+  if (!authorized && doRedirect && realRedirectUrl) redirect(realRedirectUrl)
   return authorized
 }

@@ -1,4 +1,3 @@
-import { auth } from '@/auth'
 import { getUser } from '@/http'
 import { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
@@ -20,9 +19,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
-  const isAuthorized = await auth({ redirectUrl: '/profile' })
-  if (!isAuthorized) return null
-
   const res = await getUser(Number(params.id))
   if (!res.ok) return notFound()
 

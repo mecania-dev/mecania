@@ -47,7 +47,7 @@ export function SidebarRoutes() {
           children: 'Oficinas',
           canProps: {
             I: 'create',
-            a: 'Mechanic'
+            a: 'User'
           },
           subRoutes: [{ icon: BiSolidCarMechanic, href: '/mechanics/register', children: 'Cadastrar oficinas' }]
         }

@@ -19,6 +19,7 @@ export interface AuthProps {
   admin?: boolean
   groups?: User['groups']
   unauthorizedGroups?: User['groups']
+  redirect?: boolean
   redirectUrl?: string
   custom?: MaybePromise<(props: AuthCustomProps) => boolean | undefined | void>
 }
