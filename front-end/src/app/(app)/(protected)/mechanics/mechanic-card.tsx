@@ -95,7 +95,7 @@ export const MechanicCard = forwardRef<HTMLDivElement, MechanicCardProps>(functi
         {/* Rating Section */}
         <Divider className="my-2" />
         <div className={classes.ratingWrapper({ class: classNames?.ratingWrapper })}>
-          <span className={classes.ratingText({ class: classNames?.ratingText })}>Rating</span>
+          <span className={classes.ratingText({ class: classNames?.ratingText })}>Avaliação</span>
           <Rating rating={mechanic?.rating} />
         </div>
         {children}
@@ -159,7 +159,7 @@ export function MechanicCardSkeleton({
         {/* Rating Section */}
         <Divider className="my-2" />
         <div className={classes.ratingWrapper({ class: classNames?.ratingWrapper })}>
-          <span className={classes.ratingText({ class: classNames?.ratingText })}>Rating</span>
+          <span className={classes.ratingText({ class: classNames?.ratingText })}>Avaliação</span>
           <Skeleton className="rounded-small" isLoaded={isLoaded}>
             <Rating rating={0} />
           </Skeleton>
