@@ -21,11 +21,9 @@ export function RegisterMechanicsList() {
           }
         }
       })
-      if (res.ok) {
-        removeMechanic(i)
-        push('/mechanics')
-      }
+      if (res.ok) removeMechanic(i)
     }
+    push('/mechanics')
   })
 
   if (mechanics.length === 0) return null
