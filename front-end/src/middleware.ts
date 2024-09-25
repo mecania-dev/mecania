@@ -61,18 +61,30 @@ export async function middleware(req: NextRequest) {
   })
 
   if (!isAuthorized) {
-    return NextResponse.redirect(new URL(callbackUrl ?? '/', req.nextUrl))
+    let redirectUrl = callbackUrl ?? '/'
+
+    if (authPrefixes.some(p => callbackUrl?.startsWith(p))) {
+      redirectUrl = '/'
+    }
+
+    if (pathname === redirectUrl) {
+      return NextResponse.next()
+    }
+
+    return NextResponse.redirect(new URL(redirectUrl, req.nextUrl))
   }
 
-  const response = NextResponse.next()
+  if (!authPrefixes.some(p => pathname.startsWith(p))) {
+    const response = NextResponse.next()
 
-  if (pathname === '/') {
-    response.cookies.delete('callback-url')
-  } else {
-    response.cookies.set('callback-url', pathname)
+    if (pathname === '/') {
+      response.cookies.delete('callback-url')
+    } else {
+      response.cookies.set('callback-url', pathname)
+    }
+
+    return response
   }
-
-  return response
 }
 
 export const config = {
