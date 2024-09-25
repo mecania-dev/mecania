@@ -2,9 +2,9 @@
 
 import { LuTrash2 } from 'react-icons/lu'
 
+import { confirmationModal } from '@/components/modal'
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
-import { confirmationModal } from '@/hooks/use-confirmation-modal'
 import { compareDates } from '@/lib/date'
 import { useChats } from '@/mocks/use-chats'
 

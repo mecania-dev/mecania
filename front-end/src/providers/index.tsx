@@ -1,6 +1,6 @@
 'use client'
 
-import { ConfirmationModal } from '@/components/feedback/confirmation-modal'
+import { ConfirmationModal } from '@/components/modal'
 import { Toaster } from '@/components/toast/toaster'
 import { NextUIProvider } from '@nextui-org/react'
 import { ThemeProvider } from 'next-themes'

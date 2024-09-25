@@ -1,4 +1,5 @@
-import { Service, ServiceCreate } from '@/types/entities/service'
+import { ServiceCreateOutput } from '@/http'
+import { Service } from '@/types/entities/service'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -142,7 +143,7 @@ export const initialServices: Service[] = [
 
 type ServicesStore = {
   services: Service[]
-  addService: (service: ServiceCreate) => void
+  addService: (service: ServiceCreateOutput) => void
   removeService: (serviceId?: number) => void
 }
 

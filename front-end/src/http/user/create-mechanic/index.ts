@@ -1,5 +1,4 @@
-import { api, ApiRequestConfig } from '@/http'
-import { createAddress } from '@/http/address/create'
+import { api, ApiRequestConfig, createAddress } from '@/http'
 import { base64ToBlobDynamic, blobToFile } from '@/lib/file'
 import { Rating } from '@/types/entities/rating'
 import { User } from '@/types/entities/user'

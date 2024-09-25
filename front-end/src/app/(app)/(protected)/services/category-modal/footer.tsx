@@ -2,10 +2,10 @@ import { useFormContext } from 'react-hook-form'
 
 import { Button } from '@/components/button'
 import { Modal } from '@/components/modal'
-import { AddressCreateInput } from '@/http'
+import { CategoryCreateInput } from '@/http'
 
-export function AddressModalFooter() {
-  const form = useFormContext<AddressCreateInput>()
+export function CategoryModalFooter() {
+  const form = useFormContext<CategoryCreateInput>()
   const { isSubmitting } = form.formState
 
   return (

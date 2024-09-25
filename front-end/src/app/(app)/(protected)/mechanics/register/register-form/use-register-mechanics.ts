@@ -1,5 +1,5 @@
 import { isInvalidFieldsError } from '@/hooks/use-form'
-import { MechanicCreateInput, MechanicCreateOutput } from '@/http/user/create-mechanic'
+import { MechanicCreateInput, MechanicCreateOutput } from '@/http'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 

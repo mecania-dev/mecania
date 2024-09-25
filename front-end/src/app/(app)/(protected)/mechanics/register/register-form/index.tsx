@@ -4,7 +4,7 @@ import { DefaultValues } from 'react-hook-form'
 
 import { Form } from '@/components/form'
 import { useForm } from '@/hooks/use-form'
-import { MechanicCreateInput, MechanicCreateOutput, mechanicCreateSchema } from '@/http/user/create-mechanic'
+import { MechanicCreateInput, MechanicCreateOutput, mechanicCreateSchema } from '@/http'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { MechanicFormBody } from './body'

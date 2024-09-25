@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/button'
 import { useIsLoading } from '@/hooks/use-is-loading'
-import { createMechanic } from '@/http/user/create-mechanic'
+import { createMechanic } from '@/http'
 import { useRouter } from 'next/navigation'
 
 import { NewMechanicCard } from './register-form/new-mechanic-card'

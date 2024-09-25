@@ -2,10 +2,10 @@ import { useFormContext } from 'react-hook-form'
 
 import { Button } from '@/components/button'
 import { Modal } from '@/components/modal'
-import { ServiceCreate } from '@/types/entities/service'
+import { ServiceCreateInput } from '@/http'
 
 export function ServiceModalFooter() {
-  const form = useFormContext<ServiceCreate>()
+  const form = useFormContext<ServiceCreateInput>()
   const { isSubmitting } = form.formState
 
   return (

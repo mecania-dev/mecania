@@ -3,8 +3,7 @@ import { useFormContext } from 'react-hook-form'
 import { Input } from '@/components/input'
 import { ZipCodeInput } from '@/components/input/zip-code'
 import { Modal } from '@/components/modal'
-import { ZipCodeResponse } from '@/http'
-import { AddressCreateInput } from '@/http/address/create'
+import { AddressCreateInput, ZipCodeResponse } from '@/http'
 
 export function AddressModalBody() {
   const { watch, register, setValue, formState } = useFormContext<AddressCreateInput>()

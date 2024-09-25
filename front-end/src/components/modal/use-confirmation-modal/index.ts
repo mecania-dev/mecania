@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 
 import { Action, ConfirmationModalState } from './types'
 
+export * from './types'
+
 const listeners: Array<(state: ConfirmationModalState) => void> = []
 
 let memoryState: ConfirmationModalState = { isOpen: false }

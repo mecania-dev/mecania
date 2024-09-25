@@ -1,10 +1,10 @@
 'use client'
 
-import { useConfirmationModal } from '@/hooks/use-confirmation-modal'
+import { Modal, useConfirmationModal } from '@/components/modal'
 import { MaybePromise, maybePromise } from '@/lib/promise'
 import { Button } from '@nextui-org/react'
 
-import { Modal } from '../modal'
+export * from './use-confirmation-modal'
 
 export function ConfirmationModal() {
   const { question, onConfirm, onCancel, isLoading, setIsLoading, confirmationModal, ...rest } = useConfirmationModal()

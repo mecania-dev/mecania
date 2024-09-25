@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form'
 
 import { Button } from '@/components/button'
-import { MechanicCreateInput } from '@/http/user/create-mechanic'
+import { MechanicCreateInput } from '@/http'
 import { len } from '@/lib/object'
 
 export function MechanicFormFooter() {

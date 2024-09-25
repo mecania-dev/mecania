@@ -2,6 +2,7 @@ import { User } from '@/types/entities/user'
 
 import { api, ApiRequestConfig } from '../api'
 
+export * from './create-mechanic'
 export * from './update'
 
 export async function getUser(id: Number, config?: ApiRequestConfig<User>) {

@@ -3,8 +3,13 @@ import { useState } from 'react'
 import { Button, ButtonProps } from '@/components/button'
 import { Modal } from '@/components/modal'
 import { useForm } from '@/hooks/use-form'
-import { AddressCreateInput, AddressCreateOutput, addressCreateSchema } from '@/http/address/create'
-import { AddressUpdateOutput, addressUpdateSchema } from '@/http/address/update'
+import {
+  AddressCreateInput,
+  AddressCreateOutput,
+  addressCreateSchema,
+  AddressUpdateOutput,
+  addressUpdateSchema
+} from '@/http'
 import { maybePromise, MaybePromise } from '@/lib/promise'
 import { useUser } from '@/providers/user-provider'
 import { Address } from '@/types/entities/address'

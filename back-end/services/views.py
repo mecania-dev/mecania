@@ -1,14 +1,33 @@
 from rest_framework import generics
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
-from .models import Service
-from .serializers import ServiceSerializer
+from .models import Category, Service
+from .serializers import CategorySerializer, ServiceSerializer
 from users.models import User
 from users.permissions import IsSelfOrAdmin, IsInGroups
+
+
+class CategoryListCreateView(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [IsAuthenticated()]
+        return [IsAdminUser()]
+
+
+class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [IsAuthenticated()]
+        return [IsAdminUser()]
 
 
 class ServiceListCreateView(generics.ListCreateAPIView):
@@ -72,8 +91,3 @@ class UserServicesView(generics.GenericAPIView):
             # If no service_id is provided, clear all services
             user.services.clear()
             return Response({"message": "All services removed successfully."}, status=status.HTTP_200_OK)
-
-
-class ServiceCategoriesView(APIView):
-    def get(self, request, *args, **kwargs):
-        return Response([{"key": key, "value": value} for key, value in Service.CATEGORIES_CHOICES])

@@ -4,13 +4,14 @@ import { useCallback, useState } from 'react'
 import { LuTrash2 } from 'react-icons/lu'
 
 import { FlexWrap } from '@/components/flex-wrap'
+import { confirmationModal } from '@/components/modal'
 import { Table } from '@/components/table'
 import { TableTopContent } from '@/components/table/types'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
-import { confirmationModal } from '@/hooks/use-confirmation-modal'
 import { toast } from '@/hooks/use-toast'
+import { ServiceCreateOutput } from '@/http'
 import { formatDate } from '@/lib/date'
-import { Service, ServiceCreate } from '@/types/entities/service'
+import { Service } from '@/types/entities/service'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
 
 import { NewServiceModalButton } from './service-modal'
@@ -20,7 +21,7 @@ export function ServicesTable() {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]))
 
   const onCreateService = useCallback(
-    async (service: ServiceCreate) => {
+    async (service: ServiceCreateOutput) => {
       const res = await services.post(service)
       if (res.ok) {
         toast({ message: 'Serviço adicionado com sucesso', type: 'success' })
