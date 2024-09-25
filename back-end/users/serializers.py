@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group, Permission
 from .models import User
 from addresses.serializers import AddressSerializer
 from vehicles.serializers import VehicleSerializer
-from services.serializers import ServiceSerializer
+from services.serializers import ServiceRetrieveDestroySerializer
 
 
 class UserRetrieveDestroySerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class UserRetrieveDestroySerializer(serializers.ModelSerializer):
     permissions = serializers.SerializerMethodField()
     addresses = AddressSerializer(many=True, read_only=True)
     vehicles = VehicleSerializer(many=True, read_only=True)
-    services = ServiceSerializer(many=True, read_only=True)
+    services = ServiceRetrieveDestroySerializer(many=True, read_only=True)
     rating = serializers.SerializerMethodField()
 
     class Meta:

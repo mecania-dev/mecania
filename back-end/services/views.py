@@ -5,7 +5,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 from .models import Category, Service
-from .serializers import CategorySerializer, ServiceSerializer
+from .serializers import CategorySerializer, ServiceRetrieveDestroySerializer, ServiceCreateUpdateSerializer
 from users.models import User
 from users.permissions import IsSelfOrAdmin, IsInGroups
 
@@ -32,29 +32,40 @@ class CategoryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class ServiceListCreateView(generics.ListCreateAPIView):
     queryset = Service.objects.all()
-    serializer_class = ServiceSerializer
 
     def get_permissions(self):
         if self.request.method == "GET":
             return [IsAuthenticated()]
         return [IsAdminUser()]
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return ServiceRetrieveDestroySerializer
+        return ServiceCreateUpdateSerializer
 
 
 class ServiceRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
-    serializer_class = ServiceSerializer
 
     def get_permissions(self):
         if self.request.method == "GET":
             return [IsAuthenticated()]
         return [IsAdminUser()]
 
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return ServiceRetrieveDestroySerializer
+        return ServiceCreateUpdateSerializer
+
 
 class UserServicesView(generics.GenericAPIView):
-    serializer_class = ServiceSerializer
-
     def get_permissions(self):
         return [IsSelfOrAdmin("user_id"), IsInGroups(["Mechanic"])]
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return ServiceCreateUpdateSerializer
+        return ServiceRetrieveDestroySerializer
 
     def get_queryset(self):
         user_id = self.kwargs.get("user_id")

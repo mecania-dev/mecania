@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ServiceSerializer(serializers.ModelSerializer):
+class ServiceRetrieveDestroySerializer(serializers.ModelSerializer):
     vehicle_type = serializers.SerializerMethodField()
     category = CategorySerializer()
 
@@ -18,3 +18,9 @@ class ServiceSerializer(serializers.ModelSerializer):
 
     def get_vehicle_type(self, obj):
         return dict(Service.VEHICLE_TYPE_CHOICES).get(obj.vehicle_type, "")
+
+
+class ServiceCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = "__all__"

@@ -25,7 +25,13 @@ export function ServiceModalBody() {
 
   function onAddNewCategory() {
     categoryModal.setIsOpen(true)
-    categoryModal.setOnSubmit(async category => categories.post<Category>(category))
+    categoryModal.setOnSubmit(async category => {
+      const res = await categories.post<Category>(category)
+      if (res.ok) {
+        setValue('category', res.data.id.toString(), { shouldValidate: true, shouldDirty: true })
+      }
+      return res
+    })
   }
 
   return (
