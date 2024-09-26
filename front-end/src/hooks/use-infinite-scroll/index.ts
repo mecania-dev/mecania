@@ -1,80 +1,35 @@
-import { useEffect, useRef, useCallback, useState } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 
-import { InfiniteScrollAction, InfiniteScrollState, UseInfiniteScrollProps } from './types'
+import { usePagination } from '../use-pagination'
+import { UseInfiniteScrollProps } from './types'
 
 export * from './types'
 
-function reducer<T>(state: InfiniteScrollState<T>, action: InfiniteScrollAction<T>): InfiniteScrollState<T> {
-  switch (action.type) {
-    case 'LOAD_MORE':
-      return { ...state, isLoading: true }
-    case 'LOAD_MORE_SUCCESS':
-      return {
-        ...state,
-        items: [...state.items, ...action.payload.items],
-        next: action.payload.next,
-        hasMore: !!action.payload.next,
-        isMounted: true,
-        isLoading: false
-      }
-    case 'LOAD_MORE_FAILURE':
-      return { ...state, isLoading: false }
-    default:
-      return state
-  }
-}
-
-let listeners: Array<(state: InfiniteScrollState<any>) => void> = []
-let memoryState: InfiniteScrollState<any> = { items: [], next: null, hasMore: true, isMounted: false, isLoading: false }
-
-function dispatch<T>(action: InfiniteScrollAction<T>) {
-  memoryState = reducer(memoryState, action)
-  listeners.forEach(listener => {
-    listener(memoryState)
-  })
-}
-
-export function useInfiniteScroll<T>(props: UseInfiniteScrollProps<T> = {}) {
-  const { distance = 50, isEnabled = true, onLoadMore } = props
-  const [state, setState] = useState<InfiniteScrollState<T>>(memoryState)
+export function useInfiniteScroll<T>({ distance = 50, isEnabled = true, onLoadMore }: UseInfiniteScrollProps<T> = {}) {
+  const [state, loadMore] = usePagination({ load: onLoadMore })
   const scrollContainerRef = useRef<HTMLElement>(null)
 
-  useEffect(() => {
-    listeners.push(setState)
-    return () => {
-      listeners = []
-    }
-  }, [state])
-
-  const loadMore = useCallback(
+  const handleLoadMore = useCallback(
     async (element: HTMLElement) => {
       const { scrollHeight, clientHeight, scrollTop } = element
       const isNearBottom = scrollHeight - scrollTop <= clientHeight + distance
 
-      if (!isEnabled || !onLoadMore) return
-
-      if ((isNearBottom || !memoryState.isMounted) && !memoryState.isLoading) {
-        dispatch({ type: 'LOAD_MORE' })
-        try {
-          const newProps = await onLoadMore({ items: memoryState.items, next: memoryState.next })
-          dispatch({ type: 'LOAD_MORE_SUCCESS', payload: newProps })
-        } catch (error) {
-          dispatch({ type: 'LOAD_MORE_FAILURE' })
-        }
+      if (isEnabled && (isNearBottom || !state.isMounted)) {
+        await loadMore()
       }
     },
-    [distance, isEnabled, onLoadMore]
+    [distance, isEnabled, state.isMounted, loadMore]
   )
 
   useEffect(() => {
     if (!scrollContainerRef.current) return
     const scrollContainerNode = scrollContainerRef.current
 
-    loadMore(scrollContainerNode)
+    handleLoadMore(scrollContainerNode)
 
     function checkIfNearBottom(e: Event) {
       const element = e.target as HTMLElement
-      loadMore(element)
+      handleLoadMore(element)
     }
 
     scrollContainerNode.addEventListener('scroll', checkIfNearBottom)
@@ -82,9 +37,9 @@ export function useInfiniteScroll<T>(props: UseInfiniteScrollProps<T> = {}) {
     return () => {
       scrollContainerNode.removeEventListener('scroll', checkIfNearBottom)
     }
-  }, [scrollContainerRef, loadMore])
+  }, [scrollContainerRef, handleLoadMore])
 
-  return [state, scrollContainerRef, dispatch] as const
+  return [state, scrollContainerRef] as const
 }
 
 export type UseInfiniteScrollReturn = ReturnType<typeof useInfiniteScroll>

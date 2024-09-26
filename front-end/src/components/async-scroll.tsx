@@ -1,9 +1,10 @@
-import { useInfiniteScroll, LoadMoreProps, InfiniteScrollState } from '@/hooks/use-infinite-scroll'
+import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
+import { PaginationState } from '@/hooks/use-pagination'
 import { api } from '@/http'
 import { ScrollShadow, ScrollShadowProps, SlotsToClasses, Spinner, SpinnerProps, tv } from '@nextui-org/react'
 
 interface AsyncScrollProps<T> extends Omit<ScrollShadowProps, 'children'> {
-  children: React.ReactNode | ((items: T[], state: Omit<InfiniteScrollState<T>, 'items'>) => React.ReactNode)
+  children: React.ReactNode | ((items: T[], state: Omit<PaginationState<T>, 'items'>) => React.ReactNode)
   url: string
   loadingContent?: React.ReactNode
   classNames?: SlotsToClasses<keyof ReturnType<typeof asyncScroll>>
@@ -31,21 +32,16 @@ export function AsyncScroll<T>({
   spinnerProps,
   ...props
 }: AsyncScrollProps<T>) {
-  const {} = props
-  const classes = asyncScroll()
-
-  async function onLoadMore({ next }: LoadMoreProps<T>): Promise<LoadMoreProps<T>> {
-    const res = await api.get<ItemsResponse<T>>(next ?? url)
-    if (!res.ok) return { items: [], next: next ?? url }
-
-    return {
-      items: res.data.results,
-      next: res.data.next
+  const [{ items, ...state }, scrollerRef] = useInfiniteScroll<T>({
+    async onLoadMore({ next }) {
+      const res = await api.get<ItemsResponse<T>>(next ?? url)
+      return {
+        items: res.ok ? res.data.results : [],
+        next: res.ok ? res.data.next : next ?? url
+      }
     }
-  }
-
-  const [state, scrollerRef] = useInfiniteScroll({ onLoadMore })
-  const { items, ...stateRest } = state
+  })
+  const classes = asyncScroll()
 
   loadingContent = loadingContent ?? (
     <div className={classes.spinnerWrapper({ class: classNames?.spinnerWrapper })}>
@@ -55,7 +51,7 @@ export function AsyncScroll<T>({
 
   return (
     <ScrollShadow ref={scrollerRef} className={classes.base({ class: classNames?.base })} {...props}>
-      {typeof children === 'function' ? children(items, stateRest) : children}
+      {typeof children === 'function' ? children(items, state) : children}
       {state.hasMore && loadingContent}
     </ScrollShadow>
   )

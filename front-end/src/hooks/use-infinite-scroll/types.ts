@@ -1,20 +1,4 @@
-import { MaybePromise } from '@/lib/promise'
-
-export interface LoadMoreProps<T> {
-  items: T[]
-  next?: string | null
-}
-
-export interface InfiniteScrollState<T> extends LoadMoreProps<T> {
-  hasMore: boolean
-  isMounted: boolean
-  isLoading: boolean
-}
-
-export type InfiniteScrollAction<T> =
-  | { type: 'LOAD_MORE' }
-  | { type: 'LOAD_MORE_SUCCESS'; payload: LoadMoreProps<T> }
-  | { type: 'LOAD_MORE_FAILURE' }
+import { UsePaginationProps } from '../use-pagination'
 
 export interface UseInfiniteScrollProps<T> {
   /**
@@ -30,5 +14,5 @@ export interface UseInfiniteScrollProps<T> {
   /**
    * Callback to load more items.
    */
-  onLoadMore?: MaybePromise<(props: LoadMoreProps<T>) => LoadMoreProps<T>>
+  onLoadMore?: UsePaginationProps<T>['load']
 }
