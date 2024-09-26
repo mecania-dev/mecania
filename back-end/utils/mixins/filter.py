@@ -1,4 +1,3 @@
-from django.db.models import Field
 from utils.assertions import is_false
 
 
@@ -6,7 +5,7 @@ class FiltersMixin:
     not_allowed_filters = ["paginate"]
 
     def get_filter_params(self):
-        query_params = self.request.query_params
+        query_params: dict = self.request.query_params
         no_pagination = is_false(query_params.get("paginate", "true"))
 
         if no_pagination:
@@ -16,10 +15,9 @@ class FiltersMixin:
         Get a dictionary of filterable params based on not allowed filters.
         """
         filter_params = {}
-        model_fields = [f.name for f in self.queryset.model._meta.get_fields() if isinstance(f, Field)]
 
         for key, value in query_params.items():
-            if key not in self.not_allowed_filters and key in model_fields and value:
+            if key not in self.not_allowed_filters and value:
                 filter_params[key] = value
 
         return filter_params
