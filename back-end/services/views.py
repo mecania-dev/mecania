@@ -10,13 +10,10 @@ from users.models import User
 from users.permissions import IsSelfOrAdmin, IsInGroups
 from utils.mixins import FiltersMixin
 
-# REMOVE PAGINATION_CLASS = NONE WHEN FRONT END IS READY
-
 
 class CategoryListCreateView(FiltersMixin, generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = None
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -36,7 +33,6 @@ class CategoryRetrieveUpdateDestroyView(FiltersMixin, generics.RetrieveUpdateDes
 
 class ServiceListCreateView(FiltersMixin, generics.ListCreateAPIView):
     queryset = Service.objects.all()
-    pagination_class = None
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -64,7 +60,6 @@ class ServiceRetrieveUpdateDestroyView(FiltersMixin, generics.RetrieveUpdateDest
 
 
 class UserServicesView(FiltersMixin, generics.GenericAPIView):
-    pagination_class = None
 
     def get_permissions(self):
         return [IsSelfOrAdmin("user_id"), IsInGroups(["Mechanic"])]

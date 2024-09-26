@@ -6,12 +6,9 @@ from .permissions import IsSelfOrAdmin
 from .serializers import UserListSerializer, UserRetrieveDestroySerializer, UserCreateUpdateSerializer
 from utils.mixins import FiltersMixin
 
-# REMOVE PAGINATION_CLASS = NONE WHEN FRONT END IS READY
-
 
 class UserListCreate(FiltersMixin, generics.ListCreateAPIView):
     queryset = User.objects.all()
-    pagination_class = None
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -57,4 +54,3 @@ class DriversListView(FiltersMixin, generics.ListAPIView):
     queryset = User.objects.filter(groups__name="Driver")
     serializer_class = UserListSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = None
