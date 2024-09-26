@@ -1,6 +1,5 @@
 import { maybePromise } from '@/lib/promise'
 import { User } from '@/types/entities/user'
-import { redirect } from 'next/navigation'
 
 import { AppAbility, getUserPermissions } from './casl'
 import { getSession } from './session'
@@ -17,20 +16,12 @@ export async function isAuthenticated() {
   return !!refresh
 }
 
-export async function auth({
-  admin,
-  groups,
-  unauthorizedGroups,
-  redirect: doRedirect = true,
-  redirectUrl,
-  custom
-}: AuthProps = {}) {
+export async function auth({ admin, groups, unauthorizedGroups, custom }: AuthProps = {}) {
   await waitTokenRefresh()
   const session = await getSession()
   const isAuthed = await isAuthenticated()
   let authorized = isAuthed
   let user: User | undefined
-  let realRedirectUrl: string | undefined = redirectUrl ?? '/sign-in'
   let ability: AppAbility | undefined
 
   if (session) {
@@ -48,16 +39,11 @@ export async function auth({
     }
   }
 
-  function setRedirectUrl(url?: string) {
-    realRedirectUrl = url
-  }
-
-  const customRes = await maybePromise(custom, { user, ability, isAuthenticated: isAuthed, setRedirectUrl })
+  const customRes = await maybePromise(custom, { user, ability, isAuthenticated: isAuthed })
 
   if (customRes != null) {
     authorized = customRes
   }
 
-  if (!authorized && doRedirect && realRedirectUrl) redirect(realRedirectUrl)
   return authorized
 }

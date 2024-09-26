@@ -14,7 +14,9 @@ import { useCategoryModal } from '../category-modal/use-category-modal'
 
 export function ServiceModalBody() {
   const categoryModal = useCategoryModal()
-  const categories = useSWRCustom<Category[]>('services/categories/')
+  const categories = useSWRCustom<Category[]>('services/categories/', {
+    fetcherConfig: { params: { paginate: false } }
+  })
   const { watch, register, setValue, formState } = useFormContext<ServiceCreateInput>()
   const { errors } = formState
   const values = watch()

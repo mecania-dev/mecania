@@ -40,13 +40,13 @@ export function SidebarRoutes() {
             a: 'Chat'
           }
         },
-        { icon: FaTools, href: '/services', children: 'Serviços', canProps: { I: 'create', a: 'Service' } },
+        { icon: FaTools, href: '/services', children: 'Serviços', canProps: { I: 'manage', a: 'Service' } },
         {
           icon: BiSolidCarMechanic,
           href: '/mechanics',
           children: 'Oficinas',
           canProps: {
-            I: 'create',
+            I: 'manage',
             a: 'User'
           },
           subRoutes: [{ icon: BiSolidCarMechanic, href: '/mechanics/register', children: 'Cadastrar oficinas' }]

@@ -2,76 +2,83 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import { auth } from './auth'
 
-const authPrefixes = ['/sign-in', '/sign-up', '/forgot-password']
+const authPrefixes = ['/sign-in', '/sign-up', '/forgot-password'] as const
+const protectedParentsPrefixes = ['/chat', '/mechanics', '/profile', '/services'] as const
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname
   const callbackUrl = req.cookies.get('callback-url')?.value
+  let authRedirectUrl: string | undefined
 
-  const isAuthorized = await auth({
-    redirect: false,
+  function setRedirectUrlAndReturn(url: string, isAthorized: boolean) {
+    authRedirectUrl = isAthorized ? undefined : url
+    return isAthorized
+  }
+
+  await auth({
     custom({ isAuthenticated, ability }) {
       // AUTH
       if (authPrefixes.some(p => pathname.startsWith(p))) {
-        return !isAuthenticated
+        return setRedirectUrlAndReturn(callbackUrl ?? '/', !isAuthenticated)
       }
 
-      // CHAT
-      if (pathname.startsWith('/chat')) {
-        return !!ability?.can('ask_ai', 'Chat')
-      }
-
-      // MECHANICS
-      if (pathname.startsWith('/mechanics')) {
-        // REGISTER MECHANICS
-        if (pathname.startsWith('/mechanics/register')) {
-          return !!ability?.can('manage', 'User')
+      // PROTECTED PARENTS
+      if (protectedParentsPrefixes.some(p => pathname.startsWith(p))) {
+        if (!isAuthenticated) {
+          return setRedirectUrlAndReturn('/sign-in', false)
         }
 
-        return isAuthenticated
-      }
+        /*----------IS AUTHENTICATED----------*/
 
-      // PROFILE
-      if (pathname.startsWith('/profile')) {
-        // ADDRESSES
-        if (pathname.startsWith('/profile/addresses')) {
-          return !!ability?.can('create', 'Address')
+        // CHAT
+        if (pathname.startsWith('/chat')) {
+          return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('ask_ai', 'Chat'))
         }
 
-        // REQUESTS
-        if (pathname.startsWith('/profile/requests')) {
-          return !!ability?.can('message_mechanic', 'Chat') || !!ability?.can('message_user', 'Chat')
+        // MECHANICS
+        if (pathname.startsWith('/mechanics')) {
+          return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('manage', 'User'))
         }
 
-        // VEHICLES
-        if (pathname.startsWith('/profile/vehicles')) {
-          return !!ability?.can('create', 'Vehicle')
+        // PROFILE
+        if (pathname.startsWith('/profile')) {
+          // ADDRESSES
+          if (pathname.startsWith('/profile/addresses')) {
+            return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('create', 'Address'))
+          }
+
+          // REQUESTS
+          if (pathname.startsWith('/profile/requests')) {
+            return setRedirectUrlAndReturn(
+              callbackUrl ?? '/profile',
+              !!ability?.can('message_mechanic', 'Chat') || !!ability?.can('message_user', 'Chat')
+            )
+          }
+
+          // VEHICLES
+          if (pathname.startsWith('/profile/vehicles')) {
+            return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('create', 'Vehicle'))
+          }
         }
 
-        return isAuthenticated
+        // SERVICES
+        if (pathname.startsWith('/services')) {
+          return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('manage', 'Service'))
+        }
       }
-
-      // SERVICES
-      if (pathname.startsWith('/services')) {
-        return !!ability?.can('manage', 'Service')
-      }
-
-      return true
     }
   })
 
-  if (!isAuthorized) {
-    let redirectUrl = callbackUrl ?? '/'
-
-    if (authPrefixes.some(p => callbackUrl?.startsWith(p))) {
-      redirectUrl = '/'
+  if (authRedirectUrl) {
+    if (authPrefixes.some(p => authRedirectUrl?.startsWith(p))) {
+      authRedirectUrl = '/'
     }
 
-    if (pathname === redirectUrl) {
+    if (pathname === authRedirectUrl) {
       return NextResponse.next()
     }
 
-    return NextResponse.redirect(new URL(redirectUrl, req.nextUrl))
+    return NextResponse.redirect(new URL(authRedirectUrl, req.nextUrl))
   }
 
   if (!authPrefixes.some(p => pathname.startsWith(p))) {

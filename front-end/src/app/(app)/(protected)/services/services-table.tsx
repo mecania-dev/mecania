@@ -17,7 +17,9 @@ import { Selection, Spinner, Tooltip } from '@nextui-org/react'
 import { NewServiceModalButton } from './service-modal'
 
 export function ServicesTable() {
-  const services = useSWRCustom<Service[]>('services/')
+  const services = useSWRCustom<Service[]>('services/', {
+    fetcherConfig: { params: { paginate: false } }
+  })
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]))
 
   const onCreateService = useCallback(

@@ -12,14 +12,11 @@ export interface AuthCustomProps {
   user?: User
   ability?: AppAbility
   isAuthenticated: boolean
-  setRedirectUrl: (url?: string) => void
 }
 
 export interface AuthProps {
   admin?: boolean
   groups?: User['groups']
   unauthorizedGroups?: User['groups']
-  redirect?: boolean
-  redirectUrl?: string
   custom?: MaybePromise<(props: AuthCustomProps) => boolean | undefined | void>
 }

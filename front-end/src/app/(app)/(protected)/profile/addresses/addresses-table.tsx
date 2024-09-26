@@ -20,7 +20,9 @@ import { AddressModal, NewAddressModalButton } from './address-modal'
 
 export function AddressesTable() {
   const { user } = useUser()
-  const addresses = useSWRCustom<Address[]>(user ? `users/${user.id}/addresses/` : null)
+  const addresses = useSWRCustom<Address[]>(user ? `users/${user.id}/addresses/` : null, {
+    fetcherConfig: { params: { paginate: false } }
+  })
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]))
   const [selectedAddress, setSelectedAddress] = useState<Address>()
 
