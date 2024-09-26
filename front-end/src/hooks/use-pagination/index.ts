@@ -18,7 +18,7 @@ function reducer<T>(state: PaginationState<T>, action: PaginationAction<T>): Pag
         isLoading: false
       }
     case 'LOAD_MORE_FAILURE':
-      return { ...state, isLoading: false }
+      return { ...state, isLoading: false, error: action.error }
     default:
       return state
   }
@@ -45,14 +45,14 @@ export function usePagination<T>({ load }: UsePaginationProps<T>) {
   }, [state])
 
   async function loadMore() {
-    if (memoryState.isLoading || !load) return
+    if (memoryState.isLoading || memoryState.error || !load) return
 
     dispatch({ type: 'LOAD_MORE' })
     try {
       const newProps = await load({ items: memoryState.items, next: memoryState.next })
       dispatch({ type: 'LOAD_MORE_SUCCESS', payload: newProps })
     } catch (error) {
-      dispatch({ type: 'LOAD_MORE_FAILURE' })
+      dispatch({ type: 'LOAD_MORE_FAILURE', error })
     }
   }
 
