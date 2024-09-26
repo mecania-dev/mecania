@@ -53,7 +53,7 @@ export function AsyncScroll<T>({
   return (
     <ScrollShadow ref={scrollerRef} className={classes.base({ class: classNames?.base })} {...props}>
       {typeof children === 'function' ? children(items, state) : children}
-      {state.isMounted && state.hasMore && loadingContent}
+      {!state.error && state.isMounted && state.hasMore && loadingContent}
     </ScrollShadow>
   )
 }
