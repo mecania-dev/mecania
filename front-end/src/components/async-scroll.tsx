@@ -1,17 +1,9 @@
-import { useState } from 'react'
-
-import { useInfiniteScroll, setIsLoadingMore, isLoadingMore } from '@/hooks/use-infinite-scroll'
+import { useInfiniteScroll, LoadMoreProps, InfiniteScrollState } from '@/hooks/use-infinite-scroll'
 import { api } from '@/http'
 import { ScrollShadow, ScrollShadowProps, SlotsToClasses, Spinner, SpinnerProps, tv } from '@nextui-org/react'
-import { useAsyncList } from '@react-stately/data'
-
-interface ChildrenOptions {
-  isMounted: boolean
-  isLoading: boolean
-}
 
 interface AsyncScrollProps<T> extends Omit<ScrollShadowProps, 'children'> {
-  children: React.ReactNode | ((items: T[], options: ChildrenOptions) => React.ReactNode)
+  children: React.ReactNode | ((items: T[], state: Omit<InfiniteScrollState<T>, 'items'>) => React.ReactNode)
   url: string
   loadingContent?: React.ReactNode
   classNames?: SlotsToClasses<keyof ReturnType<typeof asyncScroll>>
@@ -40,27 +32,20 @@ export function AsyncScroll<T>({
   ...props
 }: AsyncScrollProps<T>) {
   const {} = props
-  const [isMounted, setIsMounted] = useState(false)
-  const [hasMore, setHasMore] = useState(false)
   const classes = asyncScroll()
 
-  const list = useAsyncList<T>({
-    async load({ signal, cursor }) {
-      // If no cursor is available, then we're loading the first page.
-      // Otherwise, the cursor is the next URL to load, as returned from the previous page.
-      const res = await api.get<ItemsResponse<T>>(cursor || url, { signal })
-      !isMounted && setIsMounted(true)
-      setHasMore(res.ok ? !!res.data.next : false)
-      setIsLoadingMore(false)
+  async function onLoadMore({ next }: LoadMoreProps<T>): Promise<LoadMoreProps<T>> {
+    const res = await api.get<ItemsResponse<T>>(next ?? url)
+    if (!res.ok) return { items: [], next: next ?? url }
 
-      return {
-        items: res.ok ? res.data.results : [],
-        cursor: res.ok ? res.data.next ?? undefined : undefined
-      }
+    return {
+      items: res.data.results,
+      next: res.data.next
     }
-  })
+  }
 
-  const scrollerRef = useInfiniteScroll({ hasMore, onLoadMore: list.loadMore })
+  const [state, scrollerRef] = useInfiniteScroll({ onLoadMore })
+  const { items, ...stateRest } = state
 
   loadingContent = loadingContent ?? (
     <div className={classes.spinnerWrapper({ class: classNames?.spinnerWrapper })}>
@@ -70,8 +55,8 @@ export function AsyncScroll<T>({
 
   return (
     <ScrollShadow ref={scrollerRef} className={classes.base({ class: classNames?.base })} {...props}>
-      {typeof children === 'function' ? children(list.items, { isMounted, isLoading: isLoadingMore }) : children}
-      {hasMore && loadingContent}
+      {typeof children === 'function' ? children(items, stateRest) : children}
+      {state.hasMore && loadingContent}
     </ScrollShadow>
   )
 }
