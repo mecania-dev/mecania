@@ -17,7 +17,13 @@ export function ConfirmationModal() {
   }
 
   return (
-    <Modal onClose={handleAction(onCancel)} fullScreen={false} {...rest}>
+    <Modal
+      onClose={handleAction(onCancel)}
+      fullScreen={false}
+      isKeyboardDismissDisabled={false}
+      isDismissable
+      {...rest}
+    >
       <Modal.Body>
         <p>{question}</p>
       </Modal.Body>
