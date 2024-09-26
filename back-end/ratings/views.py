@@ -2,10 +2,10 @@ from rest_framework import generics, permissions
 from users.permissions import IsInGroups
 from .models import Rating
 from .serializers import RatingSerializer
-from utils.mixins import FiltersMixin
+from utils.mixins import DynamicQuerysetMixin
 
 
-class RatingListCreateView(FiltersMixin, generics.ListCreateAPIView):
+class RatingListCreateView(DynamicQuerysetMixin, generics.ListCreateAPIView):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
 

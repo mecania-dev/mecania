@@ -7,10 +7,10 @@ from .models import Vehicle
 from .serializers import VehicleSerializer, VehicleCreateUpdateSerializer
 from users.models import User
 from users.permissions import IsSelfOrAdmin, IsInGroups
-from utils.mixins import FiltersMixin
+from utils.mixins import DynamicQuerysetMixin
 
 
-class UserVehiclesView(FiltersMixin, generics.GenericAPIView):
+class UserVehiclesView(DynamicQuerysetMixin, generics.GenericAPIView):
     def get_permissions(self):
         return [IsSelfOrAdmin("user_id"), IsInGroups(["Driver"])]
 

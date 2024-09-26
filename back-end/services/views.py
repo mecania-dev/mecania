@@ -8,10 +8,10 @@ from .models import Category, Service
 from .serializers import CategorySerializer, ServiceRetrieveDestroySerializer, ServiceCreateUpdateSerializer
 from users.models import User
 from users.permissions import IsSelfOrAdmin, IsInGroups
-from utils.mixins import FiltersMixin
+from utils.mixins import DynamicQuerysetMixin
 
 
-class CategoryListCreateView(FiltersMixin, generics.ListCreateAPIView):
+class CategoryListCreateView(DynamicQuerysetMixin, generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
@@ -21,7 +21,7 @@ class CategoryListCreateView(FiltersMixin, generics.ListCreateAPIView):
         return [IsAdminUser()]
 
 
-class CategoryRetrieveUpdateDestroyView(FiltersMixin, generics.RetrieveUpdateDestroyAPIView):
+class CategoryRetrieveUpdateDestroyView(DynamicQuerysetMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
@@ -31,7 +31,7 @@ class CategoryRetrieveUpdateDestroyView(FiltersMixin, generics.RetrieveUpdateDes
         return [IsAdminUser()]
 
 
-class ServiceListCreateView(FiltersMixin, generics.ListCreateAPIView):
+class ServiceListCreateView(DynamicQuerysetMixin, generics.ListCreateAPIView):
     queryset = Service.objects.all()
 
     def get_permissions(self):
@@ -45,7 +45,7 @@ class ServiceListCreateView(FiltersMixin, generics.ListCreateAPIView):
         return ServiceCreateUpdateSerializer
 
 
-class ServiceRetrieveUpdateDestroyView(FiltersMixin, generics.RetrieveUpdateDestroyAPIView):
+class ServiceRetrieveUpdateDestroyView(DynamicQuerysetMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
 
     def get_permissions(self):
@@ -59,7 +59,7 @@ class ServiceRetrieveUpdateDestroyView(FiltersMixin, generics.RetrieveUpdateDest
         return ServiceCreateUpdateSerializer
 
 
-class UserServicesView(FiltersMixin, generics.GenericAPIView):
+class UserServicesView(DynamicQuerysetMixin, generics.GenericAPIView):
 
     def get_permissions(self):
         return [IsSelfOrAdmin("user_id"), IsInGroups(["Mechanic"])]

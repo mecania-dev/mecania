@@ -7,10 +7,10 @@ from .models import Address
 from .serializers import AddressSerializer, AddressCreateUpdateSerializer
 from users.models import User
 from users.permissions import IsSelfOrAdmin, IsInGroups
-from utils.mixins import FiltersMixin
+from utils.mixins import DynamicQuerysetMixin
 
 
-class UserAddressesView(FiltersMixin, generics.GenericAPIView):
+class UserAddressesView(DynamicQuerysetMixin, generics.GenericAPIView):
     def get_permissions(self):
         return [IsSelfOrAdmin("user_id"), IsInGroups(["Mechanic"])]
 

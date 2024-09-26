@@ -4,10 +4,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import User
 from .permissions import IsSelfOrAdmin
 from .serializers import UserListSerializer, UserRetrieveDestroySerializer, UserCreateUpdateSerializer
-from utils.mixins import FiltersMixin
+from utils.mixins import DynamicQuerysetMixin
 
 
-class UserListCreate(FiltersMixin, generics.ListCreateAPIView):
+class UserListCreate(DynamicQuerysetMixin, generics.ListCreateAPIView):
     queryset = User.objects.all()
 
     def get_permissions(self):
@@ -21,7 +21,7 @@ class UserListCreate(FiltersMixin, generics.ListCreateAPIView):
         return UserCreateUpdateSerializer
 
 
-class UserRetrieveUpdateDestroy(FiltersMixin, generics.RetrieveUpdateDestroyAPIView):
+class UserRetrieveUpdateDestroy(DynamicQuerysetMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     lookup_field = "pk"
 
@@ -44,13 +44,13 @@ class LoggedUserView(generics.RetrieveAPIView):
         return self.request.user
 
 
-class MechanicsListView(FiltersMixin, generics.ListAPIView):
+class MechanicsListView(DynamicQuerysetMixin, generics.ListAPIView):
     queryset = User.objects.filter(groups__name="Mechanic")
     serializer_class = UserListSerializer
     permission_classes = [IsAuthenticated]
 
 
-class DriversListView(FiltersMixin, generics.ListAPIView):
+class DriversListView(DynamicQuerysetMixin, generics.ListAPIView):
     queryset = User.objects.filter(groups__name="Driver")
     serializer_class = UserListSerializer
     permission_classes = [IsAuthenticated]
