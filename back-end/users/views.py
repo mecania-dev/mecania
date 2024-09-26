@@ -27,7 +27,6 @@ class UserListCreate(FiltersMixin, generics.ListCreateAPIView):
 class UserRetrieveUpdateDestroy(FiltersMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     lookup_field = "pk"
-    pagination_class = None
 
     def get_permissions(self):
         if self.request.method == "GET":

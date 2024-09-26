@@ -27,7 +27,6 @@ class CategoryListCreateView(FiltersMixin, generics.ListCreateAPIView):
 class CategoryRetrieveUpdateDestroyView(FiltersMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    pagination_class = None
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -52,7 +51,6 @@ class ServiceListCreateView(FiltersMixin, generics.ListCreateAPIView):
 
 class ServiceRetrieveUpdateDestroyView(FiltersMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
-    pagination_class = None
 
     def get_permissions(self):
         if self.request.method == "GET":
