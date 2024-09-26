@@ -45,7 +45,7 @@ export function usePagination<T>({ load }: UsePaginationProps<T>) {
   }, [state])
 
   async function loadMore() {
-    if (memoryState.isLoading || memoryState.error || !load) return
+    if (memoryState.isLoading || !memoryState.hasMore || memoryState.error || !load) return
 
     dispatch({ type: 'LOAD_MORE' })
     try {
