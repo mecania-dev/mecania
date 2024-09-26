@@ -35,7 +35,7 @@ export function AsyncAutocomplete<T extends Record<string, any>>({
 
       const res = await api.get<ItemsResponse<T>>(next ?? url, config)
 
-      if (!res.ok) return { items: [], next: next ?? url }
+      if (!res.ok) throw res.data
 
       transform?.(res.data)
 

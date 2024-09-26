@@ -35,9 +35,10 @@ export function AsyncScroll<T>({
   const [{ items, ...state }, scrollerRef] = useInfiniteScroll<T>({
     async onLoadMore({ next }) {
       const res = await api.get<ItemsResponse<T>>(next ?? url)
+      if (!res.ok) throw res.data
       return {
-        items: res.ok ? res.data.results : [],
-        next: res.ok ? res.data.next : next ?? url
+        items: res.data.results,
+        next: res.data.next
       }
     }
   })
