@@ -30,6 +30,7 @@ export function CategoryModal({ title = 'Nova Categoria', size = 'sm', ...rest }
       isOpen={categoryModal.isOpen}
       onOpenChange={categoryModal.setIsOpen}
       onFormSubmit={handleOnSubmit}
+      fullScreen={false}
       {...rest}
     >
       <CategoryModalBody />

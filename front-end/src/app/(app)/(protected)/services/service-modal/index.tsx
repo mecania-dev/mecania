@@ -29,7 +29,14 @@ export function ServiceModal({ isOpen, setIsOpen, onSubmit }: ServiceModalProps)
 
   return (
     <>
-      <Modal title="Novo Serviço" form={form} isOpen={isOpen} onOpenChange={setIsOpen} onFormSubmit={handleOnSubmit}>
+      <Modal
+        title="Novo Serviço"
+        form={form}
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        onFormSubmit={handleOnSubmit}
+        fullScreen={false}
+      >
         <ServiceModalBody />
         <ServiceModalFooter />
       </Modal>

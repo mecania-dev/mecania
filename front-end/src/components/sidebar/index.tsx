@@ -34,7 +34,7 @@ export const useSidebar = create<SidebarStore>()(set => ({
 }))
 
 const contentClass = tv({
-  base: 'flex w-[calc(100vw_-_60px)] flex-col transition-width group-data-[open=true]:w-screen lg:group-data-[open=true]:w-[max(calc(100vw_-_280px),_77%)]'
+  base: 'flex w-[calc(100vw_-_60px)] grow flex-col transition-width lg:group-data-[open=true]:w-[max(calc(100vw_-_280px),_77%)]'
 })
 
 interface SidebarProps extends Omit<React.ComponentPropsWithoutRef<'div'>, 'content'> {
