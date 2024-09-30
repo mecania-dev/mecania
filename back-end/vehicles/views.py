@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -56,3 +57,17 @@ class UserVehiclesView(DynamicQuerysetMixin, generics.GenericAPIView):
         vehicle = get_object_or_404(Vehicle, id=vehicle_id, user=user)
         vehicle.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# APIView because we are not using any queryset
+class VehicleFuelChoicesView(APIView):
+    def get(self, request):
+        fuel_choices = [{"value": value, "label": label} for value, label in Vehicle.FUEL_CHOICES]
+        return Response(fuel_choices, status=status.HTTP_200_OK)
+
+
+# APIView because we are not using any queryset
+class VehicleTransmissionChoicesView(APIView):
+    def get(self, request):
+        transmission_choices = [{"value": value, "label": label} for value, label in Vehicle.TRANSMISSION_CHOICES]
+        return Response(transmission_choices, status=status.HTTP_200_OK)

@@ -1,49 +1,48 @@
+import { useState } from 'react'
+
 import { Button } from '@/components/button'
 import { Modal } from '@/components/modal'
 import { useForm } from '@/hooks/use-form'
-import { useVehicles } from '@/mocks/use-vehicles'
-import { VehicleCreate, vehicleCreateSchema } from '@/types/entities/vehicle'
+import { VehicleCreateInput, VehicleCreateOutput, vehicleCreateSchema } from '@/http'
+import { maybePromise, MaybePromise } from '@/lib/promise'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { create } from 'zustand'
 
 import { VehicleModalBody } from './vehicle-body'
 import { VehicleModalFooter } from './vehicle-footer'
 
-type VehicleModalStore = {
+interface VehicleModalProps {
   isOpen: boolean
   setIsOpen: (value: boolean) => void
+  onSubmit?: MaybePromise<(vehicle: VehicleCreateOutput) => void>
 }
 
-export const useVehicleModal = create<VehicleModalStore>()(set => ({
-  isOpen: false,
-  setIsOpen: value => set({ isOpen: value })
-}))
+export function VehicleModal({ isOpen, setIsOpen, onSubmit }: VehicleModalProps) {
+  const form = useForm<VehicleCreateInput>({ resolver: zodResolver(vehicleCreateSchema) })
 
-export function VehicleModal() {
-  const { isOpen, setIsOpen } = useVehicleModal()
-  const { addVehicle } = useVehicles()
-  const form = useForm<VehicleCreate>({ resolver: zodResolver(vehicleCreateSchema) })
-
-  async function onSubmit(vehicle: VehicleCreate) {
-    addVehicle(vehicle)
+  async function handleOnSubmit(vehicle: VehicleCreateOutput) {
+    await maybePromise(onSubmit, vehicle)
     setIsOpen(false)
   }
 
   return (
-    <Modal title="Novo Veículo" form={form} isOpen={isOpen} onOpenChange={setIsOpen} onFormSubmit={onSubmit}>
+    <Modal title="Novo Veículo" form={form} isOpen={isOpen} onOpenChange={setIsOpen} onFormSubmit={handleOnSubmit}>
       <VehicleModalBody />
       <VehicleModalFooter />
     </Modal>
   )
 }
 
-export function NewVehicleModalButton() {
-  const { isOpen, setIsOpen } = useVehicleModal()
+interface NewVehicleModalButtonProps {
+  onSubmit?: MaybePromise<(vehicle: VehicleCreateOutput) => void>
+}
+
+export function NewVehicleModalButton({ onSubmit }: NewVehicleModalButtonProps) {
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <Button color="secondary" onPress={() => setIsOpen(true)}>
       Novo
-      {isOpen && <VehicleModal />}
+      {isOpen && <VehicleModal isOpen={isOpen} setIsOpen={setIsOpen} onSubmit={onSubmit} />}
     </Button>
   )
 }

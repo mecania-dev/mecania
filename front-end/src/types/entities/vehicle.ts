@@ -1,29 +1,19 @@
-import { stringNumeric, string } from '@/lib/zod'
+import { string, number } from '@/lib/zod'
 import { z } from 'zod'
 
 export const vehicleSchema = z.object({
   id: z.number(),
-  brand: string({ name: 'Marca', min: 1 }),
-  model: string({ name: 'Modelo', min: 1 }),
-  year: stringNumeric({ name: 'Ano' }),
-  kilometers: stringNumeric({ name: 'Quilometragem' }),
-  plate: string({ name: 'Placa', min: 1 }),
-  chassis: string({ name: 'Chassi', min: 1 }),
+  brand: string({ name: 'Marca', min: 1, max: 100 }),
+  model: string({ name: 'Modelo', min: 1, max: 100 }),
+  year: number({ name: 'Ano' }),
+  mileage: number({ name: 'Quilometragem' }).nullable(),
+  transmission: string({ name: 'Transmissão', min: 1, max: 100 }).nullable(),
+  fuelType: string({ name: 'Combustível', min: 1, max: 100 }).nullable(),
+  cylinderCount: number({ name: 'Cilindros' }).nullable(),
+  licensePlate: string({ name: 'Placa', min: 1, max: 10 }).nullable(),
+  chassisNumber: string({ name: 'Chassi', min: 1, max: 17 }).nullable(),
   createdAt: z.string(),
   updatedAt: z.string()
 })
 
-export const vehicleCreateSchema = vehicleSchema.pick({
-  brand: true,
-  model: true,
-  year: true,
-  kilometers: true,
-  plate: true,
-  chassis: true
-})
-
-export const vehicleUpdateSchema = vehicleCreateSchema.partial()
-
 export type Vehicle = z.infer<typeof vehicleSchema>
-export type VehicleCreate = z.infer<typeof vehicleCreateSchema>
-export type VehicleUpdate = z.infer<typeof vehicleUpdateSchema>

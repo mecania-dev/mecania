@@ -8,30 +8,51 @@ import { confirmationModal } from '@/components/modal'
 import { Table } from '@/components/table'
 import { TableTopContent } from '@/components/table/types'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
+import { toast } from '@/hooks/use-toast'
+import { VehicleCreateOutput } from '@/http'
 import { formatDate } from '@/lib/date'
-import { useVehicles } from '@/mocks/use-vehicles'
+import { useUser } from '@/providers/user-provider'
 import { Vehicle } from '@/types/entities/vehicle'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
 
 import { NewVehicleModalButton } from './vehicle-modal'
 
 export function VehiclesTable() {
-  const { vehicles, removeVehicle } = useVehicles()
-  const { state: vehiclesState } = useSWRCustom<Vehicle[]>(null, { fallbackData: vehicles })
+  const { user } = useUser()
+  const vehicles = useSWRCustom<Vehicle[]>(`users/${user?.id}/vehicles/`, {
+    fetcherConfig: { params: { paginate: false } }
+  })
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]))
+
+  const onCreateVehicle = useCallback(
+    async (vehicle: VehicleCreateOutput) => {
+      const res = await vehicles.post(vehicle)
+      if (res.ok) {
+        toast({ message: 'Veículo adicionado com sucesso', type: 'success' })
+      } else {
+        toast({ message: 'Erro ao criar veículo', type: 'error' })
+      }
+    },
+    [vehicles]
+  )
 
   const handleDelete = useCallback(
     (vehicle: Vehicle) => () => {
       confirmationModal({
         size: 'sm',
         title: 'Remover veículo',
-        question: `Tem certeza que deseja remover o veículo ${vehicle.brand} ${vehicle.model}?`,
+        question: `Tem certeza que deseja remover o veículo ${vehicle.brand} ${vehicle.model} ${vehicle.year}?`,
         async onConfirm() {
-          removeVehicle(vehiclesState.data?.indexOf(vehicle) || 0)
+          const res = await vehicles.remove({ url: url => url + vehicle.id })
+          if (res.ok) {
+            toast({ message: 'Veículo deletado com sucesso', type: 'success' })
+          } else {
+            toast({ message: 'Erro ao remover veículo', type: 'error' })
+          }
         }
       })
     },
-    [removeVehicle, vehiclesState.data]
+    [vehicles]
   )
 
   const renderCell = useCallback(
@@ -50,8 +71,6 @@ export function VehiclesTable() {
       const cellValue = String(vehicle[columnKey] ?? '')
 
       switch (columnKey) {
-        case 'brand':
-          return <p className="font-bold">{cellValue}</p>
         case 'createdAt':
           return <p>{formatDate(cellValue)}</p>
         case 'updatedAt':
@@ -68,12 +87,12 @@ export function VehiclesTable() {
       <FlexWrap className="justify-between">
         <div className="flex gap-2">
           <TableColumnSelector columns={columns} />
-          <NewVehicleModalButton />
+          <NewVehicleModalButton onSubmit={onCreateVehicle} />
         </div>
         <TableSearch filterFields={filterFields} columns={columns} />
       </FlexWrap>
     ),
-    []
+    [onCreateVehicle]
   )
 
   return (
@@ -86,16 +105,16 @@ export function VehiclesTable() {
         wrapper: 'bg-default-200 dark:bg-default-100',
         th: 'dark:bg-default-200'
       }}
-      items={vehiclesState.data || []}
+      items={vehicles.state.data || []}
       selectedKeys={selectedKeys}
       onSelectionChange={setSelectedKeys}
       topContent={topContent}
       renderCell={renderCell}
-      filterFields={['brand', 'model', 'year', 'kilometers', 'plate', 'chassis']}
-      initialVisibleColumns={['brand', 'model', 'year', 'kilometers', 'actions']}
+      filterFields={['brand', 'model', 'year', 'transmission']}
+      initialVisibleColumns={['brand', 'model', 'year', 'transmission', 'actions']}
       bodyProps={{
-        emptyContent: vehiclesState.isLoading ? ' ' : 'Nenhum veículo encontrado.',
-        isLoading: vehiclesState.isLoading,
+        emptyContent: vehicles.state.isLoading ? ' ' : 'Nenhum veículo encontrado.',
+        isLoading: vehicles.state.isLoading,
         loadingContent: <Spinner color="primary" />
       }}
       columns={[
@@ -103,9 +122,7 @@ export function VehiclesTable() {
         { name: 'MARCA', uid: 'brand', sortable: true },
         { name: 'MODELO', uid: 'model', sortable: true },
         { name: 'ANO', uid: 'year', sortable: true },
-        { name: 'KM', uid: 'kilometers', sortable: true },
-        { name: 'PLACA', uid: 'plate', sortable: true },
-        { name: 'CHASSI', uid: 'chassis', sortable: true },
+        { name: 'TRANSMISSÃO', uid: 'transmission', sortable: true },
         { name: 'CRIADO EM', uid: 'createdAt', sortable: true },
         { name: 'ATUALIZADO EM', uid: 'updatedAt', sortable: true },
         { name: 'AÇÕES', uid: 'actions' }

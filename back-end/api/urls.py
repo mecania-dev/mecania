@@ -7,6 +7,7 @@ urlpatterns = [
     path("auth/", include("authentication.urls")),
     path("users/", include("users.urls")),
     path("services/", include("services.urls")),
+    path("vehicles/", include("vehicles.urls")),
     path("chat/", include("chat.urls")),
     path("ratings/", include("ratings.urls")),
 ]

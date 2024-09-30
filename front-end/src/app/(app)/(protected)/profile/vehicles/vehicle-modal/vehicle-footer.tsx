@@ -2,10 +2,10 @@ import { useFormContext } from 'react-hook-form'
 
 import { Button } from '@/components/button'
 import { Modal } from '@/components/modal'
-import { VehicleCreate } from '@/types/entities/vehicle'
+import { VehicleCreateInput } from '@/http'
 
 export function VehicleModalFooter() {
-  const form = useFormContext<VehicleCreate>()
+  const form = useFormContext<VehicleCreateInput>()
   const { isSubmitting } = form.formState
 
   return (
