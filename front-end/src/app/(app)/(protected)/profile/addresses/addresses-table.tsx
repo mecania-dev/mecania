@@ -156,7 +156,7 @@ export function AddressesTable() {
           { name: 'PAÍS', uid: 'country', sortable: true },
           { name: 'ESTADO', uid: 'state', sortable: true },
           { name: 'CEP', uid: 'zipCode', sortable: true },
-          { name: 'CRIADO EM', uid: 'createdAt', sortable: true },
+          { name: 'ADICIONADO EM', uid: 'createdAt', sortable: true },
           { name: 'ATUALIZADO EM', uid: 'updatedAt', sortable: true },
           { name: 'AÇÕES', uid: 'actions' }
         ]}

@@ -129,7 +129,7 @@ export function ServicesTable() {
         { name: 'CATEGORIA', uid: 'category', sortable: true },
         { name: 'DESCRIÇÃO', uid: 'description', sortable: true },
         { name: 'DURAÇÃO', uid: 'durationMinutes', sortable: true },
-        { name: 'CRIADO EM', uid: 'createdAt', sortable: true },
+        { name: 'ADICIONADO EM', uid: 'createdAt', sortable: true },
         { name: 'ATUALIZADO EM', uid: 'updatedAt', sortable: true },
         { name: 'AÇÕES', uid: 'actions' }
       ]}

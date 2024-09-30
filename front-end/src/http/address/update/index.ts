@@ -6,8 +6,7 @@ import { AddressUpdateOutput } from './types'
 export * from './types'
 
 export async function updateAddress(
-  id: Number,
-  { userId, ...payload }: AddressUpdateOutput,
+  { id, userId, ...payload }: AddressUpdateOutput,
   config?: ApiRequestConfig<Address>
 ) {
   return await api.patch<Address>(`users/${userId}/addresses/${id}/`, payload, config)
