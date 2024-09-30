@@ -55,6 +55,7 @@ export function ServiceModalBody() {
         onSelectionChange={onCategoryChange}
         onAddNew={onAddNewCategory}
         errorMessage={errors.category?.message}
+        isLoading={categories.state.isLoading}
       />
       <Input
         type="number"

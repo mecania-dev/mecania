@@ -53,6 +53,7 @@ export function VehicleModalBody() {
         selectedKeys={values.transmission ? [values.transmission] : []}
         onSelectionChange={onTransmissionChange}
         errorMessage={errors.transmission?.message}
+        isLoading={transmissionChoices.state.isLoading}
       />
       <Select
         size="sm"
@@ -63,6 +64,7 @@ export function VehicleModalBody() {
         selectedKeys={values.fuelType ? [values.fuelType] : []}
         onSelectionChange={onFuelChange}
         errorMessage={errors.fuelType?.message}
+        isLoading={fuelChoices.state.isLoading}
       />
       <Input label="Placa" size="sm" errorMessage={errors.licensePlate?.message} {...register('licensePlate')} />
       <Input label="Chassi" size="sm" errorMessage={errors.chassisNumber?.message} {...register('chassisNumber')} />
