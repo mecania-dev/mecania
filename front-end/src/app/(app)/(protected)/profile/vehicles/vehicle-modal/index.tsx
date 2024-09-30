@@ -26,7 +26,8 @@ export function VehicleModal<T extends Vehicle | undefined = undefined>({
   onSubmit
 }: VehicleModalProps<T>) {
   const form = useForm<VehicleCreateInput>({
-    resolver: zodResolver(vehicle ? vehicleUpdateSchema : vehicleCreateSchema)
+    resolver: zodResolver(vehicle ? vehicleUpdateSchema : vehicleCreateSchema),
+    defaultValues: vehicle
   })
 
   async function handleOnSubmit(vehicle: T extends undefined ? VehicleCreateOutput : VehicleUpdateOutput) {
