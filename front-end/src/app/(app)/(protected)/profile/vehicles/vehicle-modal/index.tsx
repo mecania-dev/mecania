@@ -6,6 +6,7 @@ import { useForm } from '@/hooks/use-form'
 import { VehicleCreateInput, VehicleCreateOutput, vehicleCreateSchema } from '@/http'
 import { VehicleUpdateOutput, vehicleUpdateSchema } from '@/http/user/vehicle/update'
 import { maybePromise, MaybePromise } from '@/lib/promise'
+import { useUser } from '@/providers/user-provider'
 import { Vehicle } from '@/types/entities/vehicle'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -25,9 +26,10 @@ export function VehicleModal<T extends Vehicle | undefined = undefined>({
   setIsOpen,
   onSubmit
 }: VehicleModalProps<T>) {
+  const { user } = useUser()
   const form = useForm<VehicleCreateInput>({
     resolver: zodResolver(vehicle ? vehicleUpdateSchema : vehicleCreateSchema),
-    defaultValues: vehicle
+    defaultValues: { userId: user?.id, ...vehicle }
   })
 
   async function handleOnSubmit(vehicle: T extends undefined ? VehicleCreateOutput : VehicleUpdateOutput) {

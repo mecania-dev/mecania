@@ -9,14 +9,14 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ServiceRetrieveDestroySerializer(serializers.ModelSerializer):
-    vehicle_type = serializers.SerializerMethodField()
+    vehicle_type_label = serializers.SerializerMethodField()
     category = CategorySerializer()
 
     class Meta:
         model = Service
         fields = "__all__"
 
-    def get_vehicle_type(self, obj):
+    def get_vehicle_type_label(self, obj):
         return dict(Service.VEHICLE_TYPE_CHOICES).get(obj.vehicle_type, "")
 
 

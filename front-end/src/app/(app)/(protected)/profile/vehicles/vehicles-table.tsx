@@ -137,8 +137,8 @@ export function VehiclesTable() {
         onSelectionChange={setSelectedKeys}
         topContent={topContent}
         renderCell={renderCell}
-        filterFields={['brand', 'model', 'year', 'transmission']}
-        initialVisibleColumns={['brand', 'model', 'year', 'transmission', 'actions']}
+        filterFields={['brand', 'model', 'year', 'transmissionLabel', 'fuelTypeLabel']}
+        initialVisibleColumns={['brand', 'model', 'year', 'transmissionLabel', 'fuelTypeLabel', 'actions']}
         bodyProps={{
           emptyContent: vehicles.state.isLoading ? ' ' : 'Nenhum veículo encontrado.',
           isLoading: vehicles.state.isLoading,
@@ -149,7 +149,10 @@ export function VehiclesTable() {
           { name: 'MARCA', uid: 'brand', sortable: true },
           { name: 'MODELO', uid: 'model', sortable: true },
           { name: 'ANO', uid: 'year', sortable: true },
-          { name: 'TRANSMISSÃO', uid: 'transmission', sortable: true },
+          { name: 'TRANSMISSÃO', uid: 'transmissionLabel', sortable: true },
+          { name: 'COMBUSTÍVEL', uid: 'fuelTypeLabel', sortable: true },
+          { name: 'PLACA', uid: 'licensePlate', sortable: true },
+          { name: 'CHASSIS', uid: 'chassisNumber', sortable: true },
           { name: 'ADICIONADO EM', uid: 'createdAt', sortable: true },
           { name: 'ATUALIZADO EM', uid: 'updatedAt', sortable: true },
           { name: 'AÇÕES', uid: 'actions' }

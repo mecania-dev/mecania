@@ -3,8 +3,8 @@ from .models import Vehicle
 
 
 class VehicleSerializer(serializers.ModelSerializer):
-    transmission = serializers.SerializerMethodField()
-    fuel_type = serializers.SerializerMethodField()
+    transmission_label = serializers.SerializerMethodField()
+    fuel_type_label = serializers.SerializerMethodField()
 
     class Meta:
         model = Vehicle
@@ -15,7 +15,9 @@ class VehicleSerializer(serializers.ModelSerializer):
             "year",
             "mileage",
             "transmission",
+            "transmission_label",
             "fuel_type",
+            "fuel_type_label",
             "cylinder_count",
             "license_plate",
             "chassis_number",
@@ -23,10 +25,10 @@ class VehicleSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
 
-    def get_transmission(self, obj):
+    def get_transmission_label(self, obj):
         return dict(Vehicle.TRANSMISSION_CHOICES).get(obj.transmission, "")
 
-    def get_fuel_type(self, obj):
+    def get_fuel_type_label(self, obj):
         return dict(Vehicle.FUEL_CHOICES).get(obj.fuel_type, "")
 
 

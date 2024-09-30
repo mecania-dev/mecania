@@ -2,6 +2,7 @@ import { number, string } from '@/lib/zod'
 import { z } from 'zod'
 
 export const vehicleCreateSchema = z.object({
+  userId: z.number().optional(),
   brand: string({ name: 'Marca', min: 1, max: 100 }),
   model: string({ name: 'Modelo', min: 1, max: 100 }),
   year: number({ name: 'Ano' }),
