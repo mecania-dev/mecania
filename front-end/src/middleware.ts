@@ -19,10 +19,6 @@ export async function middleware(req: NextRequest) {
   })
 
   if (authRedirectUrl) {
-    if (authPrefixes.some(p => authRedirectUrl?.startsWith(p))) {
-      authRedirectUrl = '/'
-    }
-
     if (pathname === authRedirectUrl) {
       return NextResponse.next()
     }
