@@ -1,3 +1,5 @@
+import { maybePromise, MaybePromise } from '@/lib/promise'
+
 import { auth } from './auth'
 import { AppAbility } from './casl'
 
@@ -16,8 +18,8 @@ export type AuthRoute =
 export type AuthRouteOption = {
   can?: Parameters<AppAbility['can']> | Parameters<AppAbility['can']>[]
   canLogicType?: 'and' | 'or'
-  onAuthorized?: (isAuthenticated: boolean, ability?: AppAbility) => void
-  onUnauthorized?: (isAuthenticated: boolean, ability?: AppAbility) => void
+  onAuthorized?: MaybePromise<(isAuthenticated: boolean, ability?: AppAbility) => any>
+  onUnauthorized?: MaybePromise<(isAuthenticated: boolean, ability?: AppAbility) => any>
 }
 
 export type AuthRoutes = {
@@ -58,7 +60,7 @@ export const authRoutes: { unauthorized: AuthRoutes; authorized: AuthRoutes } = 
   }
 } as const
 
-export async function isAuthorizedRoute(
+export function getAuthRoute(
   pathname: string,
   options: AuthRoutes & {
     unauthorized?: Pick<AuthRouteOption, 'onAuthorized' | 'onUnauthorized'>
@@ -83,41 +85,41 @@ export async function isAuthorizedRoute(
     }
   }
 
-  return await auth({
-    custom({ isAuthenticated, ability }) {
-      if (!route) {
-        console.error(`Route ${pathname} is not found in authRoutes`)
-        return true
-      }
+  return { isAthorizedRoute, route }
+}
 
-      if (!isAthorizedRoute) {
-        if (isAuthenticated) {
-          route.onUnauthorized?.(isAuthenticated, ability)
-          return false
-        }
+export async function isAuthorizedRoute(
+  pathname: string,
+  isAuthenticated: boolean,
+  ability?: AppAbility,
+  options: Parameters<typeof getAuthRoute>[1] = {}
+) {
+  const { isAthorizedRoute, route } = getAuthRoute(pathname, options)
 
-        route.onAuthorized?.(isAuthenticated, ability)
-        return true
-      }
+  if (!route) return true
 
-      let isAuthorized = isAuthenticated
+  let isAuthorized = isAthorizedRoute ? isAuthenticated : !isAuthenticated
 
-      if (route.can) {
-        const can = Array.isArray(route.can[0]) ? route.can : [route.can]
-        if (route.canLogicType === 'and') {
-          isAuthorized = can.every(c => !!ability?.can(...(c as any)))
-        } else {
-          isAuthorized = can.some(c => !!ability?.can(...(c as any)))
-        }
-      }
-
-      if (!isAuthorized) {
-        route.onUnauthorized?.(isAuthenticated, ability)
-        return false
-      }
-
-      route.onAuthorized?.(isAuthenticated, ability)
-      return true
+  if (isAthorizedRoute && route.can) {
+    const can = Array.isArray(route.can[0]) ? route.can : [route.can]
+    if (route.canLogicType === 'and') {
+      isAuthorized = can.every(c => !!ability?.can(...(c as any)))
+    } else {
+      isAuthorized = can.some(c => !!ability?.can(...(c as any)))
     }
+  }
+
+  if (!isAuthorized) {
+    await maybePromise(route.onUnauthorized, isAuthenticated, ability)
+    return false
+  }
+
+  await maybePromise(route.onAuthorized, isAuthenticated, ability)
+  return true
+}
+
+export async function getIsAuthorizedRoute(pathname: string, options: Parameters<typeof getAuthRoute>[1] = {}) {
+  return auth({
+    custom: ({ isAuthenticated, ability }) => isAuthorizedRoute(pathname, isAuthenticated, ability, options)
   })
 }

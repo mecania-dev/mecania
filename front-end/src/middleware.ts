@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
-import { isAuthorizedRoute } from './auth'
+import { getIsAuthorizedRoute } from './auth'
 
 const authPrefixes = ['/sign-in', '/sign-up', '/forgot-password'] as const
 
@@ -9,7 +9,7 @@ export async function middleware(req: NextRequest) {
   const callbackUrl = req.cookies.get('callback-url')?.value
   let authRedirectUrl: string | undefined
 
-  await isAuthorizedRoute(pathname, {
+  await getIsAuthorizedRoute(pathname, {
     unauthorized: {
       onUnauthorized: () => (authRedirectUrl = callbackUrl ?? '/')
     },

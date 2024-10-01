@@ -3,9 +3,12 @@
 import { ReactNode, createContext, useContext } from 'react'
 
 import Loading from '@/app/loading'
-import { getUserPermissions } from '@/auth'
+import { getUserPermissions, isAuthorizedRoute } from '@/auth'
 import { AbilityProvider, useAuth, UseAuth } from '@/auth/client'
+import { Redirect } from '@/components/redirect'
 import { User } from '@/types/entities/user'
+import { getCookie } from 'cookies-next'
+import { usePathname } from 'next/navigation'
 import { SWRResponse } from 'swr'
 
 export interface UserContextProps {
@@ -21,8 +24,19 @@ export interface UserContextProps {
 export const UserContext = createContext({} as UserContextProps)
 
 export function UserProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname()
   const { user, isAuthenticated, isLoading, signUp, signIn, signOut } = useAuth()
   const ability = getUserPermissions(user.state.data?.id, user.state.data?.groups, user.state.data?.isSuperuser)
+  let redirectUrl: string | undefined
+
+  isAuthorizedRoute(pathname, isAuthenticated, ability, {
+    unauthorized: {
+      onUnauthorized: () => (redirectUrl = getCookie('callback-url') ?? '/')
+    },
+    authorized: {
+      onUnauthorized: isAuthenticated => (redirectUrl = isAuthenticated ? '/profile' : '/sign-in')
+    }
+  })
 
   return (
     <UserContext.Provider
@@ -36,7 +50,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
         signOut
       }}
     >
-      {isLoading ? <Loading /> : <AbilityProvider value={ability}>{children}</AbilityProvider>}
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <AbilityProvider value={ability}>{redirectUrl ? <Redirect url={redirectUrl} /> : children}</AbilityProvider>
+      )}
     </UserContext.Provider>
   )
 }
