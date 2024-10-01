@@ -1,71 +1,20 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
-import { auth } from './auth'
+import { isAuthorizedRoute } from './auth'
 
 const authPrefixes = ['/sign-in', '/sign-up', '/forgot-password'] as const
-const protectedParentsPrefixes = ['/chat', '/mechanics', '/profile', '/services'] as const
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname
   const callbackUrl = req.cookies.get('callback-url')?.value
   let authRedirectUrl: string | undefined
 
-  function setRedirectUrlAndReturn(url: string, isAthorized: boolean) {
-    authRedirectUrl = isAthorized ? undefined : url
-    return isAthorized
-  }
-
-  await auth({
-    custom({ isAuthenticated, ability }) {
-      // AUTH
-      if (authPrefixes.some(p => pathname.startsWith(p))) {
-        return setRedirectUrlAndReturn(callbackUrl ?? '/', !isAuthenticated)
-      }
-
-      // PROTECTED PARENTS
-      if (protectedParentsPrefixes.some(p => pathname.startsWith(p))) {
-        if (!isAuthenticated) {
-          return setRedirectUrlAndReturn('/sign-in', false)
-        }
-
-        /*----------IS AUTHENTICATED----------*/
-
-        // CHAT
-        if (pathname.startsWith('/chat')) {
-          return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('ask_ai', 'Chat'))
-        }
-
-        // MECHANICS
-        if (pathname.startsWith('/mechanics')) {
-          return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('manage', 'User'))
-        }
-
-        // PROFILE
-        if (pathname.startsWith('/profile')) {
-          // ADDRESSES
-          if (pathname.startsWith('/profile/addresses')) {
-            return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('create', 'Address'))
-          }
-
-          // REQUESTS
-          if (pathname.startsWith('/profile/requests')) {
-            return setRedirectUrlAndReturn(
-              callbackUrl ?? '/profile',
-              !!ability?.can('message_mechanic', 'Chat') || !!ability?.can('message_user', 'Chat')
-            )
-          }
-
-          // VEHICLES
-          if (pathname.startsWith('/profile/vehicles')) {
-            return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('create', 'Vehicle'))
-          }
-        }
-
-        // SERVICES
-        if (pathname.startsWith('/services')) {
-          return setRedirectUrlAndReturn(callbackUrl ?? '/profile', !!ability?.can('manage', 'Service'))
-        }
-      }
+  await isAuthorizedRoute(pathname, {
+    unauthorized: {
+      onUnauthorized: () => (authRedirectUrl = callbackUrl ?? '/')
+    },
+    authorized: {
+      onUnauthorized: isAuthenticated => (authRedirectUrl = isAuthenticated ? '/profile' : '/sign-in')
     }
   })
 

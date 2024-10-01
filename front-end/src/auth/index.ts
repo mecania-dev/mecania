@@ -1,6 +1,7 @@
 export * from './casl'
 export * from './actions'
 export * from './auth'
+export * from './routes'
 export * from './session'
 export * from './token'
 export * from './types'
