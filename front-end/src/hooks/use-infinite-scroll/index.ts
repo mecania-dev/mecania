@@ -44,7 +44,7 @@ export function useInfiniteScroll<T>({
     }
   }, [scrollContainerRef, handleLoadMore])
 
-  return [state, scrollContainerRef] as const
+  return [state, scrollContainerRef, handleLoadMore] as const
 }
 
 export type UseInfiniteScrollReturn = ReturnType<typeof useInfiniteScroll>

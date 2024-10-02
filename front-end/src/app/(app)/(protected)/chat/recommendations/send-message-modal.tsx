@@ -21,7 +21,7 @@ export function SendMessageModal() {
 
   const [sendMessage, isSending] = useIsLoading(async () => {
     for (const mechanic of recs.selectedMechanics) {
-      await delay(0.25)
+      await delay(250)
       sendRequest({
         chat: chat!,
         driver: user!,

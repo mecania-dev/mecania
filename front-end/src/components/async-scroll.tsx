@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
 import { PaginationState, UsePaginationProps } from '@/hooks/use-pagination'
 import { api, ApiRequestConfig } from '@/http'
@@ -56,8 +58,11 @@ export function AsyncScroll<T>({
     onStateChange,
     async onLoadMore({ next }) {
       const paramsChanged = hasNextParamsChanged(next, config.params)
+      if (!paramsChanged && next) config.params = {}
+
       const res = await api.get<ItemsResponse<T>>(paramsChanged || !next ? url : next, config)
       if (!res.ok) throw res.data
+
       return {
         items: res.data.results,
         next: res.data.next,
@@ -66,6 +71,13 @@ export function AsyncScroll<T>({
     }
   })
   const classes = asyncScroll()
+
+  useEffect(() => {
+    console.log('next', state.next)
+    console.log('params', config.params)
+    const paramsChanged = hasNextParamsChanged(state.next, config.params)
+    console.log('paramsChanged', paramsChanged)
+  }, [state.next, config.params])
 
   loadingContent = loadingContent ?? (
     <div className={classes.spinnerWrapper({ class: classNames?.spinnerWrapper })}>
