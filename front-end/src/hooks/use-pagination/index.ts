@@ -4,6 +4,16 @@ import { PaginationAction, PaginationState, UsePaginationProps } from './types'
 
 export * from './types'
 
+const initialState: PaginationState<any> = {
+  items: [],
+  next: null,
+  previous: null,
+  last: null,
+  hasMore: true,
+  isMounted: false,
+  isLoading: false
+}
+
 function reducer<T>(state: PaginationState<T>, action: PaginationAction<T>): PaginationState<T> {
   switch (action.type) {
     case 'LOAD_MORE':
@@ -13,19 +23,23 @@ function reducer<T>(state: PaginationState<T>, action: PaginationAction<T>): Pag
         ...state,
         items: action.payload.reset ? action.payload.items : [...state.items, ...action.payload.items],
         next: action.payload.next,
+        previous: action.payload.previous,
+        last: action.payload.last,
         hasMore: !!action.payload.next,
         isMounted: true,
         isLoading: false
       }
     case 'LOAD_MORE_FAILURE':
       return { ...state, isLoading: false, error: action.error }
+    case 'RESET':
+      return { ...initialState, ...action.payload }
     default:
       return state
   }
 }
 
 let listeners: Array<(state: PaginationState<any>) => void> = []
-let memoryState: PaginationState<any> = { items: [], next: null, hasMore: true, isMounted: false, isLoading: false }
+let memoryState = initialState
 
 function dispatch<T>(action: PaginationAction<T>) {
   memoryState = reducer(memoryState, action)
@@ -59,5 +73,9 @@ export function usePagination<T>({ load, onStateChange }: UsePaginationProps<T>)
     }
   }
 
-  return [state, loadMore] as const
+  function reset(defaultValues?: Partial<PaginationState<T>>) {
+    dispatch({ type: 'RESET', payload: defaultValues })
+  }
+
+  return [memoryState, loadMore, reset] as const
 }

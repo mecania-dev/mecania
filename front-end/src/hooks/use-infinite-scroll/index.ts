@@ -11,7 +11,7 @@ export function useInfiniteScroll<T>({
   onLoadMore,
   onStateChange
 }: UseInfiniteScrollProps<T> = {}) {
-  const [state, loadMore] = usePagination({ load: onLoadMore, onStateChange })
+  const [state, loadMore, reset] = usePagination({ load: onLoadMore, onStateChange })
   const scrollContainerRef = useRef<HTMLElement>(null)
 
   const handleLoadMore = useCallback(
@@ -44,7 +44,7 @@ export function useInfiniteScroll<T>({
     }
   }, [scrollContainerRef, handleLoadMore])
 
-  return [state, scrollContainerRef, handleLoadMore] as const
+  return [state, scrollContainerRef, reset] as const
 }
 
 export type UseInfiniteScrollReturn = ReturnType<typeof useInfiniteScroll>
