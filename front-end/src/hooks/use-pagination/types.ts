@@ -3,9 +3,10 @@ import { MaybePromise } from '@/lib/promise'
 export interface LoadMoreProps<T> {
   items: T[]
   next?: string | null
+  reset?: boolean
 }
 
-export interface PaginationState<T> extends LoadMoreProps<T> {
+export interface PaginationState<T> extends Omit<LoadMoreProps<T>, 'reset'> {
   error?: any
   hasMore: boolean
   isMounted: boolean

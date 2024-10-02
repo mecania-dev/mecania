@@ -26,16 +26,20 @@ const asyncScroll = tv({
   }
 })
 
-function updateUrl(url: string, newParams: Record<string, any> = {}): string {
-  const urlObj = new URL(url, 'http://temp.base.url')
-  const existingParams = new URLSearchParams(urlObj.search)
+function hasNextParamsChanged(next?: string | null, params: Record<string, any> = {}) {
+  if (!next) return false
+  const urlObj = new URL(next)
+  let paramsChanged = false
 
-  for (const [key, value] of Object.entries(newParams)) {
-    existingParams.set(key, value)
+  for (const [key, value] of Object.entries(params)) {
+    if (urlObj.searchParams.get(key) !== value) {
+      // If any parameter value has changed, set the flag to true
+      paramsChanged = true
+      break
+    }
   }
 
-  urlObj.search = existingParams.toString()
-  return `${urlObj.pathname.replace('api/', '')}${urlObj.search ?? ''}`
+  return paramsChanged
 }
 
 export function AsyncScroll<T>({
@@ -48,15 +52,16 @@ export function AsyncScroll<T>({
   onStateChange,
   ...props
 }: AsyncScrollProps<T>) {
-  const { params, ...restConfig } = config
   const [{ items, ...state }, scrollerRef] = useInfiniteScroll<T>({
     onStateChange,
     async onLoadMore({ next }) {
-      const res = await api.get<ItemsResponse<T>>(updateUrl(next ?? url, params), restConfig)
+      const paramsChanged = hasNextParamsChanged(next, config.params)
+      const res = await api.get<ItemsResponse<T>>(paramsChanged || !next ? url : next, config)
       if (!res.ok) throw res.data
       return {
         items: res.data.results,
-        next: res.data.next
+        next: res.data.next,
+        reset: next ? paramsChanged : false
       }
     }
   })

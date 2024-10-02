@@ -57,7 +57,7 @@ export function ChatRecommendations() {
             <p className="text-center text-default-400">Nenhuma oficina recomendada</p>
           </div>
         )}
-        {mechanicsState?.items.length && (
+        {!!mechanicsState?.items.length && (
           <p className="px-6 pb-1 text-center text-small text-foreground-500 sm:text-medium">
             Selecione as oficinas que deseja enviar mensagem
           </p>
@@ -86,7 +86,7 @@ export function ChatRecommendations() {
             )
           }}
         </AsyncScroll>
-        {mechanicsState?.items.length && (
+        {!!mechanicsState?.items.length && (
           <div className="flex justify-end p-4 pt-3">
             <Button isDisabled={recs.selectedMechanics.length === 0} onPress={recs.openSendModal}>
               Enviar

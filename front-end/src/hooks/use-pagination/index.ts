@@ -11,7 +11,7 @@ function reducer<T>(state: PaginationState<T>, action: PaginationAction<T>): Pag
     case 'LOAD_MORE_SUCCESS':
       return {
         ...state,
-        items: [...state.items, ...action.payload.items],
+        items: action.payload.reset ? action.payload.items : [...state.items, ...action.payload.items],
         next: action.payload.next,
         hasMore: !!action.payload.next,
         isMounted: true,
