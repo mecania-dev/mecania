@@ -6,9 +6,10 @@ export interface LoadMoreProps<T> {
   previous?: string | null
   last?: string | null
   reset?: boolean
+  signal?: AbortSignal
 }
 
-export interface PaginationState<T> extends Omit<LoadMoreProps<T>, 'reset'> {
+export interface PaginationState<T> extends Omit<LoadMoreProps<T>, 'reset' | 'signal'> {
   error?: any
   hasMore: boolean
   isMounted: boolean
@@ -22,6 +23,6 @@ export type PaginationAction<T> =
   | { type: 'RESET'; payload?: Partial<PaginationState<T>> }
 
 export interface UsePaginationProps<T> {
-  load?: MaybePromise<(state: LoadMoreProps<T>) => LoadMoreProps<T>>
+  load?: MaybePromise<(state: Omit<LoadMoreProps<T>, 'reset'>) => LoadMoreProps<T>>
   onStateChange?: (state: PaginationState<T>) => void
 }

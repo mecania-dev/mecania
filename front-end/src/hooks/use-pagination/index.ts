@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { PaginationAction, PaginationState, UsePaginationProps } from './types'
 
@@ -38,26 +38,24 @@ function reducer<T>(state: PaginationState<T>, action: PaginationAction<T>): Pag
   }
 }
 
-let listeners: Array<(state: PaginationState<any>) => void> = []
 let memoryState = initialState
+let setMemoryState: ((state: PaginationState<any>) => void) | undefined
 
 function dispatch<T>(action: PaginationAction<T>) {
   memoryState = reducer(memoryState, action)
-  listeners.forEach(listener => {
-    listener(memoryState)
-  })
+  setMemoryState?.(memoryState)
 }
 
 export function usePagination<T>({ load, onStateChange }: UsePaginationProps<T>) {
+  const abortRef = useRef<AbortController | null>(null)
   const [state, setState] = useState<PaginationState<T>>(memoryState)
 
   useEffect(() => {
-    if (memoryState.isMounted && onStateChange) {
-      onStateChange(memoryState)
-    }
-    listeners.push(setState)
+    onStateChange?.(memoryState)
+    setMemoryState = setState
+
     return () => {
-      listeners = []
+      setMemoryState = undefined
     }
   }, [state, onStateChange])
 
@@ -66,7 +64,19 @@ export function usePagination<T>({ load, onStateChange }: UsePaginationProps<T>)
 
     dispatch({ type: 'LOAD_MORE' })
     try {
-      const newProps = await load({ items: memoryState.items, next: memoryState.next })
+      if (abortRef.current) {
+        abortRef.current.abort()
+      }
+      abortRef.current = new AbortController()
+
+      const newProps = await load({
+        items: memoryState.items,
+        next: memoryState.next,
+        previous: memoryState.previous,
+        last: memoryState.last,
+        signal: abortRef.current.signal
+      })
+
       dispatch({ type: 'LOAD_MORE_SUCCESS', payload: newProps })
     } catch (error) {
       dispatch({ type: 'LOAD_MORE_FAILURE', error })
@@ -74,8 +84,11 @@ export function usePagination<T>({ load, onStateChange }: UsePaginationProps<T>)
   }
 
   function reset(defaultValues?: Partial<PaginationState<T>>) {
+    if (abortRef.current) {
+      abortRef.current.abort()
+    }
     dispatch({ type: 'RESET', payload: defaultValues })
   }
 
-  return [memoryState, loadMore, reset] as const
+  return { state, abortRef, loadMore, reset } as const
 }

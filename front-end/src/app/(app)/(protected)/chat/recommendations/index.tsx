@@ -67,8 +67,9 @@ export function ChatRecommendations() {
           config={{
             params: { addresses__city__in: recs.filters.cities.reduce((acc, city) => (acc += city + ','), '') }
           }}
+          data-mounted={mechanicsState?.isMounted}
           onStateChange={setMechanicsState}
-          className="grow px-6"
+          className="px-6 data-[mounted=true]:grow"
         >
           {(mechanics, { isMounted }) => {
             if (!isMounted || !mechanics?.length) return null

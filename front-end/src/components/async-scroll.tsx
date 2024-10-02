@@ -29,20 +29,10 @@ const asyncScroll = tv({
   }
 })
 
-function hasLastParamsChanged(last?: string | null, params: Record<string, any> = {}) {
-  if (!last) return false
-  const urlObj = new URL(last)
-  let paramsChanged = false
+let lastParams: Record<string, any> = {}
 
-  for (const [key, value] of Object.entries(params)) {
-    if (urlObj.searchParams.get(key) !== value) {
-      // If any parameter value has changed, set the flag to true
-      paramsChanged = true
-      break
-    }
-  }
-
-  return paramsChanged
+function hasLastParamsChanged(params: Record<string, any> = {}) {
+  return Object.entries(params).some(([key, value]) => lastParams[key] !== value)
 }
 
 export function AsyncScroll<T>({
@@ -55,35 +45,32 @@ export function AsyncScroll<T>({
   onStateChange,
   ...props
 }: AsyncScrollProps<T>) {
+  const classes = asyncScroll()
   const [{ items, ...state }, scrollerRef, reset] = useInfiniteScroll<T>({
     onStateChange,
-    async onLoadMore({ next, last }) {
-      const newConfig = { ...config }
-      const paramsChanged = hasLastParamsChanged(last, newConfig.params)
-      if (!paramsChanged && next) newConfig.params = {}
+    async onLoadMore({ next, signal }) {
+      lastParams = config.params
+      const newConfig = { ...config, signal }
+      if (next) newConfig.params = {}
 
-      const res = await api.get<ItemsResponse<T>>(paramsChanged || !next ? url : next, newConfig)
+      const res = await api.get<ItemsResponse<T>>(next ?? url, newConfig)
       if (!res.ok) throw res.data
 
       return {
         items: res.data.results,
         next: res.data.next,
         previous: res.data.previous,
-        last: res.request?.responseURL,
-        reset: paramsChanged
+        last: res.request?.responseURL
       }
     }
   })
-  const classes = asyncScroll()
 
   useEffect(() => {
-    if (!state.isMounted || state.isLoading) return
-
-    if (hasLastParamsChanged(state.last, config.params)) {
-      reset({ last: state.last })
+    if (hasLastParamsChanged(config.params)) {
+      reset()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.last, config.params])
+  }, [config.params])
 
   loadingContent = loadingContent ?? (
     <div className={classes.spinnerWrapper({ class: classNames?.spinnerWrapper })}>
