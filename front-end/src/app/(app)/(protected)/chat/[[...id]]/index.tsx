@@ -20,7 +20,7 @@ export function ChatPage({ chatId }: ChatProps) {
     onSuccess: setChat
   })
 
-  if (chatId && chat.state.isLoading) return <Loading isAbsolute={false} />
+  if (chatId && chat.state.isLoading) return <Loading />
   if (chatId && !chat.state.data) return <Redirect url="/chat" />
 
   return (
