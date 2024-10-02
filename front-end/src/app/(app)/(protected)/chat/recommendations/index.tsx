@@ -109,7 +109,7 @@ function applyFilters(
     if (!current.rating) current.rating = 0
     const { rating, addresses } = current
 
-    if (!addresses) return acc
+    if (!addresses.length) return acc
 
     // Filter by rating
     if (rating < ratings.min || rating > ratings.max) {
@@ -117,7 +117,6 @@ function applyFilters(
     }
 
     // Filter by cities
-    console.log('cities', cities)
     const mechanicCities = map(addresses, 'city')
     if (cities.length && !intersection(mechanicCities, cities).length) {
       return acc
