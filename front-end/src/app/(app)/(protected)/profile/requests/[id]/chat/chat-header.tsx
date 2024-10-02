@@ -2,7 +2,7 @@
 
 import { ChatHeader } from '@/components/chat/header'
 import { formatDate } from '@/lib/date'
-import { Request } from '@/types/entities/request'
+import { Request } from '@/types/entities/user'
 
 interface RequestChatHeaderProps {
   request: Request

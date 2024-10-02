@@ -1,5 +1,5 @@
 import { api, ApiRequestConfig } from '@/http'
-import { Vehicle } from '@/types/entities/vehicle'
+import { Vehicle } from '@/types/entities/user'
 
 import { VehicleCreateOutput } from './types'
 

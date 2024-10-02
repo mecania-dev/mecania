@@ -4,20 +4,17 @@ import { ChatInput } from '@/components/chat/input'
 import { Form } from '@/components/form'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
 import { useForm } from '@/hooks/use-form'
-import { useUser } from '@/providers/user-provider'
-import { SendMessage, sendMessageSchema } from '@/types/entities/message'
-import { Request } from '@/types/entities/request'
+import { SendMessage, sendMessageSchema } from '@/types/entities/chat'
+import { Request } from '@/types/entities/user'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 interface RequestChatInputProps {
   request: Request
 }
 
-export function RequestChatInput({ request }: RequestChatInputProps) {
-  const { user } = useUser()
+export function RequestChatInput({}: RequestChatInputProps) {
   const form = useForm<SendMessage>({
-    resolver: zodResolver(sendMessageSchema),
-    defaultValues: { chatId: request.id, senderId: user?.id }
+    resolver: zodResolver(sendMessageSchema)
   })
   const { isSubmitting, isValid } = form.formState
   const isDisabled = isSubmitting || !isValid

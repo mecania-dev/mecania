@@ -1,5 +1,5 @@
 import { api, ApiRequestConfig } from '@/http'
-import { Category } from '@/types/entities/category'
+import { Category } from '@/types/entities/service'
 
 import { CategoryCreateOutput } from './types'
 

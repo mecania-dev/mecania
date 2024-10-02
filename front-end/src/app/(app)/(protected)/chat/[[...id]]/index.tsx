@@ -3,32 +3,31 @@
 import Loading from '@/app/loading'
 import { Redirect } from '@/components/redirect'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
-import { useChats } from '@/mocks/use-chats'
+import { Chat } from '@/types/entities/chat'
 
 import { AIChatHeader } from '../chat-header'
 import { AIChatInput } from '../chat-input'
 import { AIChatWindow } from '../chat-window'
+import { useChat } from '../use-chat'
 
 interface ChatProps {
   chatId?: number
 }
 
-export function Chat({ chatId }: ChatProps) {
-  const isNew = !chatId
-  const { state: chatState } = useSWRCustom(isNew ? null : null)
-  // TODO: Remover depois que implementar o backend
-  const { chats } = useChats()
-  const chat = chats.find(c => c.id === chatId)
+export function ChatPage({ chatId }: ChatProps) {
+  const { setChat } = useChat()
+  const { state: chatState } = useSWRCustom<Chat>(chatId ? `/chat/${chatId}` : null, {
+    onSuccess: setChat
+  })
 
-  if (!isNew && !chat) return <Redirect url="/chat" />
-
-  if (!isNew && chatState.isLoading) return <Loading />
+  if (chatId && chatState.isLoading) return <Loading />
+  if (chatId && !chatState.data) return <Redirect url="/chat" />
 
   return (
     <div className="relative flex max-h-[calc(100dvh-4rem)] grow flex-col">
-      <AIChatHeader chat={chat} />
-      <AIChatWindow chat={chat} />
-      <AIChatInput chat={chat} />
+      <AIChatHeader />
+      <AIChatWindow />
+      <AIChatInput />
     </div>
   )
 }

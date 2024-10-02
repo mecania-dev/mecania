@@ -1,5 +1,5 @@
-import { Chat } from './chat'
-import { User } from './user'
+import { User } from '.'
+import { Chat } from '../chat'
 
 export interface Request {
   id: number

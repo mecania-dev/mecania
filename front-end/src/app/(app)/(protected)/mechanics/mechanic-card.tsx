@@ -3,12 +3,12 @@ import { FaEnvelope, FaPhone } from 'react-icons/fa6'
 
 import { Card, CardProps } from '@/components/card'
 import { Rating } from '@/components/rating'
-import { Mechanic } from '@/types/entities/mechanic'
+import { User } from '@/types/entities/user'
 import { Avatar, Divider, Skeleton, SlotsToClasses, tv } from '@nextui-org/react'
 import Link from 'next/link'
 
 type MechanicCardProps = Omit<CardProps, 'ref' | 'classNames'> & {
-  mechanic?: Mechanic
+  mechanic?: User
   href?: string
   classNames?: SlotsToClasses<keyof ReturnType<typeof mechanicCard>> & CardProps['classNames']
   hideAvatar?: boolean

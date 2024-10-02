@@ -1,5 +1,5 @@
 import { ApiResponse, CategoryCreateOutput } from '@/http'
-import { Category } from '@/types/entities/category'
+import { Category } from '@/types/entities/service'
 import { create } from 'zustand'
 
 type onSubmitCategory = (category: CategoryCreateOutput) => Promise<ApiResponse<Category>>

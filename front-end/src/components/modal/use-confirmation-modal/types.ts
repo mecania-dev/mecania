@@ -6,8 +6,8 @@ export interface ConfirmationModalState extends Pick<ModalProps, 'size'> {
   title?: string
   question?: string
   isLoading?: boolean
-  onConfirm?: MaybePromise<() => void>
-  onCancel?: MaybePromise<() => void>
+  onConfirm?: MaybePromise<() => any>
+  onCancel?: MaybePromise<() => any>
 }
 
 export const actionTypes = {

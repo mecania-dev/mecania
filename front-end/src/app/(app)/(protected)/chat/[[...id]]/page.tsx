@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
-import { Chat } from '.'
+import { ChatPage } from '.'
 
 type Props = {
   params: { id?: string }
@@ -20,5 +20,5 @@ export default async function Page({ params }: Props) {
 
   if (!isValid) redirect('/chat')
 
-  return <Chat chatId={chatId} />
+  return <ChatPage chatId={chatId} />
 }

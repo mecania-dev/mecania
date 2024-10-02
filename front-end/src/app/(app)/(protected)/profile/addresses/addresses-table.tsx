@@ -13,7 +13,7 @@ import { toast } from '@/hooks/use-toast'
 import { AddressCreateOutput, AddressUpdateOutput } from '@/http'
 import { formatDate } from '@/lib/date'
 import { useUser } from '@/providers/user-provider'
-import { Address } from '@/types/entities/address'
+import { Address } from '@/types/entities/user'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
 
 import { AddressModal, NewAddressModalButton } from './address-modal'

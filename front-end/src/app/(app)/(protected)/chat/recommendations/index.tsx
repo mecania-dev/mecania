@@ -1,29 +1,36 @@
 import { useEffect, useState } from 'react'
 
+import Loading from '@/app/loading'
 import { Button } from '@/components/button'
 import { Modal } from '@/components/modal'
+import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { search } from '@/lib/string'
-import { Mechanic } from '@/types/entities/mechanic'
+import { User } from '@/types/entities/user'
 import { CheckboxGroup, ScrollShadow } from '@nextui-org/react'
 import { intersection, map, random } from 'lodash'
 
+import { ChatStore, useChat } from '../use-chat'
 import { ChatRecommendationsFilters } from './filters'
 import { MechanicRecommendation } from './mechanic'
 import { SendMessageModal } from './send-message-modal'
-import { RecommendationsStore, useRecommendations } from './use-recommendations'
 
-export interface MechanicWithDistance extends Mechanic {
+export interface MechanicWithDistance extends User {
   distance: number
 }
 
 export function ChatRecommendations() {
-  const recs = useRecommendations()
+  const { recommendations: recs } = useChat()
+  const mechanics = useSWRCustom<User[]>('users/mechanics/', {
+    onSuccess: recs.setMechanics
+  })
   const [filteredMechanics, setFilteredMechanics] = useState<MechanicWithDistance[]>([])
   const searchedMechanics = search(filteredMechanics, 'firstName', recs.searchQuery)
 
   useEffect(() => {
-    setFilteredMechanics(applyFilters(recs.mechanics, recs.filters))
-  }, [recs.filters, recs.mechanics])
+    if (!mechanics.state.isLoading) {
+      setFilteredMechanics(applyFilters(recs.mechanics, recs.filters))
+    }
+  }, [mechanics.state.isLoading, recs.filters, recs.mechanics])
 
   return (
     <Modal
@@ -37,11 +44,18 @@ export function ChatRecommendations() {
     >
       <Modal.Body className="relative gap-0 overflow-hidden p-0">
         <ChatRecommendationsFilters className="pb-3" />
-        {searchedMechanics.length === 0 ? (
+        {/* Loading */}
+        {mechanics.state.isLoading ? (
+          <div className="flex grow items-center justify-center">
+            <Loading />
+          </div>
+        ) : // Loaded but no mechanics
+        searchedMechanics.length === 0 ? (
           <div className="flex grow items-center justify-center p-6">
             <p className="text-center text-default-400">Nenhuma oficina recomendada</p>
           </div>
         ) : (
+          // Loaded and mechanics found
           <>
             <p className="px-6 pb-1 text-center text-small text-foreground-500 sm:text-medium">
               Selecione as oficinas que deseja enviar mensagem
@@ -70,7 +84,10 @@ export function ChatRecommendations() {
   )
 }
 
-function applyFilters(mechanics: RecommendationsStore['mechanics'], filters: RecommendationsStore['filters']) {
+function applyFilters(
+  mechanics: ChatStore['recommendations']['mechanics'],
+  filters: ChatStore['recommendations']['filters']
+) {
   const { ratings, cities } = filters
 
   return mechanics.reduce((acc, current) => {

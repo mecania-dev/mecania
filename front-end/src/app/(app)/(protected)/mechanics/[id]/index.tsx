@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/card'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
-import { Mechanic } from '@/types/entities/mechanic'
+import { User } from '@/types/entities/user'
 import { cn } from '@nextui-org/react'
 
 import { MechanicCard } from '../mechanic-card'
@@ -12,7 +12,7 @@ interface MechanicDetailsProps {
 }
 
 export function MechanicDetails({ id }: MechanicDetailsProps) {
-  const { state } = useSWRCustom<Mechanic>(`users/${id}`)
+  const { state } = useSWRCustom<User>(`users/${id}`)
   const mechanic = state.data
 
   if (!mechanic && !state.isLoading) return null

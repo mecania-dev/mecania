@@ -4,12 +4,12 @@ import { useRequests } from '@/mocks/use-requests'
 import { Checkbox } from '@nextui-org/react'
 
 import { MechanicWithDistance } from '.'
-import { useRecommendations } from './use-recommendations'
+import { useChat } from '../use-chat'
 
 export function MechanicRecommendation(mechanic: MechanicWithDistance) {
-  const recs = useRecommendations()
+  const { chat } = useChat()
   const { getRequest } = useRequests()
-  const request = getRequest(recs.chat, mechanic)
+  const request = getRequest(chat, mechanic)
   const initials = mechanic.firstName
     .split(' ')
     .map(name => name[0])

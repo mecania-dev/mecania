@@ -1,7 +1,6 @@
 import { api, ApiRequestConfig, createAddress } from '@/http'
 import { base64ToBlobDynamic, blobToFile } from '@/lib/file'
-import { Rating } from '@/types/entities/rating'
-import { User } from '@/types/entities/user'
+import { Rating, User } from '@/types/entities/user'
 
 import { MechanicCreateOutput, RateMechanicOutput } from './types'
 

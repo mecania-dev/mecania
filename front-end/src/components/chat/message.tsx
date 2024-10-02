@@ -3,7 +3,7 @@ import { forwardRef } from 'react'
 import { Card } from '@/components/card'
 import { Logo } from '@/components/icons/logo'
 import { formatDate } from '@/lib/date'
-import { Message } from '@/types/entities/message'
+import { Message } from '@/types/entities/chat'
 import { Skeleton, SlotsToClasses, tv, VariantProps } from '@nextui-org/react'
 
 const chatMessage = tv({
@@ -35,25 +35,25 @@ type ChatMessageClassNames = {
   classNames?: SlotsToClasses<keyof ReturnType<typeof chatMessage>>
 }
 
-type ChatMessageProps = Pick<Message, 'sender' | 'message' | 'sendDate'> & ChatMessageVariants & ChatMessageClassNames
+type ChatMessageProps = Pick<Message, 'sender' | 'content' | 'sentAt'> & ChatMessageVariants & ChatMessageClassNames
 
 export const ChatMessage = forwardRef<HTMLDivElement, ChatMessageProps>(function ChatMessage(
-  { sender, message, sendDate, isAI, isSender, isAIGenerating, classNames },
+  { sender, content, sentAt, isSender, isAIGenerating, classNames },
   ref
 ) {
-  const classes = chatMessage({ isAI, isSender, isAIGenerating })
+  const classes = chatMessage({ isAI: sender.isAi, isSender, isAIGenerating })
   const msgContent = (
     <Card className={classes.card({ class: classNames?.card })} radius="sm" shadow="sm">
-      <p className={classes.sender({ class: classNames?.sender })}>{sender === 'AI' ? 'MecanIA' : sender.username}</p>
-      <p className={classes.message({ class: classNames?.message })}>{message}</p>
-      <p className={classes.date({ class: classNames?.date })}>{formatDate(sendDate, { timeStyle: 'short' })}</p>
+      <p className={classes.sender({ class: classNames?.sender })}>{sender.username}</p>
+      <p className={classes.message({ class: classNames?.message })}>{content}</p>
+      <p className={classes.date({ class: classNames?.date })}>{formatDate(sentAt, { timeStyle: 'short' })}</p>
     </Card>
   )
 
-  return isAI ? (
+  return sender.isAi ? (
     <div ref={ref} className="flex gap-2">
       <Logo className={classes.logo()} />
-      <div className="w-full">{message ? msgContent : <GeneratingMessageSkeleton />}</div>
+      <div className="w-full">{content ? msgContent : <GeneratingMessageSkeleton />}</div>
     </div>
   ) : (
     <div ref={ref} className={classes.base({ class: classNames?.base })}>

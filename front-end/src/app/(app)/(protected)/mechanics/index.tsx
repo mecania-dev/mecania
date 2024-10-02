@@ -3,14 +3,14 @@
 import { FaTools } from 'react-icons/fa'
 
 import { AsyncScroll } from '@/components/async-scroll'
-import { Mechanic } from '@/types/entities/mechanic'
+import { User } from '@/types/entities/user'
 import { range } from 'lodash'
 
 import { MechanicCard } from './mechanic-card'
 
 export function MechanicsList() {
   return (
-    <AsyncScroll<Mechanic> url="users/mechanics/" className="grow">
+    <AsyncScroll<User> url="users/mechanics/" className="grow">
       {(mechanics, { isMounted }) => {
         if (isMounted && !mechanics?.length) {
           return (

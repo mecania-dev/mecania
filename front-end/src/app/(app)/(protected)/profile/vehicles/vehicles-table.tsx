@@ -14,7 +14,7 @@ import { VehicleCreateOutput } from '@/http'
 import { VehicleUpdateOutput } from '@/http/user/vehicle/update'
 import { formatDate } from '@/lib/date'
 import { useUser } from '@/providers/user-provider'
-import { Vehicle } from '@/types/entities/vehicle'
+import { Vehicle } from '@/types/entities/user'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
 
 import { NewVehicleModalButton, VehicleModal } from './vehicle-modal'

@@ -7,7 +7,7 @@ import { TextArea } from '@/components/textarea'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { ServiceCreateInput } from '@/http'
 import { isNullOrEmpty } from '@/lib/assertions'
-import { Category } from '@/types/entities/category'
+import { Category } from '@/types/entities/service'
 import { SharedSelection } from '@nextui-org/react'
 
 import { useCategoryModal } from '../category-modal/use-category-modal'

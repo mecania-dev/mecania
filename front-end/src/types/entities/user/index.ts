@@ -1,11 +1,16 @@
 import { string } from '@/lib/zod'
+import { fiscalIdentificationSchema } from '@/types/fiscal-identification'
+import { phoneNumberSchema } from '@/types/phone-number'
 import { z } from 'zod'
 
-import { fiscalIdentificationSchema } from '../fiscal-identification'
-import { phoneNumberSchema } from '../phone-number'
+import { serviceSchema } from '../service'
 import { addressSchema } from './address'
-import { serviceSchema } from './service'
 import { vehicleSchema } from './vehicle'
+
+export * from './address'
+export * from './rating'
+export * from './request'
+export * from './vehicle'
 
 export const permissions = getPermissions()
 export type Permissions = (typeof permissions)[number]
@@ -23,6 +28,7 @@ export const userSchema = z.object({
   isSuperuser: z.boolean(),
   isStaff: z.boolean(),
   isActive: z.boolean(),
+  isAi: z.boolean(),
   lastLogin: z.string(),
   createdAt: z.string(),
   updatedAt: z.string(),

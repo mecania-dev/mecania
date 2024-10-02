@@ -1,4 +1,4 @@
-import { Request, RequestCreate } from '@/types/entities/request'
+import { Request, RequestCreate } from '@/types/entities/user'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 

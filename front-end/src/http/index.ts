@@ -1,5 +1,6 @@
 export * from './api'
 export * from './auth'
+export * from './chat'
 export * from './cnpj'
 export * from './service'
 export * from './user'

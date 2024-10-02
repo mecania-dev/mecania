@@ -3,6 +3,8 @@ import { z } from 'zod'
 
 import { categorySchema } from './category'
 
+export * from './category'
+
 export const serviceSchema = z.object({
   id: z.number(),
   name: string({ name: 'Nome', min: 1 }),

@@ -1,6 +1,6 @@
 import { fileToBase64 } from '@/lib/file'
 import { number, string } from '@/lib/zod'
-import { addressSchema } from '@/types/entities/address'
+import { addressSchema } from '@/types/entities/user'
 import { requiredFiscalIdentificationSchema } from '@/types/fiscal-identification'
 import { requiredPhoneNumberSchema } from '@/types/phone-number'
 import { z } from 'zod'

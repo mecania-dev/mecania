@@ -6,7 +6,7 @@ import { SearchInput } from '@/components/input/search'
 import { Checkbox, CheckboxGroup, Slider, tv } from '@nextui-org/react'
 import { flatMap, uniq } from 'lodash'
 
-import { useRecommendations } from './use-recommendations'
+import { useChat } from '../use-chat'
 
 interface ChatRecommendationsFiltersProps {
   className?: string
@@ -17,8 +17,8 @@ const filtersClasses = tv({
 })
 
 export function ChatRecommendationsFilters({ className }: ChatRecommendationsFiltersProps) {
-  const { mechanics, searchQuery, setSearchQuery, filters, setFilters, isFilterOpen, setIsFilterOpen } =
-    useRecommendations()
+  const { recommendations: recs } = useChat()
+  const { mechanics, searchQuery, setSearchQuery, filters, setFilters, isFilterOpen, setIsFilterOpen } = recs
   const [isFilterOpenComplete, setIsFilterOpenComplete] = useState(false)
   const Filter = isFilterOpen ? LuX : LuFilter
   const cities = uniq(flatMap(mechanics, 'addresses').map(a => a.city))

@@ -6,16 +6,14 @@ import { confirmationModal } from '@/components/modal'
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { compareDates } from '@/lib/date'
-import { useChats } from '@/mocks/use-chats'
+import { Chat } from '@/types/entities/chat'
 
 import { EmptyHistory } from '../empty-history'
 import { NewChatButton } from './new-chat-button'
 
 export function ChatHistory() {
-  // TODO: Remover depois que implementar o backend
-  const { chats, removeChat } = useChats()
-  const {} = useSWRCustom(null, { fallbackData: chats })
-  const sortedChats = chats.sort((a, b) => compareDates(a.updatedAt, b.updatedAt, 'desc'))
+  const chats = useSWRCustom<Chat[]>('chat/')
+  const sortedChats = chats.state.data?.sort((a, b) => compareDates(a.updatedAt, b.updatedAt, 'desc')) ?? []
 
   const handleChatRemove = (chatId?: number) => (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     e.stopPropagation()
@@ -25,7 +23,7 @@ export function ChatHistory() {
       size: 'sm',
       title: 'Excluir conversa',
       question: 'Tem certeza que deseja excluir essa conversa?',
-      onConfirm: () => removeChat(chatId)
+      onConfirm: () => chats.remove({ url: url => url + chatId })
     })
   }
 

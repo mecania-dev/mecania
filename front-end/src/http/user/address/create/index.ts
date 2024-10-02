@@ -1,5 +1,5 @@
 import { api, ApiRequestConfig } from '@/http'
-import { Address } from '@/types/entities/address'
+import { Address } from '@/types/entities/user'
 
 import { AddressCreateOutput } from './types'
 

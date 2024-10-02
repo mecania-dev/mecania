@@ -7,7 +7,7 @@ import { VehicleCreateInput, VehicleCreateOutput, vehicleCreateSchema } from '@/
 import { VehicleUpdateOutput, vehicleUpdateSchema } from '@/http/user/vehicle/update'
 import { maybePromise, MaybePromise } from '@/lib/promise'
 import { useUser } from '@/providers/user-provider'
-import { Vehicle } from '@/types/entities/vehicle'
+import { Vehicle } from '@/types/entities/user'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { VehicleModalBody } from './vehicle-body'

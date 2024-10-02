@@ -12,7 +12,7 @@ import {
 } from '@/http'
 import { maybePromise, MaybePromise } from '@/lib/promise'
 import { useUser } from '@/providers/user-provider'
-import { Address } from '@/types/entities/address'
+import { Address } from '@/types/entities/user'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { AddressModalBody } from './body'

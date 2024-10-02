@@ -10,11 +10,11 @@ import { useRequests } from '@/mocks/use-requests'
 import { useUser } from '@/providers/user-provider'
 import confetti from 'canvas-confetti'
 
-import { useRecommendations } from './use-recommendations'
+import { useChat } from '../use-chat'
 
 export function SendMessageModal() {
   const { user } = useUser()
-  const recs = useRecommendations()
+  const { chat, recommendations: recs } = useChat()
   const { sendRequest } = useRequests()
   const defaultMessage = `Estou com um problema no meu carro: há um barulho metálico ao acelerar, além de perda de potência e aumento no consumo de combustível. Acredito que possa estar relacionado ao sistema de exaustão ou ao motor. Poderia analisar isso para mim?\n\nAguardo seu retorno.\n\nObrigado,\n${user?.firstName}`
   const [message, setMessage] = useState(defaultMessage)
@@ -22,7 +22,7 @@ export function SendMessageModal() {
   const [sendMessage, isSending] = useIsLoading(async () => {
     for (const mechanic of recs.selectedMechanics) {
       await delay(0.25)
-      sendRequest({ chat: recs.chat!, driver: user!, mechanic, message: getGreeting(mechanic.firstName) + message })
+      sendRequest({ chat: chat!, driver: user!, mechanic, message: getGreeting(mechanic.firstName) + message })
     }
   })
 
