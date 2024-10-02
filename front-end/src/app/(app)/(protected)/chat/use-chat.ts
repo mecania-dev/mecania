@@ -1,5 +1,6 @@
 import { Chat } from '@/types/entities/chat'
 import { User } from '@/types/entities/user'
+import { flatMap, uniq } from 'lodash'
 import { create, StoreApi } from 'zustand'
 
 export const defaultRecommendationsFilters = {
@@ -9,7 +10,6 @@ export const defaultRecommendationsFilters = {
 }
 
 export interface ChatStore {
-  isNew: boolean
   chat?: Chat
   setChat: (chat: Chat) => void
   recommendations: {
@@ -47,8 +47,7 @@ export interface ChatStore {
 }
 
 export const useChat = create<ChatStore>()(set => ({
-  isNew: true,
-  setChat: chat => set({ chat, isNew: false }),
+  setChat: chat => set({ chat }),
   recommendations: createRecommendations(set)
 }))
 
@@ -61,9 +60,17 @@ function createRecommendations(set: StoreApi<ChatStore>['setState']): ChatStore[
     isFilterOpen: false,
     filters: defaultRecommendationsFilters,
     searchQuery: '',
-    setMechanics: mechanics => set(state => ({ recommendations: { ...state.recommendations, mechanics } })),
+    setMechanics: mechanics =>
+      set(state => ({
+        recommendations: {
+          ...state.recommendations,
+          mechanics,
+          filters: { ...state.recommendations.filters, cities: uniq(flatMap(mechanics, 'addresses').map(a => a.city)) }
+        }
+      })),
     setSelectedMechanics: mechanics =>
       set(state => {
+        console.log('mechanics', mechanics)
         const selectedMechanics = mechanics.reduce((acc, id) => {
           const mechanic = state.recommendations.mechanics.find(m => String(m.id) === id)
           if (mechanic) acc.push(mechanic)

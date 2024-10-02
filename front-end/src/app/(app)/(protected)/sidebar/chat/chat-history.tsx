@@ -12,7 +12,9 @@ import { EmptyHistory } from '../empty-history'
 import { NewChatButton } from './new-chat-button'
 
 export function ChatHistory() {
-  const chats = useSWRCustom<Chat[]>('chat/')
+  const chats = useSWRCustom<Chat[]>('chat/', {
+    fetcherConfig: { params: { paginate: false } }
+  })
   const sortedChats = chats.state.data?.sort((a, b) => compareDates(a.updatedAt, b.updatedAt, 'desc')) ?? []
 
   const handleChatRemove = (chatId?: number) => (e: React.MouseEvent<SVGElement, MouseEvent>) => {
@@ -39,6 +41,7 @@ export function ChatHistory() {
         )}
         {sortedChats.map((chat, i) => (
           <SidebarRoute
+            canProps={{ I: 'ask_ai', a: 'Chat' }}
             href={`/chat/${chat.id}`}
             variant="ghost"
             activeVariant="solid"

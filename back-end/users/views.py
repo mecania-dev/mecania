@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .models import User
 from .permissions import IsSelfOrAdmin
-from .serializers import UserListSerializer, UserRetrieveDestroySerializer, UserCreateUpdateSerializer
+from .serializers import UserSerializer, UserCreateUpdateSerializer
 from utils.mixins import DynamicQuerysetMixin
 
 
@@ -17,7 +17,7 @@ class UserListCreate(DynamicQuerysetMixin, generics.ListCreateAPIView):
 
     def get_serializer_class(self):
         if self.request.method == "GET":
-            return UserListSerializer
+            return UserSerializer
         return UserCreateUpdateSerializer
 
 
@@ -32,13 +32,13 @@ class UserRetrieveUpdateDestroy(DynamicQuerysetMixin, generics.RetrieveUpdateDes
 
     def get_serializer_class(self):
         if self.request.method in ["GET", "DELETE"]:
-            return UserRetrieveDestroySerializer
+            return UserSerializer
         else:
             return UserCreateUpdateSerializer
 
 
 class LoggedUserView(generics.RetrieveAPIView):
-    serializer_class = UserRetrieveDestroySerializer
+    serializer_class = UserSerializer
 
     def get_object(self):
         return self.request.user
@@ -46,11 +46,11 @@ class LoggedUserView(generics.RetrieveAPIView):
 
 class MechanicsListView(DynamicQuerysetMixin, generics.ListAPIView):
     queryset = User.objects.filter(groups__name="Mechanic")
-    serializer_class = UserListSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
 
 class DriversListView(DynamicQuerysetMixin, generics.ListAPIView):
     queryset = User.objects.filter(groups__name="Driver")
-    serializer_class = UserListSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]

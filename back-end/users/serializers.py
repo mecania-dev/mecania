@@ -9,43 +9,7 @@ from vehicles.serializers import VehicleSerializer
 from services.serializers import ServiceRetrieveDestroySerializer
 
 
-class UserListSerializer(serializers.ModelSerializer):
-    rating = serializers.SerializerMethodField()
-    groups = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-            "phone_number",
-            "fiscal_identification",
-            "avatar_url",
-            "rating",
-            "last_login",
-            "is_superuser",
-            "is_staff",
-            "is_active",
-            "created_at",
-            "updated_at",
-            "groups",
-        ]
-
-    def get_rating(self, obj):
-        avg_rating = obj.received_ratings.aggregate(Avg("score"))["score__avg"]
-        if avg_rating is not None:
-            avg_rating = round(avg_rating * 2) / 2
-            return avg_rating
-        return None
-
-    def get_groups(self, obj):
-        return [group.name for group in obj.groups.all()]
-
-
-class UserRetrieveDestroySerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField()
     addresses = AddressSerializer(many=True, read_only=True)

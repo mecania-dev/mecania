@@ -71,7 +71,7 @@ class Issue(models.Model):
         ordering = ["created_at"]
 
     def __str__(self):
-        return f"Issue {self.id} for Chat {self.chat.id}"
+        return f"Issue {self.id} for Chat {self.chat_group.id}"
 
 
 class Recommendation(models.Model):

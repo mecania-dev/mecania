@@ -1,12 +1,26 @@
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from .models import ChatGroup
+from .serializers import ChatGroupSerializer
 from .forms import GroupMessageCreateForm
+from utils.mixins import UserQuerysetMixin, DynamicQuerysetMixin
 
 
-def index(request):
-    return render(request, "chat/index.html")
+class ChatGroupListCreateView(UserQuerysetMixin, DynamicQuerysetMixin, generics.ListCreateAPIView):
+    queryset = ChatGroup.objects.all()
+    serializer_class = ChatGroupSerializer
+    permission_classes = [IsAuthenticated]
+    user_field = "members"
+
+
+class ChatGroupRetrieveUpdateDestroyView(UserQuerysetMixin, generics.RetrieveUpdateDestroyAPIView):
+    queryset = ChatGroup.objects.all()
+    serializer_class = ChatGroupSerializer
+    permission_classes = [IsAuthenticated]
+    user_field = "members"
 
 
 @login_required

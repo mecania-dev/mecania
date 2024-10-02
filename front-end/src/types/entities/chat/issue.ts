@@ -5,7 +5,6 @@ import { recommendationSchema } from './recommendation'
 
 export const issueSchema = z.object({
   id: z.number(),
-  chatGroup: z.number(),
   description: string({ name: 'Descrição', min: 1 }),
   category: string({ name: 'Categoria', min: 1, max: 50 }),
   status: z.enum(['open', 'resolved']),

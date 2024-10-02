@@ -6,7 +6,7 @@ from django.contrib.auth.models import Permission
 
 from .serializers import PermissionSerializer
 from users.models import User
-from users.serializers import UserRetrieveDestroySerializer
+from users.serializers import UserSerializer
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -21,7 +21,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         response = super().post(request, *args, **kwargs)
 
         if response.status_code == 200:
-            response.data["user"] = UserRetrieveDestroySerializer(user).data
+            response.data["user"] = UserSerializer(user).data
 
         return response
 
@@ -35,7 +35,7 @@ class CustomTokenRefreshView(TokenRefreshView):
             if refresh_token:
                 token = RefreshToken(refresh_token)
                 user = User.objects.get(id=token["user_id"])
-                response.data["user"] = UserRetrieveDestroySerializer(user).data
+                response.data["user"] = UserSerializer(user).data
 
         return response
 

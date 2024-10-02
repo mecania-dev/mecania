@@ -22,7 +22,12 @@ export function SendMessageModal() {
   const [sendMessage, isSending] = useIsLoading(async () => {
     for (const mechanic of recs.selectedMechanics) {
       await delay(0.25)
-      sendRequest({ chat: chat!, driver: user!, mechanic, message: getGreeting(mechanic.firstName) + message })
+      sendRequest({
+        chat: chat!,
+        driver: user!,
+        mechanic,
+        message: getGreeting(mechanic.firstName ?? mechanic.username) + message
+      })
     }
   })
 

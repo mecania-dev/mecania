@@ -1,14 +1,11 @@
 import { string } from '@/lib/zod'
 import { z } from 'zod'
 
+import { userSchema } from '../user'
+
 export const messageSchema = z.object({
   id: z.number(),
-  chatGroup: z.number(),
-  sender: z.object({
-    id: z.number(),
-    username: string({ name: 'Nome de usuário', min: 1, max: 30 }),
-    isAi: z.boolean()
-  }),
+  sender: userSchema.pick({ id: true, username: true, isAi: true }),
   content: string({ name: 'Mensagem', min: 1, max: 300 }),
   sentAt: z.string(),
   updatedAt: z.string()

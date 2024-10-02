@@ -16,12 +16,12 @@ interface ChatProps {
 
 export function ChatPage({ chatId }: ChatProps) {
   const { setChat } = useChat()
-  const { state: chatState } = useSWRCustom<Chat>(chatId ? `/chat/${chatId}` : null, {
+  const chat = useSWRCustom<Chat>(chatId ? `/chat/${chatId}` : null, {
     onSuccess: setChat
   })
 
-  if (chatId && chatState.isLoading) return <Loading />
-  if (chatId && !chatState.data) return <Redirect url="/chat" />
+  if (chatId && chat.state.isLoading) return <Loading />
+  if (chatId && !chat.state.data) return <Redirect url="/chat" />
 
   return (
     <div className="relative flex max-h-[calc(100dvh-4rem)] grow flex-col">

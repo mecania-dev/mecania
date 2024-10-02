@@ -4,7 +4,7 @@ import { forwardRef, useEffect, useState } from 'react'
 import { IconType } from 'react-icons'
 import { FaChevronRight } from 'react-icons/fa6'
 
-import { Can, CanProps } from '@/auth/client'
+import { Can, I, Do } from '@/auth/client'
 import { Button, ButtonProps } from '@/components/button'
 import { SlotsToClasses } from '@nextui-org/react'
 import Link from 'next/link'
@@ -17,7 +17,10 @@ type BaseSidebarRouteProps = Omit<ButtonProps, 'ref'> & {
   icon?: IconType
   activeVariant?: ButtonProps['variant']
   classNames?: SlotsToClasses<SidebarRouteSlots>
-  canProps?: CanProps
+  canProps?: {
+    I: I
+    a: Do
+  }
 }
 
 export type SidebarRouteProps = BaseSidebarRouteProps & {
@@ -40,7 +43,7 @@ export const SidebarRoute = forwardRef<HTMLButtonElement, SidebarRouteProps>(fun
     classNames,
     className,
     subRoutes,
-    canProps = {} as CanProps,
+    canProps = {},
     ...props
   },
   ref
@@ -61,7 +64,7 @@ export const SidebarRoute = forwardRef<HTMLButtonElement, SidebarRouteProps>(fun
   }
 
   return (
-    <Can {...canProps}>
+    <Can {...(canProps as any)}>
       <Button
         ref={ref}
         as={Link}

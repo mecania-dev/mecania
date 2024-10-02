@@ -21,7 +21,8 @@ export interface MechanicWithDistance extends User {
 export function ChatRecommendations() {
   const { recommendations: recs } = useChat()
   const mechanics = useSWRCustom<User[]>('users/mechanics/', {
-    onSuccess: recs.setMechanics
+    onSuccess: recs.setMechanics,
+    fetcherConfig: { params: { paginate: false } }
   })
   const [filteredMechanics, setFilteredMechanics] = useState<MechanicWithDistance[]>([])
   const searchedMechanics = search(filteredMechanics, 'firstName', recs.searchQuery)
@@ -91,11 +92,13 @@ function applyFilters(
   const { ratings, cities } = filters
 
   return mechanics.reduce((acc, current) => {
+    if (!current.rating) current.rating = 0
     const { rating, addresses } = current
 
+    if (!addresses) return acc
+
     // Filter by rating
-    const roundedRating = Math.round((rating ?? 0) * 2) / 2
-    if (roundedRating < ratings.min || roundedRating > ratings.max) {
+    if (rating < ratings.min || rating > ratings.max) {
       return acc
     }
 

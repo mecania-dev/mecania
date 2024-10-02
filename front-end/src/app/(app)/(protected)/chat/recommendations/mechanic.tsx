@@ -10,7 +10,7 @@ export function MechanicRecommendation(mechanic: MechanicWithDistance) {
   const { chat } = useChat()
   const { getRequest } = useRequests()
   const request = getRequest(chat, mechanic)
-  const initials = mechanic.firstName
+  const initials = (mechanic.firstName ?? mechanic.username)
     .split(' ')
     .map(name => name[0])
     .join('')
@@ -19,7 +19,7 @@ export function MechanicRecommendation(mechanic: MechanicWithDistance) {
     <div className="flex flex-col">
       <Checkbox
         value={String(mechanic.id)}
-        aria-label={mechanic.firstName}
+        aria-label={mechanic.firstName ?? mechanic.username}
         classNames={{
           base: [
             'flex w-full max-w-none bg-gradient-to-tr from-primary/20 via-[#CDCDCD]/20 to-secondary/20',

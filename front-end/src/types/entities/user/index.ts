@@ -18,7 +18,7 @@ export type Permissions = (typeof permissions)[number]
 export const userSchema = z.object({
   id: z.number(),
   username: string({ name: 'Nome de usuário', min: 1, max: 30 }),
-  firstName: string({ name: 'Nome', min: 1, max: 255 }),
+  firstName: string({ name: 'Nome', min: 1, max: 255, allowEmpty: true }).nullable(),
   lastName: string({ name: 'Sobrenome', min: 1, max: 255, allowEmpty: true }).nullable(),
   email: z.string().email('Insira um e-mail válido'),
   phoneNumber: phoneNumberSchema.nullable(),
