@@ -61,5 +61,5 @@ class UserAddressesView(DynamicQuerysetMixin, generics.GenericAPIView):
 
 class CitiesView(APIView):
     def get(self, request, *args, **kwargs):
-        cities = set(Address.objects.values_list("city", flat=True))
+        cities = sorted(set(Address.objects.values_list("city", flat=True)))
         return Response(cities)
