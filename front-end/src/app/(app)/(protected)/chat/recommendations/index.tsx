@@ -68,7 +68,7 @@ export function ChatRecommendations() {
             params: { addresses__city__in: recs.filters.cities.reduce((acc, city) => (acc += city + ','), '') }
           }}
           onStateChange={setMechanicsState}
-          className="px-6"
+          className="grow px-6"
         >
           {(mechanics, { isMounted }) => {
             if (!isMounted || !mechanics?.length) return null

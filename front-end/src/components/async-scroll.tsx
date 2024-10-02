@@ -58,10 +58,11 @@ export function AsyncScroll<T>({
   const [{ items, ...state }, scrollerRef, reset] = useInfiniteScroll<T>({
     onStateChange,
     async onLoadMore({ next, last }) {
-      const paramsChanged = hasLastParamsChanged(last, config.params)
-      if (!paramsChanged && next) config.params = {}
+      const newConfig = { ...config }
+      const paramsChanged = hasLastParamsChanged(last, newConfig.params)
+      if (!paramsChanged && next) newConfig.params = {}
 
-      const res = await api.get<ItemsResponse<T>>(paramsChanged || !next ? url : next, config)
+      const res = await api.get<ItemsResponse<T>>(paramsChanged || !next ? url : next, newConfig)
       if (!res.ok) throw res.data
 
       return {
