@@ -1,6 +1,12 @@
-from utils.assertions import is_false
+from utils.assertions import is_bool, is_true, is_false
 
 DISALLOWED_FILTERS = ["paginate", "limit", "offset", "ordering"]
+
+
+def as_bool_or_original(value):
+    if isinstance(value, list):
+        return [as_bool_or_original(v) for v in value]
+    return is_true(value) if is_bool(value) else value
 
 
 class DynamicQuerysetMixin:
@@ -10,12 +16,14 @@ class DynamicQuerysetMixin:
         query_params: dict = self.request.query_params
         all_disallowed_filters = set(DISALLOWED_FILTERS).union(self.not_allowed_filters)
         filter_params = {
-            key: (value.split(",") if "__" in key and "," in value else value)
+            key: as_bool_or_original(value.split(",") if "__" in key and "," in value else value)
             for key, value in query_params.items()
             if key not in all_disallowed_filters and not "__not" in key and value
         }
         exclude_params = {
-            key.replace("__not", ""): (value.split(",") if "__" in key.replace("__not", "") and "," in value else value)
+            key.replace("__not", ""): as_bool_or_original(
+                value.split(",") if "__" in key.replace("__not", "") and "," in value else value
+            )
             for key, value in query_params.items()
             if "__not" in key and value
         }

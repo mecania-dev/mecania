@@ -11,6 +11,10 @@ def is_primitive_class(cls):
     return cls in primitives
 
 
+def is_bool(value):
+    return isinstance(value, bool) or normalize_string(value).lower() in ("true", "false")
+
+
 def is_true(value):
     return value is True or normalize_string(value).lower() == "true"
 
