@@ -33,7 +33,7 @@ class DynamicQuerysetMixin:
         if exclude_params:
             queryset = queryset.exclude(**exclude_params)
 
-        return queryset.distinct()
+        return queryset
 
     def order_queryset(self, queryset):
         query_params: dict = self.request.query_params
@@ -54,7 +54,7 @@ class DynamicQuerysetMixin:
         queryset = super().get_queryset()
         queryset = self.filter_queryset(queryset)
         queryset = self.order_queryset(queryset)
-        return queryset
+        return queryset.distinct()
 
 
 class UserQuerysetMixin:
