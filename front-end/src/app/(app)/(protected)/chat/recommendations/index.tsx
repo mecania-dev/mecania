@@ -23,7 +23,7 @@ export function ChatRecommendations() {
   const { recommendations: recs } = useChat()
   const [mechanicsState, setMechanicsState] = useState<PaginationState<User>>()
   const [filteredMechanics, setFilteredMechanics] = useState<MechanicWithDistance[]>([])
-  const searchedMechanics = search(filteredMechanics, 'firstName', recs.searchQuery)
+  const searchedMechanics = search(filteredMechanics, 'firstName', recs.searchQuery, false)
 
   useEffect(() => {
     if (mechanicsState?.items.length) {
@@ -108,9 +108,9 @@ function applyFilters(
 
   return mechanics.reduce((acc, current) => {
     if (!current.rating) current.rating = 0
-    const { rating, addresses } = current
+    const { firstName, rating, addresses } = current
 
-    if (!addresses.length) return acc
+    if (!firstName || !addresses.length) return acc
 
     // Filter by rating
     if (rating < ratings.min || rating > ratings.max) {
