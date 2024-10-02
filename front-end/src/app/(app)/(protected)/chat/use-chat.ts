@@ -70,7 +70,6 @@ function createRecommendations(set: StoreApi<ChatStore>['setState']): ChatStore[
       })),
     setSelectedMechanics: mechanics =>
       set(state => {
-        console.log('mechanics', mechanics)
         const selectedMechanics = mechanics.reduce((acc, id) => {
           const mechanic = state.recommendations.mechanics.find(m => String(m.id) === id)
           if (mechanic) acc.push(mechanic)
@@ -88,7 +87,7 @@ function createRecommendations(set: StoreApi<ChatStore>['setState']): ChatStore[
           isModalOpen: isOpen,
           isSendOpen: false,
           isFilterOpen: false,
-          filters: defaultRecommendationsFilters,
+          filters: { ...defaultRecommendationsFilters, cities: state.recommendations.filters.cities },
           searchQuery: ''
         }
       })),
