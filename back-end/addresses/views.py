@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -56,3 +57,9 @@ class UserAddressesView(DynamicQuerysetMixin, generics.GenericAPIView):
         address = get_object_or_404(Address, id=address_id, user=user)
         address.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CitiesView(APIView):
+    def get(self, request, *args, **kwargs):
+        cities = set(Address.objects.values_list("city", flat=True))
+        return Response(cities)

@@ -3,8 +3,9 @@ import { LuFilter, LuX } from 'react-icons/lu'
 
 import { Button } from '@/components/button'
 import { SearchInput } from '@/components/input/search'
-import { Checkbox, CheckboxGroup, Slider, tv } from '@nextui-org/react'
-import { flatMap, uniq } from 'lodash'
+import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
+import { Checkbox, CheckboxGroup, Skeleton, Slider, tv } from '@nextui-org/react'
+import { random, range } from 'lodash'
 
 import { useChat } from '../use-chat'
 
@@ -17,11 +18,11 @@ const filtersClasses = tv({
 })
 
 export function ChatRecommendationsFilters({ className }: ChatRecommendationsFiltersProps) {
+  const cities = useSWRCustom<string[]>('addresses/cities')
   const { recommendations: recs } = useChat()
-  const { mechanics, searchQuery, setSearchQuery, filters, setFilters, isFilterOpen, setIsFilterOpen } = recs
+  const { searchQuery, setSearchQuery, filters, setFilters, isFilterOpen, setIsFilterOpen } = recs
   const [isFilterOpenComplete, setIsFilterOpenComplete] = useState(false)
   const Filter = isFilterOpen ? LuX : LuFilter
-  const cities = uniq(flatMap(mechanics, 'addresses').map(a => a.city))
 
   function toggleFilter() {
     setIsFilterOpen(!isFilterOpen)
@@ -87,7 +88,16 @@ export function ChatRecommendationsFilters({ className }: ChatRecommendationsFil
           onChange={onDistancesChange}
         />
         <CheckboxGroup label="Cidades" value={filters.cities} onChange={onCitiesChange}>
-          {cities.map(city => (
+          {!cities.state.isLoading && !cities.state.data?.length && (
+            <p className="text-default-400">Nenhuma cidade encontrada</p>
+          )}
+          {cities.state.isLoading &&
+            range(10).map(i => (
+              <Checkbox key={i} isReadOnly>
+                <Skeleton className="w- h-5 rounded-md">{range(random(12, 16)).map(i => i)}</Skeleton>
+              </Checkbox>
+            ))}
+          {cities.state.data?.map(city => (
             <Checkbox value={city} key={city}>
               {city}
             </Checkbox>
