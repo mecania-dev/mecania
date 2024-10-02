@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 
-import Loading from '@/app/loading'
 import { Button } from '@/components/button'
 import { Modal } from '@/components/modal'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { search } from '@/lib/string'
 import { User } from '@/types/entities/user'
-import { CheckboxGroup, ScrollShadow } from '@nextui-org/react'
+import { CheckboxGroup, ScrollShadow, Spinner } from '@nextui-org/react'
 import { intersection, map, random } from 'lodash'
 
 import { ChatStore, useChat } from '../use-chat'
@@ -48,7 +47,7 @@ export function ChatRecommendations() {
         {/* Loading */}
         {mechanics.state.isLoading ? (
           <div className="flex grow items-center justify-center">
-            <Loading />
+            <Spinner classNames={{ wrapper: 'h-10 w-10' }} />
           </div>
         ) : // Loaded but no mechanics
         searchedMechanics.length === 0 ? (
