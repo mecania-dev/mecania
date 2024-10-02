@@ -10,7 +10,9 @@ class DynamicQuerysetMixin:
         query_params: dict = self.request.query_params
         all_disallowed_filters = set(DISALLOWED_FILTERS).union(self.not_allowed_filters)
         filter_params = {
-            key: value for key, value in query_params.items() if key not in all_disallowed_filters and value
+            key: (value.split(",") if "__" in key and "," in value else value)
+            for key, value in query_params.items()
+            if key not in all_disallowed_filters and value
         }
 
         if filter_params:
