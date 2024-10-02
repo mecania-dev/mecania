@@ -19,7 +19,12 @@ export function Navbar() {
   const menuItems = [{ label: 'Início', href: '/' }]
 
   return (
-    <NextUINavbar className="bg-background/60 text-foreground" isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
+    <NextUINavbar
+      className="bg-background/60 text-foreground shadow-sm"
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+      isBordered
+    >
       <NavbarBrand className="h-full space-x-2">
         <Link href="/" className="flex h-full items-center justify-center gap-2">
           <Mecania className="h-2/5 w-auto" />

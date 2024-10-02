@@ -1,4 +1,4 @@
-import { api, ApiRequestConfig } from '../api'
+import { api, ApiRequestConfig } from '../../api'
 import { SignInRequest, SignInResponse } from './types'
 
 export * from './types'

@@ -1,4 +1,4 @@
-import { api, ApiRequestConfig } from '../api'
+import { api, ApiRequestConfig } from '../../api'
 import { RefreshTokenRequest, RefreshTokenResponse } from './types'
 
 export * from './types'
