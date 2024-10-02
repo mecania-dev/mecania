@@ -12,11 +12,18 @@ class DynamicQuerysetMixin:
         filter_params = {
             key: (value.split(",") if "__" in key and "," in value else value)
             for key, value in query_params.items()
-            if key not in all_disallowed_filters and value
+            if key not in all_disallowed_filters and not "__not" in key and value
+        }
+        exclude_params = {
+            key.replace("__not", ""): (value.split(",") if "__" in key.replace("__not", "") and "," in value else value)
+            for key, value in query_params.items()
+            if "__not" in key and value
         }
 
         if filter_params:
             queryset = queryset.filter(**filter_params)
+        if exclude_params:
+            queryset = queryset.exclude(**exclude_params)
 
         return queryset
 
