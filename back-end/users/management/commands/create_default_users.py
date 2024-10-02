@@ -47,6 +47,7 @@ class Command(BaseCommand):
                 email="mecania.dev@gmail.com",
                 password="mecania",
                 is_active=False,
+                is_ai=True,
                 set_unusable_password=True,
             )
             ai_group, _ = Group.objects.get_or_create(name="AI")

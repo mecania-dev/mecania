@@ -52,6 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Flags
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_ai = models.BooleanField(default=False)
 
     objects = UserManager()
 
