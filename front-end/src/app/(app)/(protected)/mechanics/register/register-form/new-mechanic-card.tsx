@@ -22,8 +22,8 @@ export function NewMechanicCard({ index, mechanic }: NewMechanicCardProps) {
     addAddress(index, address)
   }
 
-  const handleRemoveMechanic = (mechanicIndex: number) => () => {
-    removeMechanic(mechanicIndex)
+  const handleRemoveMechanic = (mechanicUsername: string) => () => {
+    removeMechanic(mechanicUsername)
   }
 
   const handleRemoveAddress = (mechanicIndex: number, addressIndex: number) => () => {
@@ -80,7 +80,12 @@ export function NewMechanicCard({ index, mechanic }: NewMechanicCardProps) {
             <NewAddressModalButton size="sm" className="h-auto w-fit px-1.5 py-1" onSubmit={onSubmit}>
               Novo endereço
             </NewAddressModalButton>
-            <Button color="danger" size="sm" className="h-auto w-fit px-1.5 py-1" onPress={handleRemoveMechanic(index)}>
+            <Button
+              color="danger"
+              size="sm"
+              className="h-auto w-fit px-1.5 py-1"
+              onPress={handleRemoveMechanic(mechanic.username)}
+            >
               Remover oficina
             </Button>
           </div>

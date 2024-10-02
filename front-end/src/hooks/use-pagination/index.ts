@@ -34,15 +34,18 @@ function dispatch<T>(action: PaginationAction<T>) {
   })
 }
 
-export function usePagination<T>({ load }: UsePaginationProps<T>) {
+export function usePagination<T>({ load, onStateChange }: UsePaginationProps<T>) {
   const [state, setState] = useState<PaginationState<T>>(memoryState)
 
   useEffect(() => {
+    if (memoryState.isMounted && onStateChange) {
+      onStateChange(memoryState)
+    }
     listeners.push(setState)
     return () => {
       listeners = []
     }
-  }, [state])
+  }, [state, onStateChange])
 
   async function loadMore() {
     if (memoryState.isLoading || !memoryState.hasMore || memoryState.error || !load) return

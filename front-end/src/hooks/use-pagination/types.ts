@@ -19,4 +19,5 @@ export type PaginationAction<T> =
 
 export interface UsePaginationProps<T> {
   load?: MaybePromise<(state: LoadMoreProps<T>) => LoadMoreProps<T>>
+  onStateChange?: (state: PaginationState<T>) => void
 }

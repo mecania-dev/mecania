@@ -7,7 +7,7 @@ type RegisterMechanicsStore = {
   mechanics: MechanicCreateOutput[]
   errors: { username: string; errorMessages: string[] }[]
   addMechanic: (mechanic: MechanicCreateOutput) => void
-  removeMechanic: (index?: number) => void
+  removeMechanic: (username?: string) => void
   addAddress: (mechanicIndex: number, address: NonNullable<MechanicCreateInput['addresses']>[number]) => void
   removeAddress: (mechanicIndex: number, addressIndex: number) => void
   addError: (username: string, error: any) => void
@@ -24,12 +24,12 @@ export const useRegisterMechanics = create<RegisterMechanicsStore>()(
           return { ...state }
         })
       },
-      removeMechanic: index => {
+      removeMechanic: username => {
         return set(state => {
-          if (index != null) {
-            const removedMechanic = state.mechanics[index]
-            state.mechanics = state.mechanics.filter((_, i) => i !== index)
-            state.errors = state.errors.filter(error => error.username !== removedMechanic.username)
+          if (username != null) {
+            const removedMechanic = state.mechanics.find(mechanic => mechanic.username === username)
+            state.mechanics = state.mechanics.filter(u => u.username !== username)
+            state.errors = state.errors.filter(error => error.username !== removedMechanic?.username)
           } else {
             state.mechanics = []
             state.errors = []

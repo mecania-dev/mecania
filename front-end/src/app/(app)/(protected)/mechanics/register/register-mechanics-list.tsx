@@ -12,18 +12,20 @@ export function RegisterMechanicsList() {
   const { push } = useRouter()
   const { mechanics, removeMechanic, addError } = useRegisterMechanics()
   const [onRegisterMechanics, isLoading] = useIsLoading(async () => {
+    let hasError = false
     for (let i = 0; i < mechanics.length; i++) {
       const mechanic = mechanics[i]
       const res = await createMechanic(mechanic, {
         onError(error) {
+          hasError = true
           if (error?.response?.data) {
             addError(mechanic.username, error.response.data)
           }
         }
       })
-      if (res.ok) removeMechanic(i)
+      if (res.ok) removeMechanic(mechanic.username)
     }
-    push('/mechanics')
+    if (!hasError) push('/mechanics')
   })
 
   if (mechanics.length === 0) return null

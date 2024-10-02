@@ -1,6 +1,6 @@
 import { useInfiniteScroll } from '@/hooks/use-infinite-scroll'
-import { PaginationState } from '@/hooks/use-pagination'
-import { api } from '@/http'
+import { PaginationState, UsePaginationProps } from '@/hooks/use-pagination'
+import { api, ApiRequestConfig } from '@/http'
 import { ScrollShadow, ScrollShadowProps, SlotsToClasses, Spinner, SpinnerProps, tv } from '@nextui-org/react'
 
 interface AsyncScrollProps<T> extends Omit<ScrollShadowProps, 'children'> {
@@ -9,6 +9,8 @@ interface AsyncScrollProps<T> extends Omit<ScrollShadowProps, 'children'> {
   loadingContent?: React.ReactNode
   classNames?: SlotsToClasses<keyof ReturnType<typeof asyncScroll>>
   spinnerProps?: Omit<SpinnerProps, 'className'>
+  config?: ApiRequestConfig<ItemsResponse<T>>
+  onStateChange?: UsePaginationProps<T>['onStateChange']
 }
 
 interface ItemsResponse<T> {
@@ -24,17 +26,33 @@ const asyncScroll = tv({
   }
 })
 
+function updateUrl(url: string, newParams: Record<string, any> = {}): string {
+  const urlObj = new URL(url, 'http://temp.base.url')
+  const existingParams = new URLSearchParams(urlObj.search)
+
+  for (const [key, value] of Object.entries(newParams)) {
+    existingParams.set(key, value)
+  }
+
+  urlObj.search = existingParams.toString()
+  return `${urlObj.pathname.replace('api/', '')}${urlObj.search ?? ''}`
+}
+
 export function AsyncScroll<T>({
   children,
   url,
   loadingContent,
   classNames,
   spinnerProps,
+  config = {},
+  onStateChange,
   ...props
 }: AsyncScrollProps<T>) {
+  const { params, ...restConfig } = config
   const [{ items, ...state }, scrollerRef] = useInfiniteScroll<T>({
+    onStateChange,
     async onLoadMore({ next }) {
-      const res = await api.get<ItemsResponse<T>>(next ?? url)
+      const res = await api.get<ItemsResponse<T>>(updateUrl(next ?? url, params), restConfig)
       if (!res.ok) throw res.data
       return {
         items: res.data.results,

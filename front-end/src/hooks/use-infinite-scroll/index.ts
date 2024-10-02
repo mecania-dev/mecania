@@ -5,8 +5,13 @@ import { UseInfiniteScrollProps } from './types'
 
 export * from './types'
 
-export function useInfiniteScroll<T>({ distance = 50, isEnabled = true, onLoadMore }: UseInfiniteScrollProps<T> = {}) {
-  const [state, loadMore] = usePagination({ load: onLoadMore })
+export function useInfiniteScroll<T>({
+  distance = 50,
+  isEnabled = true,
+  onLoadMore,
+  onStateChange
+}: UseInfiniteScrollProps<T> = {}) {
+  const [state, loadMore] = usePagination({ load: onLoadMore, onStateChange })
   const scrollContainerRef = useRef<HTMLElement>(null)
 
   const handleLoadMore = useCallback(

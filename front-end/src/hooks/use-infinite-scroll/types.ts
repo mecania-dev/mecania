@@ -15,4 +15,5 @@ export interface UseInfiniteScrollProps<T> {
    * Callback to load more items.
    */
   onLoadMore?: UsePaginationProps<T>['load']
+  onStateChange?: UsePaginationProps<T>['onStateChange']
 }

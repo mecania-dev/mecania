@@ -1,6 +1,5 @@
 import { Chat } from '@/types/entities/chat'
 import { User } from '@/types/entities/user'
-import { flatMap, uniq } from 'lodash'
 import { create, StoreApi } from 'zustand'
 
 export const defaultRecommendationsFilters = {
@@ -64,8 +63,7 @@ function createRecommendations(set: StoreApi<ChatStore>['setState']): ChatStore[
       set(state => ({
         recommendations: {
           ...state.recommendations,
-          mechanics,
-          filters: { ...state.recommendations.filters, cities: uniq(flatMap(mechanics, 'addresses').map(a => a.city)) }
+          mechanics
         }
       })),
     setSelectedMechanics: mechanics =>
@@ -87,7 +85,7 @@ function createRecommendations(set: StoreApi<ChatStore>['setState']): ChatStore[
           isModalOpen: isOpen,
           isSendOpen: false,
           isFilterOpen: false,
-          filters: { ...defaultRecommendationsFilters, cities: state.recommendations.filters.cities },
+          filters: defaultRecommendationsFilters,
           searchQuery: ''
         }
       })),
