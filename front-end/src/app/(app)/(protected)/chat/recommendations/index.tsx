@@ -65,7 +65,10 @@ export function ChatRecommendations() {
         <AsyncScroll<User>
           url="users/mechanics/"
           config={{
-            params: { addresses__city__in: recs.filters.cities.reduce((acc, city) => (acc += city + ','), '') }
+            params: {
+              addresses__city__in: recs.filters.cities.reduce((acc, city) => (acc += city + ','), ''),
+              received_ratings__score__avg: `${recs.filters.ratings.min},${recs.filters.ratings.max}`
+            }
           }}
           data-mounted={mechanicsState?.isMounted}
           onStateChange={setMechanicsState}
