@@ -4,46 +4,30 @@ import { ChatInput } from '@/components/chat/input'
 import { Form } from '@/components/form'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
 import { useForm } from '@/hooks/use-form'
-import { useUser } from '@/providers/user-provider'
+import { SendMessage, sendMessageSchema } from '@/types/entities/chat'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 import { useChat } from './use-chat'
 
 export function AIChatInput() {
   // const router = useRouter()
-  const { user } = useUser()
   const { chat } = useChat()
-  const form = useForm<any>({
-    // resolver: zodResolver(sendMessageSchema),
-    defaultValues: { chatId: chat?.id, senderId: user?.id }
-  })
+  const form = useForm<SendMessage>({ resolver: zodResolver(sendMessageSchema), defaultValues: { message: '' } })
   const { isSubmitting, isValid } = form.formState
+  const hasRecommendations = !!chat?.issues.some(issue => issue.recommendations.length > 0)
   const isDisabled = isSubmitting || !isValid
 
   useFirstRenderEffect(() => {
     form.setFocus('message')
   })
 
-  // function onSubmit(message: SendMessage) {
-  function onSubmit() {
-    // if (!message.chatId) {
-    //   const newChat: Chat = {
-    //     id: uniqueId(),
-    //     title: message.message.slice(0, 20),
-    //     messages: [],
-    //     users: [user!],
-    //     status: 'active',
-    //     createdAt: new Date().toISOString(),
-    //     updatedAt: new Date().toISOString()
-    //   }
-    //   createChat(newChat)
-    //   message.chatId = newChat.id
-    //   sendMessage(message, user!)
+  function onSubmit(message: SendMessage) {
+    console.log(message)
     //   router.replace(`/chat/${newChat.id}`)
-    // } else {
-    //   sendMessage(message, user!)
-    // }
     form.reset()
   }
+
+  if (hasRecommendations) return null
 
   return (
     <Form

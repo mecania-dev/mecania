@@ -22,6 +22,7 @@ class UserForm(forms.ModelForm):
             "is_superuser",
             "is_staff",
             "is_active",
+            "is_ai",
             "last_login",
             "groups",
             "services",

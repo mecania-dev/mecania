@@ -10,7 +10,8 @@ export const defaultRecommendationsFilters = {
 
 export interface ChatStore {
   chat?: Chat
-  setChat: (chat: Chat) => void
+  setChat: (chat?: Chat) => void
+  initialQuestions?: {}[]
   recommendations: {
     mechanics: User[]
     selectedMechanics: User[]
@@ -46,7 +47,7 @@ export interface ChatStore {
 }
 
 export const useChat = create<ChatStore>()(set => ({
-  setChat: chat => set({ chat }),
+  setChat: chat => set(state => ({ chat, recommendations: chat ? state.recommendations : createRecommendations(set) })),
   recommendations: createRecommendations(set)
 }))
 

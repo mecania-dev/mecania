@@ -3,6 +3,7 @@
 import Loading from '@/app/loading'
 import { Redirect } from '@/components/redirect'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
+import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
 import { Chat } from '@/types/entities/chat'
 
 import { AIChatHeader } from '../chat-header'
@@ -18,6 +19,10 @@ export function ChatPage({ chatId }: ChatProps) {
   const { setChat } = useChat()
   const chat = useSWRCustom<Chat>(chatId ? `/chat/${chatId}` : null, {
     onSuccess: setChat
+  })
+
+  useFirstRenderEffect(() => {
+    if (!chatId) setChat()
   })
 
   if (chatId && chat.state.isLoading) return <Loading />
