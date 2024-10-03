@@ -1,3 +1,4 @@
+from django.db.models import Avg, FloatField, Func, Q, QuerySet
 from utils.assertions import is_bool, is_true, is_false
 
 DISALLOWED_FILTERS = ["paginate", "limit", "offset", "ordering"]
@@ -9,16 +10,20 @@ def as_bool_or_original(value):
     return is_true(value) if is_bool(value) else value
 
 
+class Round(Func):
+    function = "ROUND"
+
+
 class DynamicQuerysetMixin:
     not_allowed_filters = []
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, queryset: QuerySet):
         query_params: dict = self.request.query_params
         all_disallowed_filters = set(DISALLOWED_FILTERS).union(self.not_allowed_filters)
         filter_params = {
             key: as_bool_or_original(value.split(",") if "__" in key and "," in value else value)
             for key, value in query_params.items()
-            if key not in all_disallowed_filters and not "__not" in key and value
+            if key not in all_disallowed_filters and not "__not" in key and not "__avg" in key and value
         }
         exclude_params = {
             key.replace("__not", ""): as_bool_or_original(
@@ -27,15 +32,42 @@ class DynamicQuerysetMixin:
             for key, value in query_params.items()
             if "__not" in key and value
         }
+        average_params = {
+            key: value.split(",") if "," in value else value
+            for key, value in query_params.items()
+            if "__avg" in key and value
+        }
 
-        if filter_params:
-            queryset = queryset.filter(**filter_params)
-        if exclude_params:
-            queryset = queryset.exclude(**exclude_params)
+        # Filter queryset
+        try:
+            if filter_params:
+                queryset = queryset.filter(**filter_params)
+        except:
+            pass
+        # Exclude queryset
+        try:
+            if exclude_params:
+                queryset = queryset.exclude(**exclude_params)
+        except:
+            pass
+        # Average queryset
+        try:
+            for param, avg_value in average_params.items():
+                field_name = param.replace("__avg", "")
+                queryset = queryset.annotate(**{param: Round(Avg(field_name) * 2, output_field=FloatField()) / 2})
+
+                if isinstance(avg_value, list) and len(avg_value) >= 2:
+                    min_value = float(avg_value[0])
+                    max_value = float(avg_value[1])
+                    queryset = queryset.filter(Q(**{f"{param}__gte": min_value}) & Q(**{f"{param}__lte": max_value}))
+                else:
+                    queryset = queryset.filter(**{f"{param}__gte": float(avg_value)})
+        except:
+            pass
 
         return queryset
 
-    def order_queryset(self, queryset):
+    def order_queryset(self, queryset: QuerySet):
         query_params: dict = self.request.query_params
         ordering = query_params.get("ordering", "")
 
