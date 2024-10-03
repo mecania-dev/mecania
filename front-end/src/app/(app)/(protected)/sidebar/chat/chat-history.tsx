@@ -7,6 +7,7 @@ import { SidebarRoute } from '@/components/sidebar/sidebar-route'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { compareDates } from '@/lib/date'
 import { Chat } from '@/types/entities/chat'
+import { mutate } from 'swr'
 
 import { EmptyHistory } from '../empty-history'
 import { NewChatButton } from './new-chat-button'
@@ -25,7 +26,10 @@ export function ChatHistory() {
       size: 'sm',
       title: 'Excluir conversa',
       question: 'Tem certeza que deseja excluir essa conversa?',
-      onConfirm: () => chats.remove({ url: url => url + chatId })
+      onConfirm: () => {
+        chats.remove({ url: url => url + chatId })
+        mutate(`/chat/${chatId}`)
+      }
     })
   }
 

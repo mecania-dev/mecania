@@ -12,12 +12,12 @@ import { useChat } from './use-chat'
 
 export function AIChatWindow() {
   const { user } = useUser()
-  const { chat, recommendations } = useChat()
+  const { chat, messages, recommendations } = useChat()
 
   return (
     <ChatWindow>
       <p className="mb-20"></p>
-      {chat?.messages.map(msg => (
+      {messages.map(msg => (
         <ChatMessage
           isSender={user?.id === msg.sender.id}
           isAIGenerating={msg.sender.isAi && !msg.content}

@@ -1,11 +1,13 @@
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from .models import ChatGroup
+from .models import ChatGroup, GroupMessage
 from .serializers import ChatGroupSerializer
 from .forms import GroupMessageCreateForm
+from users.models import User
 from utils.mixins import UserQuerysetMixin, DynamicQuerysetMixin
 
 
@@ -14,6 +16,31 @@ class ChatGroupListCreateView(UserQuerysetMixin, DynamicQuerysetMixin, generics.
     serializer_class = ChatGroupSerializer
     permission_classes = [IsAuthenticated]
     user_field = "members"
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        members_data = [request.user.id]
+
+        if "members" not in data:
+            ai_user = User.objects.filter(is_ai=True).first()
+            if not ai_user:
+                return Response({"detail": "AI user not found."}, status=status.HTTP_400_BAD_REQUEST)
+
+            members_data += [ai_user.pk]
+
+        chat_group = ChatGroup.objects.create(
+            title=data.get("title", "Chat Group"),
+            vehicle_id=data.get("vehicle"),
+            is_private=data.get("is_private", False),
+        )
+        members = User.objects.filter(id__in=members_data)
+        chat_group.members.set(members)
+
+        if "message" in request.data:
+            GroupMessage.objects.create(chat_group=chat_group, sender=request.user, content=request.data["message"])
+
+        serializer = self.get_serializer(chat_group)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ChatGroupRetrieveUpdateDestroyView(UserQuerysetMixin, generics.RetrieveUpdateDestroyAPIView):

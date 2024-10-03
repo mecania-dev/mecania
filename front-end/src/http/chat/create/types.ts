@@ -1,7 +1,9 @@
+import { string } from '@/lib/zod'
 import { z } from 'zod'
 
 export const chatCreateSchema = z.object({
   vehicle: z.number(),
+  message: string({ name: 'Mensagem', min: 1, max: 300, allowEmpty: true }).optional(),
   isPrivate: z.boolean().default(true)
 })
 

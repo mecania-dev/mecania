@@ -1,10 +1,10 @@
 'use client'
 
-import Loading from '@/app/loading'
 import { Redirect } from '@/components/redirect'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
 import { Chat } from '@/types/entities/chat'
+import { useRouter } from 'next/navigation'
 
 import { AIChatHeader } from '../chat-header'
 import { AIChatInput } from '../chat-input'
@@ -16,17 +16,18 @@ interface ChatProps {
 }
 
 export function ChatPage({ chatId }: ChatProps) {
+  const router = useRouter()
   const { setChat } = useChat()
   const chat = useSWRCustom<Chat>(chatId ? `/chat/${chatId}` : null, {
-    onSuccess: setChat
+    onSuccess: setChat,
+    onError: () => router.push('/chat')
   })
 
   useFirstRenderEffect(() => {
     if (!chatId) setChat()
   })
 
-  if (chatId && chat.state.isLoading) return <Loading />
-  if (chatId && !chat.state.data) return <Redirect url="/chat" />
+  if (chatId && !chat.state.isLoading && !chat.state.data) return <Redirect url="/chat" />
 
   return (
     <div className="relative flex max-h-[calc(100dvh-4rem)] grow flex-col">

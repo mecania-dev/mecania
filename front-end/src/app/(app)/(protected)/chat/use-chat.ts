@@ -10,7 +10,9 @@ export const defaultRecommendationsFilters = {
 
 export interface ChatStore {
   chat?: Chat
+  messages: Chat['messages']
   setChat: (chat?: Chat) => void
+  sendMessage: (message: string, sender: User) => void
   initialQuestions?: {}[]
   recommendations: {
     mechanics: User[]
@@ -47,7 +49,25 @@ export interface ChatStore {
 }
 
 export const useChat = create<ChatStore>()(set => ({
-  setChat: chat => set(state => ({ chat, recommendations: chat ? state.recommendations : createRecommendations(set) })),
+  messages: [],
+  setChat: chat =>
+    set(state => ({
+      chat,
+      messages: chat?.messages ?? [],
+      recommendations: chat ? state.recommendations : createRecommendations(set)
+    })),
+  sendMessage: (message, sender) => {
+    set(state => {
+      state.messages.push({
+        id: state.messages.length + 1,
+        content: message,
+        sender: { id: sender.id, username: sender.username, isAi: sender.isAi },
+        sentAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      })
+      return { messages: state.messages }
+    })
+  },
   recommendations: createRecommendations(set)
 }))
 

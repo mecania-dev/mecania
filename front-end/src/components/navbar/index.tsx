@@ -20,7 +20,7 @@ export function Navbar() {
 
   return (
     <NextUINavbar
-      className="bg-background/60 text-foreground shadow-sm"
+      className="h-[calc(4rem_-_1px)] bg-background/60 text-foreground shadow-sm"
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
       isBordered
