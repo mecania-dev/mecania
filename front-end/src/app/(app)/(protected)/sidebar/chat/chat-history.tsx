@@ -39,7 +39,7 @@ export function ChatHistory() {
       <NewChatButton />
       <div className="space-y-1">
         {chats.state.isLoading && <Loading className="mt-20" isFixed={false} />}
-        {sortedChats.length === 0 && (
+        {!chats.state.isLoading && sortedChats.length === 0 && (
           <EmptyHistory
             title="Nenhuma conversa iniciada"
             description="Inicie uma nova conversa para descrever o problema do seu veículo e receba recomendações"
