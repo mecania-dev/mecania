@@ -18,6 +18,7 @@ export function AIChatWindow() {
   return (
     <ChatWindow>
       <p className="mb-20"></p>
+      <VehicleSelector />
       {messages.map(msg => (
         <ChatMessage
           isSender={user?.id === msg.sender.id}
@@ -26,7 +27,6 @@ export function AIChatWindow() {
           {...msg}
         />
       ))}
-      <VehicleSelector />
       {chat?.issues.some(i => i.recommendations.length > 0) && (
         <div className="!my-10 animate-appearance-in text-center">
           <Button
