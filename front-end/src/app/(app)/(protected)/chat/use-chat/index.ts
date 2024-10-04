@@ -2,7 +2,7 @@ import { Chat } from '@/types/entities/chat'
 import { User, Vehicle } from '@/types/entities/user'
 import { create, StoreApi } from 'zustand'
 
-import { initialQuestions } from './initial-questions'
+import { getNotAnsweredQuestion, initialQuestions } from './initial-questions'
 import { Question } from './types'
 
 export * from './types'
@@ -22,7 +22,8 @@ export interface ChatStore {
   setChat: (chat?: Chat) => void
   setVehicle: (vehicle: Vehicle) => void
   sendMessage: (message: string, sender: User) => void
-  getCurrentQuestion: () => Question
+  answerQuestion: (questionIndex: number, updatedQuestion: Question) => void
+  getCurrentQuestion: () => [Question | undefined, number]
   recommendations: {
     mechanics: User[]
     selectedMechanics: User[]
@@ -63,6 +64,7 @@ export const useChat = create<ChatStore>()((set, get) => ({
   setChat: chat =>
     set(state => ({
       chat,
+      initialQuestions,
       vehicle: chat?.vehicle,
       messages: chat?.messages ?? [],
       recommendations: chat ? state.recommendations : createRecommendations(set)
@@ -80,9 +82,63 @@ export const useChat = create<ChatStore>()((set, get) => ({
       return { messages: state.messages }
     })
   },
+  answerQuestion: (questionIndex, updatedQuestion) => {
+    const { initialQuestions } = get()
+    const question = initialQuestions[questionIndex]
+
+    function updateFollowUp(question: Question | undefined, updatedQuestion: Question): boolean {
+      if (!question) return false
+
+      // If the question's text matches the updated question, update its answer
+      if (question.text === updatedQuestion.text) {
+        question.answer = updatedQuestion.answer
+        return true
+      }
+
+      // If it's an options question, iterate through the options and check their follow-ups
+      if (question.type === 'options') {
+        for (const option of question.options) {
+          // Check if the selected option has `end: true`, and stop updating if so
+          if (option.text === question.answer && option.end) {
+            return false
+          }
+          // If the option's text matches the updated question, update its answer
+          if (option.text === updatedQuestion.answer) {
+            question.answer = updatedQuestion.answer
+            return true
+          }
+          // Follow-up, recurse
+          if (typeof option.followUp === 'object') {
+            return updateFollowUp(option.followUp, updatedQuestion)
+          }
+        }
+      }
+
+      // If it's a text question with a follow-up, recurse
+      if (question.type === 'text' && typeof question.followUp === 'object') {
+        return updateFollowUp(question.followUp, updatedQuestion)
+      }
+
+      return false
+    }
+
+    const found = updateFollowUp(question, updatedQuestion)
+
+    if (!found) return
+
+    set({ initialQuestions: [...initialQuestions] })
+  },
   getCurrentQuestion: () => {
     const { initialQuestions } = get()
-    return initialQuestions.find((q, i) => !q.answer || i === initialQuestions.length - 1)!
+
+    for (let i = 0; i < initialQuestions.length; i++) {
+      const q = initialQuestions[i]
+      const notAnsweredQuestion = getNotAnsweredQuestion(q)
+
+      if (notAnsweredQuestion) return [notAnsweredQuestion, i]
+    }
+
+    return [, initialQuestions.length - 1]
   },
   recommendations: createRecommendations(set)
 }))

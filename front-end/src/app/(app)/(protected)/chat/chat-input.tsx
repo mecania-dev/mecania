@@ -16,13 +16,13 @@ import { useChat } from './use-chat'
 export function AIChatInput() {
   const router = useRouter()
   const { user } = useUser()
-  const { chat, vehicle, sendMessage, setChat, getCurrentQuestion } = useChat()
-  const currentQuestion = getCurrentQuestion()
+  const { chat, vehicle, sendMessage, setChat, getCurrentQuestion, answerQuestion } = useChat()
+  const [currentQuestion, questionIndex] = getCurrentQuestion()
   const form = useForm<SendMessage>({ resolver: zodResolver(sendMessageSchema), defaultValues: { message: '' } })
   const { isSubmitting, isValid } = form.formState
 
   const hasRecommendations = !!chat?.issues.some(issue => issue.recommendations.length > 0)
-  const isChatDisabled = !chat && currentQuestion.type !== 'text'
+  const isChatDisabled = (!chat && currentQuestion?.type === 'options') || !vehicle
   const isDisabled = isSubmitting || !isValid || isChatDisabled
 
   useFirstRenderEffect(() => {
@@ -30,6 +30,12 @@ export function AIChatInput() {
   })
 
   async function onSubmit({ message }: SendMessage) {
+    if (currentQuestion) {
+      answerQuestion(questionIndex, { ...currentQuestion, answer: message })
+      form.reset()
+      return
+    }
+
     sendMessage(message, user!)
     form.reset()
 
@@ -54,6 +60,11 @@ export function AIChatInput() {
     >
       <ChatInput
         maxLength={1024}
+        description={
+          !chat && vehicle && currentQuestion?.type === 'text'
+            ? 'Por favor, insira sua resposta para a pergunta acima.'
+            : undefined
+        }
         submitProps={{ isDisabled }}
         onSubmit={form.handleSubmit(onSubmit)}
         isDisabled={isChatDisabled}

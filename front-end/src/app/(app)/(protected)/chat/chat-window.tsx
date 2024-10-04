@@ -7,6 +7,7 @@ import { ChatMessage } from '@/components/chat/message'
 import { ChatWindow } from '@/components/chat/window'
 import { useUser } from '@/providers/user-provider'
 
+import { InitialQuestions } from './initial-questions'
 import { ChatRecommendations } from './recommendations'
 import { useChat } from './use-chat'
 import { VehicleSelector } from './vehicle-selector'
@@ -19,6 +20,7 @@ export function AIChatWindow() {
     <ChatWindow>
       <p className="mb-20"></p>
       <VehicleSelector />
+      <InitialQuestions />
       {messages.map(msg => (
         <ChatMessage
           isSender={user?.id === msg.sender.id}

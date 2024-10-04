@@ -2,6 +2,7 @@
 
 import { LuTrash2 } from 'react-icons/lu'
 
+import Loading from '@/app/loading'
 import { confirmationModal } from '@/components/modal'
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
@@ -37,30 +38,32 @@ export function ChatHistory() {
     <div className="w-0 space-y-3 overflow-hidden transition-width group-data-[chat=true]:w-full">
       <NewChatButton />
       <div className="space-y-1">
+        {chats.state.isLoading && <Loading className="mt-20" isFixed={false} />}
         {sortedChats.length === 0 && (
           <EmptyHistory
             title="Nenhuma conversa iniciada"
             description="Inicie uma nova conversa para descrever o problema do seu veículo e receba recomendações"
           />
         )}
-        {sortedChats.map((chat, i) => (
-          <SidebarRoute
-            canProps={{ I: 'ask_ai', a: 'Chat' }}
-            href={`/chat/${chat.id}`}
-            variant="ghost"
-            activeVariant="solid"
-            classNames={{ text: 'truncate' }}
-            endContent={
-              <LuTrash2
-                className="hidden h-5 w-5 shrink-0 text-danger hover:scale-105 group-data-[active=true]:block group-data-[hover=true]:block"
-                onClick={handleChatRemove(chat.id)}
-              />
-            }
-            key={`${i}-${chat.id}`}
-          >
-            {chat.title}
-          </SidebarRoute>
-        ))}
+        {!chats.state.isLoading &&
+          sortedChats.map((chat, i) => (
+            <SidebarRoute
+              canProps={{ I: 'ask_ai', a: 'Chat' }}
+              href={`/chat/${chat.id}`}
+              variant="ghost"
+              activeVariant="solid"
+              classNames={{ text: 'truncate' }}
+              endContent={
+                <LuTrash2
+                  className="hidden h-5 w-5 shrink-0 text-danger hover:scale-105 group-data-[active=true]:block group-data-[hover=true]:block"
+                  onClick={handleChatRemove(chat.id)}
+                />
+              }
+              key={`${i}-${chat.id}`}
+            >
+              {chat.title}
+            </SidebarRoute>
+          ))}
       </div>
     </div>
   )

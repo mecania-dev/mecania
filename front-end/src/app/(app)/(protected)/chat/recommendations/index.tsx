@@ -51,7 +51,7 @@ export function ChatRecommendations() {
     >
       <Modal.Body className="relative gap-0 overflow-hidden p-0">
         <ChatRecommendationsFilters className="pb-3" />
-        {!mechanicsState?.isMounted && <Loading isAbsolute={false} />}
+        {!mechanicsState?.isMounted && <Loading isFixed={false} />}
         {mechanicsState?.isMounted && !mechanicsState.items.length && (
           <div className="flex grow items-center justify-center p-6">
             <p className="text-center text-default-400">Nenhuma oficina recomendada</p>
