@@ -16,11 +16,14 @@ import { useChat } from './use-chat'
 export function AIChatInput() {
   const router = useRouter()
   const { user } = useUser()
-  const { chat, vehicle, sendMessage } = useChat()
+  const { chat, vehicle, sendMessage, setChat, getCurrentQuestion } = useChat()
+  const currentQuestion = getCurrentQuestion()
   const form = useForm<SendMessage>({ resolver: zodResolver(sendMessageSchema), defaultValues: { message: '' } })
   const { isSubmitting, isValid } = form.formState
+
   const hasRecommendations = !!chat?.issues.some(issue => issue.recommendations.length > 0)
-  const isDisabled = isSubmitting || !isValid
+  const isChatDisabled = !chat && currentQuestion.type !== 'text'
+  const isDisabled = isSubmitting || !isValid || isChatDisabled
 
   useFirstRenderEffect(() => {
     form.setFocus('message')
@@ -34,8 +37,10 @@ export function AIChatInput() {
       const res = await createChat({ vehicle: vehicle.id, isPrivate: true, message })
       if (res.ok) {
         router.replace(`/chat/${res.data.id}`)
+        setChat(res.data)
         mutate('chat/')
       }
+      return
     }
   }
 
@@ -51,6 +56,7 @@ export function AIChatInput() {
         maxLength={1024}
         submitProps={{ isDisabled }}
         onSubmit={form.handleSubmit(onSubmit)}
+        isDisabled={isChatDisabled}
         fullWidth
         {...form.register('message')}
       />
