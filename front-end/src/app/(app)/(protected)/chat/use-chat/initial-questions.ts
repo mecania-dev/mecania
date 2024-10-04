@@ -22,7 +22,7 @@ export function getNotAnsweredQuestion(question: Question) {
   return undefined
 }
 
-export const initialQuestions: Question[] = [
+const initialQuestions: Question[] = [
   {
     type: 'options',
     text: 'Seu veículo se envolveu em algum acidente, colisão, ou algo do tipo, recentemente?',
@@ -66,3 +66,7 @@ export const initialQuestions: Question[] = [
     text: 'Por favor, descreva o problema que você está enfrentando.'
   }
 ]
+
+export function getInitialQuestions() {
+  return initialQuestions.map(q => ({ ...q }))
+}

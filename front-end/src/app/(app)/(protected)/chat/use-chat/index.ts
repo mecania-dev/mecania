@@ -2,7 +2,7 @@ import { Chat } from '@/types/entities/chat'
 import { User, Vehicle } from '@/types/entities/user'
 import { create, StoreApi } from 'zustand'
 
-import { getNotAnsweredQuestion, initialQuestions } from './initial-questions'
+import { getNotAnsweredQuestion, getInitialQuestions } from './initial-questions'
 import { Question } from './types'
 
 export * from './types'
@@ -60,11 +60,11 @@ export interface ChatStore {
 
 export const useChat = create<ChatStore>()((set, get) => ({
   messages: [],
-  initialQuestions,
+  initialQuestions: getInitialQuestions(),
   setChat: chat =>
     set(state => ({
       chat,
-      initialQuestions,
+      initialQuestions: getInitialQuestions(),
       vehicle: chat?.vehicle,
       messages: chat?.messages ?? [],
       recommendations: chat ? state.recommendations : createRecommendations(set)
@@ -150,7 +150,7 @@ function createRecommendations(set: StoreApi<ChatStore>['setState']): ChatStore[
     isModalOpen: false,
     isSendOpen: false,
     isFilterOpen: false,
-    filters: defaultRecommendationsFilters,
+    filters: { ...defaultRecommendationsFilters },
     searchQuery: '',
     setMechanics: mechanics =>
       set(state => ({
@@ -178,7 +178,7 @@ function createRecommendations(set: StoreApi<ChatStore>['setState']): ChatStore[
           isModalOpen: isOpen,
           isSendOpen: false,
           isFilterOpen: false,
-          filters: defaultRecommendationsFilters,
+          filters: { ...defaultRecommendationsFilters },
           searchQuery: ''
         }
       })),
