@@ -16,7 +16,7 @@ import { useChat } from './use-chat'
 export function AIChatInput() {
   const router = useRouter()
   const { user } = useUser()
-  const { chat, sendMessage } = useChat()
+  const { chat, vehicle, sendMessage } = useChat()
   const form = useForm<SendMessage>({ resolver: zodResolver(sendMessageSchema), defaultValues: { message: '' } })
   const { isSubmitting, isValid } = form.formState
   const hasRecommendations = !!chat?.issues.some(issue => issue.recommendations.length > 0)
@@ -30,8 +30,8 @@ export function AIChatInput() {
     sendMessage(message, user!)
     form.reset()
 
-    if (!chat) {
-      const res = await createChat({ vehicle: 2, isPrivate: true, message })
+    if (!chat && vehicle) {
+      const res = await createChat({ vehicle: vehicle.id, isPrivate: true, message })
       if (res.ok) {
         router.replace(`/chat/${res.data.id}`)
         mutate('chat/')

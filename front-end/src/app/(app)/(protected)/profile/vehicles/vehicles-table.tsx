@@ -16,6 +16,7 @@ import { formatDate } from '@/lib/date'
 import { useUser } from '@/providers/user-provider'
 import { Vehicle } from '@/types/entities/user'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
+import { mutate } from 'swr'
 
 import { NewVehicleModalButton, VehicleModal } from './vehicle-modal'
 
@@ -32,6 +33,7 @@ export function VehiclesTable() {
       const res = await vehicles.post(vehicle)
       if (res.ok) {
         toast({ message: 'Veículo adicionado com sucesso', type: 'success' })
+        mutate('users/me/')
       } else {
         toast({ message: 'Erro ao criar veículo', type: 'error' })
       }
@@ -45,6 +47,7 @@ export function VehiclesTable() {
         url: url => url + `${vehicle.id}/`,
         onSuccess() {
           toast({ message: 'Veículo atualizado com sucesso', type: 'success' })
+          mutate('users/me/')
         },
         onError() {
           toast({ message: 'Erro ao atualizar veículo', type: 'error' })
@@ -64,6 +67,7 @@ export function VehiclesTable() {
           const res = await vehicles.remove({ url: url => url + vehicle.id })
           if (res.ok) {
             toast({ message: 'Veículo deletado com sucesso', type: 'success' })
+            mutate('users/me/')
           } else {
             toast({ message: 'Erro ao remover veículo', type: 'error' })
           }

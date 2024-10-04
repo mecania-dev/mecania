@@ -1,6 +1,12 @@
 import { Chat } from '@/types/entities/chat'
-import { User } from '@/types/entities/user'
+import { User, Vehicle } from '@/types/entities/user'
 import { create, StoreApi } from 'zustand'
+
+import { initialQuestions } from './initial-questions'
+import { Question } from './types'
+
+export * from './types'
+export * from './initial-questions'
 
 export const defaultRecommendationsFilters = {
   ratings: { min: 0, max: 5 },
@@ -10,10 +16,12 @@ export const defaultRecommendationsFilters = {
 
 export interface ChatStore {
   chat?: Chat
+  vehicle?: Vehicle
   messages: Chat['messages']
+  initialQuestions: Question[]
   setChat: (chat?: Chat) => void
+  setVehicle: (vehicle: Vehicle) => void
   sendMessage: (message: string, sender: User) => void
-  initialQuestions?: {}[]
   recommendations: {
     mechanics: User[]
     selectedMechanics: User[]
@@ -50,12 +58,15 @@ export interface ChatStore {
 
 export const useChat = create<ChatStore>()(set => ({
   messages: [],
+  initialQuestions,
   setChat: chat =>
     set(state => ({
       chat,
+      vehicle: chat?.vehicle,
       messages: chat?.messages ?? [],
       recommendations: chat ? state.recommendations : createRecommendations(set)
     })),
+  setVehicle: vehicle => set({ vehicle }),
   sendMessage: (message, sender) => {
     set(state => {
       state.messages.push({

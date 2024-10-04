@@ -9,6 +9,7 @@ import { useUser } from '@/providers/user-provider'
 
 import { ChatRecommendations } from './recommendations'
 import { useChat } from './use-chat'
+import { VehicleSelector } from './vehicle-selector'
 
 export function AIChatWindow() {
   const { user } = useUser()
@@ -25,6 +26,7 @@ export function AIChatWindow() {
           {...msg}
         />
       ))}
+      <VehicleSelector />
       {chat?.issues.some(i => i.recommendations.length > 0) && (
         <div className="!my-10 animate-appearance-in text-center">
           <Button

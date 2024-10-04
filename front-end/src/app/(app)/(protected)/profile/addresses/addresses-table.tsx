@@ -15,6 +15,7 @@ import { formatDate } from '@/lib/date'
 import { useUser } from '@/providers/user-provider'
 import { Address } from '@/types/entities/user'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
+import { mutate } from 'swr'
 
 import { AddressModal, NewAddressModalButton } from './address-modal'
 
@@ -31,6 +32,7 @@ export function AddressesTable() {
       await addresses.post(address, {
         onSuccess() {
           toast({ message: 'Endereço adicionado com sucesso', type: 'success' })
+          mutate('users/me/')
         },
         onError() {
           toast({ message: 'Erro ao adicionar endereço', type: 'error' })
@@ -46,6 +48,7 @@ export function AddressesTable() {
         url: url => url + `${address.id}/`,
         onSuccess() {
           toast({ message: 'Endereço atualizado com sucesso', type: 'success' })
+          mutate('users/me/')
         },
         onError() {
           toast({ message: 'Erro ao atualizar endereço', type: 'error' })
@@ -65,6 +68,7 @@ export function AddressesTable() {
           const res = await addresses.remove({ url: url => url + address.id })
           if (res.ok) {
             toast({ message: 'Endereço deletado com sucesso', type: 'success' })
+            mutate('users/me/')
           } else {
             toast({ message: 'Erro ao remover endereço', type: 'error' })
           }

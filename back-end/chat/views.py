@@ -19,7 +19,8 @@ class ChatGroupListCreateView(UserQuerysetMixin, DynamicQuerysetMixin, generics.
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        members_data = [request.user.id]
+        members_data = data.get("members", [])
+        members_data += [request.user.id]
 
         if "members" not in data:
             ai_user = User.objects.filter(is_ai=True).first()
