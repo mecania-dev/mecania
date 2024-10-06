@@ -54,6 +54,7 @@ export function AIChatInput() {
   async function onSubmit({ message }: SendMessage) {
     if (currentQuestion) {
       answerQuestion(questionIndex, { ...currentQuestion, answer: message })
+      form.reset()
 
       if (isLastQuestion) {
         let initialMessage = ''
@@ -73,8 +74,6 @@ export function AIChatInput() {
           mutate('chat/')
         }
       }
-
-      form.reset()
       return
     }
 
