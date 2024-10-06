@@ -4,8 +4,8 @@ import { Question, useChat } from './use-chat'
 
 export function InitialQuestions() {
   const { chat, vehicle, initialQuestions, answerQuestion, getCurrentQuestion } = useChat()
-  const [currentQuestion, index] = getCurrentQuestion()
-  if ((chat && currentQuestion) || !vehicle) return null
+  const { index, isAllAnswered } = getCurrentQuestion()
+  if ((chat && !isAllAnswered) || !vehicle) return null
 
   function handleSelectOption(question: Question) {
     answerQuestion(index, question)

@@ -39,7 +39,7 @@ export function AIChatInput() {
   const router = useRouter()
   const { user } = useUser()
   const { chat, vehicle, initialQuestions, sendMessage, setChat, getCurrentQuestion, answerQuestion } = useChat()
-  const [currentQuestion, questionIndex, isLastQuestion] = getCurrentQuestion()
+  const { currentQuestion, index: questionIndex, isLastQuestion } = getCurrentQuestion()
   const form = useForm<SendMessage>({ resolver: zodResolver(sendMessageSchema), defaultValues: { message: '' } })
   const { isSubmitting, isValid } = form.formState
 

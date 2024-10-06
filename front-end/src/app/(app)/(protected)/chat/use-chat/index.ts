@@ -23,7 +23,12 @@ export interface ChatStore {
   setVehicle: (vehicle: Vehicle) => void
   sendMessage: (message: string, sender: User) => void
   answerQuestion: (questionIndex: number, updatedQuestion: Question) => void
-  getCurrentQuestion: () => [Question | undefined, number, boolean]
+  getCurrentQuestion: () => {
+    currentQuestion?: Question
+    index: number
+    isLastQuestion: boolean
+    isAllAnswered: boolean
+  }
   recommendations: {
     mechanics: User[]
     selectedMechanics: User[]
@@ -64,7 +69,6 @@ export const useChat = create<ChatStore>()((set, get) => ({
   setChat: chat =>
     set(state => ({
       chat,
-      initialQuestions: getInitialQuestions(),
       vehicle: chat?.vehicle,
       messages: chat?.messages ?? [],
       recommendations: chat ? state.recommendations : createRecommendations(set)
@@ -135,10 +139,20 @@ export const useChat = create<ChatStore>()((set, get) => ({
       const q = initialQuestions[i]
       const notAnsweredQuestion = getNotAnsweredQuestion(q)
 
-      if (notAnsweredQuestion) return [notAnsweredQuestion, i, i === initialQuestions.length - 1]
+      if (notAnsweredQuestion)
+        return {
+          currentQuestion: notAnsweredQuestion,
+          index: i,
+          isLastQuestion: i === initialQuestions.length - 1,
+          isAllAnswered: false
+        }
     }
 
-    return [, initialQuestions.length - 1, true]
+    return {
+      index: initialQuestions.length - 1,
+      isLastQuestion: true,
+      isAllAnswered: true
+    }
   },
   recommendations: createRecommendations(set)
 }))
