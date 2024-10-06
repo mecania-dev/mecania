@@ -23,7 +23,7 @@ export function ChatPage({ chatId }: ChatProps) {
     const res = await api.get<Chat>(`/chat/${chatId}`)
     if (!res.ok) router.push('/chat')
     setChat(res.data)
-  }, true)
+  }, !!chatId)
 
   useFirstRenderEffect(() => {
     if (!chatId) return setChat()
