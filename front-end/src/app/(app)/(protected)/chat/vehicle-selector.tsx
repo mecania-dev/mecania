@@ -11,8 +11,11 @@ import { useChat } from './use-chat'
 
 export function VehicleSelector() {
   const { user } = useUser()
-  const { chat, vehicle, setVehicle } = useChat()
+  const { chat, vehicle, setVehicle, getCurrentQuestion } = useChat()
+  const { isAllAnswered } = getCurrentQuestion()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  if (chat && !isAllAnswered) return null
 
   async function onCreateVehicle(vehicle: VehicleCreateOutput) {
     const res = await createVehicle(user!.id, vehicle)

@@ -32,7 +32,7 @@ export function ChatPage({ chatId }: ChatProps) {
   return (
     <div className="relative flex max-h-[calc(100dvh-4rem)] grow flex-col">
       <AIChatHeader />
-      <AIChatWindow isLoading={chat.state.isLoading} />
+      <AIChatWindow />
       <AIChatInput />
     </div>
   )
