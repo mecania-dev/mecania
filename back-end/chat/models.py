@@ -25,7 +25,7 @@ class ChatGroup(models.Model):
 class GroupMessage(models.Model):
     chat_group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE, related_name="group_messages")
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.CharField(max_length=300)
+    content = models.CharField(max_length=4096)
     sent_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
