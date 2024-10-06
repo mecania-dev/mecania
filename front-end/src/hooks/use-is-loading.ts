@@ -2,8 +2,8 @@ import { useState } from 'react'
 
 type FromPromise<T> = T extends PromiseLike<infer U> ? U : T
 
-export function useIsLoading<T extends any[], R>(fn: (...args: T) => R) {
-  const [isLoading, setIsLoading] = useState(false)
+export function useIsLoading<T extends any[], R>(fn: (...args: T) => R, defaultValue = false) {
+  const [isLoading, setIsLoading] = useState(defaultValue)
 
   async function handleFn(...args: Parameters<typeof fn>) {
     const res = fn(...args)

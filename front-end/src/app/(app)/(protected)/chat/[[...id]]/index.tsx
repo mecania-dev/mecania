@@ -1,8 +1,9 @@
 'use client'
 
 import { Redirect } from '@/components/redirect'
-import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
+import { useIsLoading } from '@/hooks/use-is-loading'
+import { api } from '@/http'
 import { Chat } from '@/types/entities/chat'
 import { useRouter } from 'next/navigation'
 
@@ -17,23 +18,25 @@ interface ChatProps {
 
 export function ChatPage({ chatId }: ChatProps) {
   const router = useRouter()
-  const { setChat } = useChat()
-  const chat = useSWRCustom<Chat>(chatId ? `/chat/${chatId}` : null, {
-    onSuccess: setChat,
-    onError: () => router.push('/chat')
-  })
+  const { chat, setChat } = useChat()
+  const [fetchChat, isLoading] = useIsLoading(async () => {
+    const res = await api.get<Chat>(`/chat/${chatId}`)
+    if (!res.ok) router.push('/chat')
+    setChat(res.data)
+  }, true)
 
   useFirstRenderEffect(() => {
-    if (!chatId) setChat()
+    if (!chatId) return setChat()
+    fetchChat()
   })
 
-  if (chatId && !chat.state.isLoading && !chat.state.data) return <Redirect url="/chat" />
+  if (chatId && !isLoading && !chat) return <Redirect url="/chat" />
 
   return (
     <div className="relative flex max-h-[calc(100dvh-4rem)] grow flex-col">
       <AIChatHeader />
-      <AIChatWindow isLoading={chat.state.isLoading} />
-      <AIChatInput />
+      <AIChatWindow isLoading={isLoading} />
+      <AIChatInput isLoading={isLoading} />
     </div>
   )
 }

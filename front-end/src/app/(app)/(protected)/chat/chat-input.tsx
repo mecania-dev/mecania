@@ -35,7 +35,11 @@ function setInitialMessage(question: Question) {
   return initialMessage
 }
 
-export function AIChatInput() {
+interface AIChatInputProps {
+  isLoading: boolean
+}
+
+export function AIChatInput({ isLoading }: AIChatInputProps) {
   const router = useRouter()
   const { user } = useUser()
   const { chat, vehicle, initialQuestions, sendMessage, setChat, getCurrentQuestion, answerQuestion } = useChat()
@@ -81,7 +85,7 @@ export function AIChatInput() {
     form.reset()
   }
 
-  if (hasRecommendations) return null
+  if (hasRecommendations && !isLoading) return null
 
   return (
     <Form
