@@ -11,13 +11,35 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { mutate } from 'swr'
 
-import { useChat } from './use-chat'
+import { Question, useChat } from './use-chat'
+
+function setInitialMessage(question: Question) {
+  let initialMessage = ''
+
+  if (question.answer) {
+    initialMessage += `${question.text}\n${question.answer}\n\n`
+  }
+
+  if (question.type === 'text' && typeof question.followUp === 'object') {
+    initialMessage += setInitialMessage(question.followUp)
+  }
+
+  if (question.type === 'options') {
+    question.options.forEach(option => {
+      if (option.text === question.answer && typeof option.followUp === 'object') {
+        initialMessage += setInitialMessage(option.followUp)
+      }
+    })
+  }
+
+  return initialMessage
+}
 
 export function AIChatInput() {
   const router = useRouter()
   const { user } = useUser()
-  const { chat, vehicle, sendMessage, setChat, getCurrentQuestion, answerQuestion } = useChat()
-  const [currentQuestion, questionIndex] = getCurrentQuestion()
+  const { chat, vehicle, initialQuestions, sendMessage, setChat, getCurrentQuestion, answerQuestion } = useChat()
+  const [currentQuestion, questionIndex, isLastQuestion] = getCurrentQuestion()
   const form = useForm<SendMessage>({ resolver: zodResolver(sendMessageSchema), defaultValues: { message: '' } })
   const { isSubmitting, isValid } = form.formState
 
@@ -32,22 +54,32 @@ export function AIChatInput() {
   async function onSubmit({ message }: SendMessage) {
     if (currentQuestion) {
       answerQuestion(questionIndex, { ...currentQuestion, answer: message })
+
+      if (isLastQuestion) {
+        let initialMessage = ''
+        initialMessage += `Resumo do problema:\n\n`
+        initialMessage += `Qual veículo está com problemas?\n${vehicle?.brand} ${vehicle?.model} - ${vehicle?.year}\n\n`
+
+        initialQuestions.forEach(q => {
+          initialMessage += setInitialMessage(q)
+        })
+
+        sendMessage(initialMessage, user!)
+
+        const res = await createChat({ vehicle: vehicle!.id, isPrivate: true, message: initialMessage })
+        if (res.ok) {
+          router.replace(`/chat/${res.data.id}`)
+          setChat(res.data)
+          mutate('chat/')
+        }
+      }
+
       form.reset()
       return
     }
 
     sendMessage(message, user!)
     form.reset()
-
-    if (!chat && vehicle) {
-      const res = await createChat({ vehicle: vehicle.id, isPrivate: true, message })
-      if (res.ok) {
-        router.replace(`/chat/${res.data.id}`)
-        setChat(res.data)
-        mutate('chat/')
-      }
-      return
-    }
   }
 
   if (hasRecommendations) return null

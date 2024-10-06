@@ -23,7 +23,7 @@ export interface ChatStore {
   setVehicle: (vehicle: Vehicle) => void
   sendMessage: (message: string, sender: User) => void
   answerQuestion: (questionIndex: number, updatedQuestion: Question) => void
-  getCurrentQuestion: () => [Question | undefined, number]
+  getCurrentQuestion: () => [Question | undefined, number, boolean]
   recommendations: {
     mechanics: User[]
     selectedMechanics: User[]
@@ -135,10 +135,10 @@ export const useChat = create<ChatStore>()((set, get) => ({
       const q = initialQuestions[i]
       const notAnsweredQuestion = getNotAnsweredQuestion(q)
 
-      if (notAnsweredQuestion) return [notAnsweredQuestion, i]
+      if (notAnsweredQuestion) return [notAnsweredQuestion, i, i === initialQuestions.length - 1]
     }
 
-    return [, initialQuestions.length - 1]
+    return [, initialQuestions.length - 1, true]
   },
   recommendations: createRecommendations(set)
 }))
