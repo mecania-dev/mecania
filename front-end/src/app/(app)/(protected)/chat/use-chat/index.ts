@@ -29,6 +29,7 @@ export interface ChatStore {
     isLastQuestion: boolean
     isAllAnswered: boolean
   }
+  resetInitialQuestions: () => void
   recommendations: {
     mechanics: User[]
     selectedMechanics: User[]
@@ -154,6 +155,7 @@ export const useChat = create<ChatStore>()((set, get) => ({
       isAllAnswered: true
     }
   },
+  resetInitialQuestions: () => set({ initialQuestions: getInitialQuestions() }),
   recommendations: createRecommendations(set)
 }))
 

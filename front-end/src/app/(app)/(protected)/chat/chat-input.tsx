@@ -8,6 +8,7 @@ import { createChat } from '@/http'
 import { useUser } from '@/providers/user-provider'
 import { SendMessage, sendMessageSchema } from '@/types/entities/chat'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/navigation'
 import { mutate } from 'swr'
 
@@ -75,6 +76,7 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
         if (res.ok) {
           router.replace(`/chat/${res.data.id}`)
           setChat(res.data)
+          setCookie('createdChatId', res.data.id)
           mutate('chat/')
         }
       }
