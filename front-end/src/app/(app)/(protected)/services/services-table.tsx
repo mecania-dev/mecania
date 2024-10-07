@@ -117,10 +117,10 @@ export function ServicesTable() {
   const topContent: TableTopContent<Service> = useCallback(
     ({ filterFields, columns, TableSearch, TableColumnSelector }) => (
       <FlexWrap className="justify-between">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <TableColumnSelector columns={columns} />
-          <Button onPress={downloadJson}>Download JSON</Button>
           <NewServiceModalButton onSubmit={onCreateService} />
+          <Button onPress={downloadJson}>Download JSON</Button>
         </div>
         <TableSearch filterFields={filterFields} columns={columns} />
       </FlexWrap>
