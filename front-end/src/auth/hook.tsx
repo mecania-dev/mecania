@@ -18,8 +18,9 @@ async function rotateToken(callback?: (accessToken?: string) => void) {
   if (timeout) clearTimeout(timeout)
   const accessToken = await auth.getValidAccessToken()
   if (!accessToken) return callback?.()
-  // 30 seconds before expiration
-  timeout = setTimeout(rotateToken, auth.getTokenExpiresIn(accessToken, 1000 * 30))
+  // 160 seconds before expiration, the time difference between the client and the server
+  const expiresIn = auth.getTokenExpiresIn(accessToken, 1000 * 160)
+  timeout = setTimeout(rotateToken, expiresIn)
   callback?.(accessToken)
 }
 
