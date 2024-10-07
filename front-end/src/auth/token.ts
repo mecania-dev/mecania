@@ -56,21 +56,25 @@ export async function getValidAccessToken(forceRefresh = false) {
   }
 }
 
-export function isTokenExpired(token: string) {
-  return Date.now() >= getTokenExpiration(token) * 1000
+export function isTokenExpired(token: string, offset?: number) {
+  return getTokenExpiresIn(token, offset) <= 0
 }
 
-export function getTokenExpiresIn(token?: string, offset = 0) {
-  const expiresIn = getTokenExpiration(token) * 1000 - Date.now()
-  return expiresIn > offset ? expiresIn - offset : 0
+export function getTokenExpiresIn(token?: string, offset?: number) {
+  const expiresIn = getTokenExpiration(token, offset) * 1000 - Date.now()
+  console.log('Token expires in', expiresIn / 1000, 'seconds')
+  return expiresIn
 }
 
-export function getTokenExpiration(token?: string) {
+// offset -> seconds before expiration
+// default 160 seconds, the time difference between the client and the server
+export function getTokenExpiration(token?: string, offset = 160) {
   if (!token) return 0
 
   try {
     const decoded = jwtDecode(token)
-    return decoded.exp ?? 0
+    if (!decoded.exp) return 0
+    return decoded.exp > offset ? decoded.exp - offset : 0
   } catch {
     return 0
   }
