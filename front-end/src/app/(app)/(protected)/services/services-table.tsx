@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react'
 import { LuTrash2 } from 'react-icons/lu'
 
+import { Button } from '@/components/button'
 import { FlexWrap } from '@/components/flex-wrap'
 import { confirmationModal } from '@/components/modal'
 import { Table } from '@/components/table'
@@ -13,6 +14,7 @@ import { ServiceCreateOutput } from '@/http'
 import { formatDate } from '@/lib/date'
 import { Service } from '@/types/entities/service'
 import { Selection, Spinner, Tooltip } from '@nextui-org/react'
+import { groupBy } from 'lodash'
 
 import { NewServiceModalButton } from './service-modal'
 
@@ -88,17 +90,42 @@ export function ServicesTable() {
     [handleDelete]
   )
 
+  const downloadJson = useCallback(() => {
+    if (!services.state.data) return
+    // Group services by category name
+    const grouped = groupBy(services.state.data, service => service.category.name)
+    // Format the data to { category: 'category.name', services: [] }
+    const formattedData = Object.keys(grouped).map(categoryName => ({
+      category: categoryName,
+      services: grouped[categoryName].map(({ name, description, vehicleType }) => {
+        if (description) return { name, description, vehicleType }
+        return { name, vehicleType }
+      })
+    }))
+    // Create a Blob from the JSON data
+    const blob = new Blob([JSON.stringify(formattedData, null, 2)], { type: 'application/json' })
+    // Create a download link and trigger the download
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'services.json'
+    link.click()
+    // Clean up the URL object
+    URL.revokeObjectURL(url)
+  }, [services.state.data])
+
   const topContent: TableTopContent<Service> = useCallback(
     ({ filterFields, columns, TableSearch, TableColumnSelector }) => (
       <FlexWrap className="justify-between">
         <div className="flex gap-2">
           <TableColumnSelector columns={columns} />
+          <Button onPress={downloadJson}>Download JSON</Button>
           <NewServiceModalButton onSubmit={onCreateService} />
         </div>
         <TableSearch filterFields={filterFields} columns={columns} />
       </FlexWrap>
     ),
-    [onCreateService]
+    [onCreateService, downloadJson]
   )
 
   return (

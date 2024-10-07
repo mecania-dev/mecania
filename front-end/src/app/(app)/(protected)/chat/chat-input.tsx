@@ -71,6 +71,7 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
         })
 
         sendMessage(initialMessage, user!)
+        sendMessage('', { id: -1, username: 'MecanIA', isAi: true } as any)
 
         const res = await createChat({ vehicle: vehicle!.id, isPrivate: true, message: initialMessage })
         if (res.ok) {
