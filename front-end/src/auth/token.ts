@@ -62,7 +62,6 @@ export function isTokenExpired(token: string, offset?: number) {
 
 export function getTokenExpiresIn(token?: string, offset?: number) {
   const expiresIn = getTokenExpiration(token, offset) * 1000 - Date.now()
-  console.log('Token expires in', expiresIn / 1000, 'seconds')
   return expiresIn
 }
 
