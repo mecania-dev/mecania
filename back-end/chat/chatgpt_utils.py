@@ -1,9 +1,9 @@
 import time
-import json
 from openai import OpenAI
 from django.conf import settings
 
 from utils.env import env
+from utils.json import extract_all_jsons
 
 client = OpenAI()
 client.api_key = settings.OPENAI_API_KEY
@@ -20,5 +20,5 @@ def ask_gpt(message: str):
     message_response = client.beta.threads.messages.list(thread_id=thread.id)
     messages = message_response.data
     latest_message = messages[0].content[0].text.value
-    json_string = latest_message.replace("```json", "").replace("```", "")
-    return json.loads(json_string)
+    parsed_message = extract_all_jsons(latest_message)[0]
+    return parsed_message

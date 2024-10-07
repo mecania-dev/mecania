@@ -12,6 +12,7 @@ djangorestframework-simplejwt==5.3.1
 pydantic==2.7.2
 python-dotenv==1.0.1
 pytz==2024.1
+regex==2024.9.11
 gunicorn==21.2.0
 openai==1.43.0
 pillow==10.3.0
