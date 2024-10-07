@@ -20,6 +20,7 @@ async function rotateToken(callback?: (accessToken?: string) => void) {
   if (!accessToken) return callback?.()
   // 160 seconds before expiration, the time difference between the client and the server
   const expiresIn = auth.getTokenExpiresIn(accessToken, 1000 * 160)
+  console.log('Token expires in', expiresIn / 1000, 'seconds')
   timeout = setTimeout(rotateToken, expiresIn)
   callback?.(accessToken)
 }
