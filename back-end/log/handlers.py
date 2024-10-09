@@ -1,6 +1,6 @@
 from logging import Handler
 from django.utils import timezone
-import json, datetime, random
+import datetime, random
 
 
 class DBHandler(Handler, object):
@@ -26,26 +26,20 @@ class DBHandler(Handler, object):
             except:
                 from log.models import LogEntry as model
 
-            log_entry = model(log_level=record.levelname, message=self.format(record))
-
-            # test if msg is json and apply to log record object
-            try:
-                data = json.loads(record.msg)
-                for key, value in data.items():
-                    if hasattr(log_entry, key):
-                        try:
-                            setattr(log_entry, key, value)
-                        except:
-                            pass
-            except:
-                pass
+            log_entry = model(
+                log_level=record.levelname,
+                message=self.format(record),
+                context=getattr(record, "context", ""),
+                request_data=getattr(record, "request_data", None),
+                response_data=getattr(record, "response_data", None),
+            )
 
             log_entry.save()
 
             # in 20% of time, check and delete expired logs
             if self.expiry and random.randint(1, 5) == 1:
                 model.objects.filter(time__lt=timezone.now() - datetime.timedelta(seconds=self.expiry)).delete()
-        except Exception as e:
+        except:
             pass
 
     def get_model(self, name):

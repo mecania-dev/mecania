@@ -1,9 +1,11 @@
-import time
+import logging, time
 from openai import OpenAI
 from django.conf import settings
 
 from utils.env import env
 from utils.json import extract_all_jsons
+
+logger = logging.getLogger("django")
 
 client = OpenAI()
 client.api_key = settings.OPENAI_API_KEY
@@ -20,5 +22,6 @@ def ask_gpt(message: str):
     message_response = client.beta.threads.messages.list(thread_id=thread.id)
     messages = message_response.data
     latest_message = messages[0].content[0].text.value
-    parsed_message = extract_all_jsons(latest_message)[0]
-    return parsed_message
+    logger.info("GPT response", extra={"context": "Ask GPT", "request_data": message, "response_data": latest_message})
+    parsed_message = extract_all_jsons(latest_message)
+    return parsed_message[0] if parsed_message else None
