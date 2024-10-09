@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "django_cleanup.apps.CleanupConfig",
     "storages",
     # internal apps
+    "log",
     "api",
     "authentication",
     "users",
@@ -101,6 +102,29 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = "mecania.asgi.application"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "db": {
+            "level": "INFO",
+            "class": "log.handlers.DBHandler",
+            "model": "log.models.LogEntry",
+            "expiry": 2592000,  # 30 days
+        },
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["db", "console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}
 
 if DEVELOPMENT:
     CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
