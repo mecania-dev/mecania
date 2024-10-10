@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (res.status === 404) return notFound()
   if (!res.ok) return redirect('/profile')
   return {
-    title: `Oficina ${res.data.username}`
+    title: res.data.username
   }
 }
 

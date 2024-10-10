@@ -15,6 +15,7 @@ export interface UserContextProps {
   user?: User
   userState: SWRResponse<User>
   isAuthenticated: boolean
+  isAdmin: boolean
   isMechanic: boolean
   signUp: UseAuth['signUp']
   signIn: UseAuth['signIn']
@@ -43,6 +44,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       value={{
         user: user.state.data,
         userState: user.state,
+        isAdmin: user.state.data?.isSuperuser ?? false,
         isMechanic: user.state.data?.groups.includes('Mechanic') ?? false,
         isAuthenticated,
         signUp,

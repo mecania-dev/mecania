@@ -2,6 +2,7 @@ import { User } from '@/types/entities/user'
 
 import { api, ApiRequestConfig } from '../api'
 
+export * from './services'
 export * from './address'
 export * from './create-mechanic'
 export * from './update'

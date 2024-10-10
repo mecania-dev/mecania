@@ -20,6 +20,7 @@ import { AddressModalFooter } from './footer'
 
 type AddressModalProps<T extends Address | undefined = undefined> = {
   address?: T
+  userId?: number
   isOpen: boolean
   setIsOpen: (value: boolean) => void
   onSubmit?: MaybePromise<(address: T extends undefined ? AddressCreateOutput : AddressUpdateOutput) => void>
@@ -27,6 +28,7 @@ type AddressModalProps<T extends Address | undefined = undefined> = {
 
 export function AddressModal<T extends Address | undefined = undefined>({
   address,
+  userId,
   isOpen,
   setIsOpen,
   onSubmit
@@ -34,7 +36,7 @@ export function AddressModal<T extends Address | undefined = undefined>({
   const { user } = useUser()
   const form = useForm<AddressCreateInput>({
     resolver: zodResolver(address ? addressUpdateSchema : addressCreateSchema),
-    defaultValues: { userId: user?.id, country: 'BR', ...address }
+    defaultValues: { userId: userId ?? user?.id, country: 'BR', ...address }
   })
 
   async function handleOnSubmit(address: T extends undefined ? AddressCreateOutput : AddressUpdateOutput) {
@@ -50,14 +52,19 @@ export function AddressModal<T extends Address | undefined = undefined>({
   )
 }
 
-interface NewAddressModalButtonProps extends Omit<ButtonProps, 'ref' | 'onPress' | 'onSubmit'> {
+type NewAddressModalButtonProps<T extends Address | undefined = undefined> = Omit<
+  ButtonProps,
+  'ref' | 'onPress' | 'onSubmit'
+> & {
   onSubmit?: MaybePromise<(address: AddressCreateOutput) => void>
+  modalProps?: Omit<AddressModalProps<T>, 'isOpen' | 'setIsOpen' | 'onSubmit'>
 }
 
 export function NewAddressModalButton({
   children,
   color = 'secondary',
   onSubmit,
+  modalProps,
   ...rest
 }: NewAddressModalButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -65,7 +72,7 @@ export function NewAddressModalButton({
   return (
     <Button color={color} onPress={() => setIsOpen(true)} {...rest}>
       {children ?? 'Novo'}
-      {isOpen && <AddressModal isOpen={isOpen} setIsOpen={setIsOpen} onSubmit={onSubmit} />}
+      {isOpen && <AddressModal isOpen={isOpen} setIsOpen={setIsOpen} onSubmit={onSubmit} {...modalProps} />}
     </Button>
   )
 }
