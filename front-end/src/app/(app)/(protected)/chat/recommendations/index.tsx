@@ -20,7 +20,7 @@ export interface MechanicWithDistance extends User {
 }
 
 export function ChatRecommendations() {
-  const { recommendations: recs } = useChat()
+  const { chat, recommendations: recs } = useChat()
   const [mechanicsState, setMechanicsState] = useState<PaginationState<User>>()
   const [filteredMechanics, setFilteredMechanics] = useState<MechanicWithDistance[]>([])
   const searchedMechanics = search(filteredMechanics, 'firstName', recs.searchQuery, false)
@@ -66,6 +66,8 @@ export function ChatRecommendations() {
           url="users/mechanics/"
           config={{
             params: {
+              services__isnull: false,
+              services__id__in: chat?.issues.flatMap(issue => issue.recommendations.map(r => r.service)).join(','),
               addresses__city__in: recs.filters.cities.reduce((acc, city) => (acc += city + ','), ''),
               received_ratings__score__avg: `${recs.filters.ratings.min},${recs.filters.ratings.max}`
             }

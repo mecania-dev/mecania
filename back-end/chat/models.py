@@ -56,7 +56,13 @@ class Issue(models.Model):
         ("Vague", "Vago"),
     ]
 
-    STATUS_CHOICES = [("open", "Aberto"), ("resolved", "Resolvido")]
+    STATUS_CHOICES = [
+        ("pending", "Pendente"),  # Foi feita solicitação
+        ("accepted", "Aceito"),  # Oficina aceitou
+        ("rejected", "Rejeitado"),  # Oficina rejeitou
+        ("in_progress", "Em andamento"),  # Ambos fecharam negócio
+        ("resolved", "Resolvido"),  # Ambos concordaram que foi resolvido
+    ]
 
     chat_group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE, related_name="group_issues")
     description = models.TextField()
@@ -66,6 +72,10 @@ class Issue(models.Model):
     is_resolved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    user_accepted = models.BooleanField(default=False)  # Aceitou fechar negócio
+    mechanic_accepted = models.BooleanField(default=False)  # Aceitou fechar negócio
+    user_agreeded = models.BooleanField(default=False)  # Aceitou que foi resolvido
+    mechanic_agreeded = models.BooleanField(default=False)  # Aceitou que foi resolvido
 
     class Meta:
         ordering = ["created_at"]

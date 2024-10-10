@@ -41,7 +41,6 @@ class ChatGroupListCreateView(UserQuerysetMixin, DynamicQuerysetMixin, generics.
         GroupMessage.objects.create(chat_group=chat_group, sender=ai_user, content=gpt_response["content"])
 
         if not gpt_response["is_question"]:
-            # Loop through each issue in the response
             for issue_data in gpt_response["issues"]:
                 issue = Issue.objects.create(
                     chat_group=chat_group,
@@ -50,12 +49,9 @@ class ChatGroupListCreateView(UserQuerysetMixin, DynamicQuerysetMixin, generics.
                     status="open",
                 )
 
-                # Loop through each recommendation related to the current issue
-                for recommendation in gpt_response["recommendations"]:
-                    if recommendation["issue_related"] == issue_data["description"]:
-                        service = get_object_or_404(Service, name=recommendation["service_needed"])
-                        Recommendation.objects.create(issue=issue, service=service)
-                        break
+                for recommendation in issue_data["recommendations"]:
+                    service = get_object_or_404(Service, name=recommendation)
+                    Recommendation.objects.create(issue=issue, service=service)
 
         serializer = self.get_serializer(chat_group)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

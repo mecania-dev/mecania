@@ -5,7 +5,7 @@ from django.conf import settings
 from utils.env import env
 from utils.json import extract_all_jsons
 
-logger = logging.getLogger("django")
+logger = logging.getLogger("global")
 
 client = OpenAI()
 client.api_key = settings.OPENAI_API_KEY

@@ -112,16 +112,12 @@ LOGGING = {
             "class": "log.handlers.DBHandler",
             "model": "log.models.LogEntry",
             "expiry": 2592000,  # 30 days
-        },
-        "console": {
-            "class": "logging.StreamHandler",
-        },
+        }
     },
     "loggers": {
-        "django": {
-            "handlers": ["db", "console"],
+        "global": {
+            "handlers": ["db"],
             "level": "INFO",
-            "propagate": True,
         },
     },
 }
