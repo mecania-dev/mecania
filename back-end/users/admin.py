@@ -6,10 +6,7 @@ from .forms import UserForm
 
 class UserAdmin(admin.ModelAdmin):
     form = UserForm
-    filter_horizontal = (
-        "groups",
-        "user_permissions",
-    )
+    filter_horizontal = ("groups", "user_permissions", "services")
 
 
 admin.site.register(User, UserAdmin)

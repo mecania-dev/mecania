@@ -19,7 +19,7 @@ interface AIChatWindowProps {
 
 export function AIChatWindow({ isLoading }: AIChatWindowProps) {
   const { user } = useUser()
-  const { chat, messages, recommendations, getCurrentQuestion } = useChat()
+  const { chat, messages, recommendations, isAiGenerating, getCurrentQuestion } = useChat()
   const { isAllAnswered } = getCurrentQuestion()
 
   return (
@@ -39,6 +39,15 @@ export function AIChatWindow({ isLoading }: AIChatWindowProps) {
               {...msg}
             />
           ))}
+          {isAiGenerating && (
+            <ChatMessage
+              content=""
+              sender={chat?.members.find(m => m.isAi) as any}
+              sentAt={new Date().toISOString()}
+              isSender={false}
+              isAIGenerating
+            />
+          )}
           {chat?.issues.some(i => i.recommendations.length > 0) && (
             <div className="!my-10 animate-appearance-in text-center">
               <Button

@@ -15,7 +15,7 @@ import { NewChatButton } from './new-chat-button'
 
 export function ChatHistory() {
   const chats = useSWRCustom<Chat[]>('chat/', {
-    fetcherConfig: { params: { paginate: false } }
+    fetcherConfig: { params: { paginate: false, title__isnull: false } }
   })
   const sortedChats = chats.state.data?.sort((a, b) => compareDates(a.updatedAt, b.updatedAt, 'desc')) ?? []
 

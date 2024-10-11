@@ -1,12 +1,15 @@
 'use client'
 
+import { useEffect } from 'react'
+
 import { ChatInput } from '@/components/chat/input'
 import { Form } from '@/components/form'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
 import { useForm } from '@/hooks/use-form'
+import useWebSocket from '@/hooks/use-web-socket'
 import { createChat } from '@/http'
 import { useUser } from '@/providers/user-provider'
-import { SendMessage, sendMessageSchema } from '@/types/entities/chat'
+import { Message, SendMessage, sendMessageSchema } from '@/types/entities/chat'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/navigation'
@@ -43,37 +46,70 @@ interface AIChatInputProps {
 export function AIChatInput({ isLoading }: AIChatInputProps) {
   const router = useRouter()
   const { user } = useUser()
-  const { chat, vehicle, initialQuestions, sendMessage, setChat, getCurrentQuestion, answerQuestion } = useChat()
+  const {
+    chat,
+    vehicle,
+    initialQuestions,
+    firstMessage,
+    isAiGenerating,
+    sendMessage,
+    setChat,
+    getCurrentQuestion,
+    answerQuestion,
+    setIsAiGenerating,
+    setFirstMessage
+  } = useChat()
   const { currentQuestion, index: questionIndex, isLastQuestion } = getCurrentQuestion()
   const form = useForm<SendMessage>({ resolver: zodResolver(sendMessageSchema), defaultValues: { message: '' } })
   const { isSubmitting, isValid } = form.formState
+  const socket = useWebSocket<Message & { isAiGenerating: boolean }>(`/ws/chat/${chat?.groupName}/`, {
+    isDisabled: !chat?.groupName,
+    onMessage
+  })
 
   const hasRecommendations = !!chat?.issues.some(issue => issue.recommendations.length > 0)
   const isChatDisabled = (!chat && currentQuestion?.type === 'options') || !vehicle
-  const isDisabled = isSubmitting || !isValid || isChatDisabled
+  const isDisabled = isSubmitting || !isValid || isChatDisabled || isAiGenerating
 
   useFirstRenderEffect(() => {
     form.setFocus('message')
   })
 
+  useEffect(() => {
+    if (socket.isConnected && firstMessage) {
+      sendMessage(firstMessage, user!)
+      socket.sendMessage<{ message: string }>({ message: firstMessage })
+      setFirstMessage('')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket.isConnected])
+
+  function onMessage(data: Message & { isAiGenerating: boolean }) {
+    if (!chat) return
+    if (data.sender.id !== user?.id) {
+      sendMessage(data.content, data.sender)
+    }
+    setIsAiGenerating(!!data.isAiGenerating)
+  }
+
   async function onSubmit({ message }: SendMessage) {
+    form.reset()
+
     if (currentQuestion) {
       answerQuestion(questionIndex, { ...currentQuestion, answer: message })
-      form.reset()
 
       if (isLastQuestion) {
-        let initialMessage = ''
-        initialMessage += `Resumo do problema:\n\n`
-        initialMessage += `Qual veículo está com problemas?\n${vehicle?.brand} ${vehicle?.model} - ${vehicle?.year}\n\n`
+        message = ''
+        message += `Resumo do problema:\n\n`
+        message += `Qual veículo está com problemas?\n${vehicle?.brand} ${vehicle?.model} - ${vehicle?.year}\n\n`
 
         initialQuestions.forEach(q => {
-          initialMessage += setInitialMessage(q)
+          message += setInitialMessage(q)
         })
 
-        sendMessage(initialMessage, user!)
-        sendMessage('', { id: -1, username: 'MecanIA', isAi: true } as any)
+        setFirstMessage(message)
 
-        const res = await createChat({ vehicle: vehicle!.id, isPrivate: true, message: initialMessage })
+        const res = await createChat({ vehicle: vehicle!.id, isPrivate: true })
         if (res.ok) {
           router.replace(`/chat/${res.data.id}`)
           setChat(res.data)
@@ -81,11 +117,12 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
           mutate('chat/')
         }
       }
+
       return
     }
 
     sendMessage(message, user!)
-    form.reset()
+    socket.sendMessage<{ message: string }>({ message })
   }
 
   if (hasRecommendations && !isLoading) return null

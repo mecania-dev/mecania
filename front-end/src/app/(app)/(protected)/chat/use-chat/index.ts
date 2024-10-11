@@ -19,9 +19,11 @@ export interface ChatStore {
   vehicle?: Vehicle
   messages: Chat['messages']
   initialQuestions: Question[]
+  firstMessage: string
+  isAiGenerating: boolean
   setChat: (chat?: Chat) => void
   setVehicle: (vehicle: Vehicle) => void
-  sendMessage: (message: string, sender: User) => void
+  sendMessage: (message: string, sender: Pick<User, 'id' | 'username' | 'isAi'>) => void
   answerQuestion: (questionIndex: number, updatedQuestion: Question) => void
   getCurrentQuestion: () => {
     currentQuestion?: Question
@@ -30,6 +32,8 @@ export interface ChatStore {
     isAllAnswered: boolean
   }
   resetInitialQuestions: () => void
+  setFirstMessage: (message: string) => void
+  setIsAiGenerating: (isGenerating: boolean) => void
   recommendations: {
     mechanics: User[]
     selectedMechanics: User[]
@@ -67,6 +71,8 @@ export interface ChatStore {
 export const useChat = create<ChatStore>()((set, get) => ({
   messages: [],
   initialQuestions: getInitialQuestions(),
+  firstMessage: '',
+  isAiGenerating: false,
   setChat: chat =>
     set(state => ({
       chat,
@@ -156,6 +162,8 @@ export const useChat = create<ChatStore>()((set, get) => ({
     }
   },
   resetInitialQuestions: () => set({ initialQuestions: getInitialQuestions() }),
+  setFirstMessage: message => set({ firstMessage: message }),
+  setIsAiGenerating: isGenerating => set({ isAiGenerating: isGenerating }),
   recommendations: createRecommendations(set)
 }))
 
