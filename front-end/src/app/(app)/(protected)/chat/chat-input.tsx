@@ -88,6 +88,7 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
     if (!chat) return
     if (data.sender.id !== user?.id) {
       sendMessage(data.content, data.sender)
+      mutate(`/chat/${chat.id}`)
     }
     setIsAiGenerating(!!data.isAiGenerating)
   }
@@ -95,7 +96,7 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
   async function onSubmit({ message }: SendMessage) {
     form.reset()
 
-    if (currentQuestion) {
+    if (!chat && currentQuestion) {
       answerQuestion(questionIndex, { ...currentQuestion, answer: message })
 
       if (isLastQuestion) {

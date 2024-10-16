@@ -78,6 +78,7 @@ export const useChat = create<ChatStore>()((set, get) => ({
       chat,
       vehicle: chat?.vehicle,
       messages: chat?.messages ?? [],
+      isAiGenerating: chat ? state.isAiGenerating : false,
       recommendations: chat ? state.recommendations : createRecommendations(set)
     })),
   setVehicle: vehicle => set({ vehicle }),

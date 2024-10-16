@@ -1,7 +1,7 @@
-import json
-from channels.generic.websocket import WebsocketConsumer
+import json, asyncio
+from channels.generic.websocket import AsyncWebsocketConsumer
 from django.shortcuts import get_object_or_404
-from asgiref.sync import async_to_sync
+from channels.db import database_sync_to_async
 
 from .models import ChatGroup, GroupMessage, Issue, Recommendation
 from .serializers import GroupMessageSerializer
@@ -9,66 +9,94 @@ from .chatgpt_utils import ask_gpt
 from services.models import Service
 
 
-class ChatConsumer(WebsocketConsumer):
-    def connect(self):
+class ChatConsumer(AsyncWebsocketConsumer):
+    # Default methods
+    async def connect(self):
         self.user = self.scope["user"]
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.chat_group = get_object_or_404(ChatGroup, group_name=self.room_name)
-        self.is_ai_chat = self.chat_group.members.filter(is_ai=True).exists()
+        self.chat_group = await database_sync_to_async(self.get_chat_group)()
+        self.is_ai_chat = await database_sync_to_async(self.get_is_ai_chat)()
+
         # Join room group
-        async_to_sync(self.channel_layer.group_add)(self.room_name, self.channel_name)
-        self.accept()
+        await self.channel_layer.group_add(self.room_name, self.channel_name)
+        await self.accept()
 
-    def disconnect(self, close_code):
+    async def disconnect(self, close_code):
         # Leave room group
-        async_to_sync(self.channel_layer.group_discard)(self.room_name, self.channel_name)
+        await self.channel_layer.group_discard(self.room_name, self.channel_name)
 
-    # Receive message from WebSocket
-    def receive(self, text_data):
+    async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = GroupMessage.objects.create(
-            chat_group=self.chat_group, sender=self.user, content=text_data_json["message"]
+        message = await database_sync_to_async(self.create_message)(sender=self.user, content=text_data_json["message"])
+
+        # Send user message to room group
+        await self.channel_layer.group_send(
+            self.room_name,
+            {
+                "type": "chat_message",
+                "message": {**message, "isAiGenerating": self.is_ai_chat},
+            },
         )
-        serializer = GroupMessageSerializer(message)
-        event = {
-            "type": "chat_message",
-            "message": {**serializer.data, "isAiGenerating": self.is_ai_chat},
-        }
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(self.room_name, event)
 
         if self.is_ai_chat:
-            ai_user = self.chat_group.members.filter(is_ai=True).first()
-            gpt_response = ask_gpt(message=text_data_json["message"])
+            asyncio.create_task(self.process_ai_response(text_data_json["message"]))
 
-            if gpt_response["title"]:
-                self.chat_group.title = gpt_response["title"]
-                self.chat_group.save()
+    # Async handlers
+    async def chat_message(self, event):
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps(event["message"]))
 
-            message = GroupMessage.objects.create(
-                chat_group=self.chat_group, sender=ai_user, content=gpt_response["content"]
-            )
-            serializer = GroupMessageSerializer(message)
-            event = {
+    async def process_ai_response(self, user_message):
+        ai_user = await database_sync_to_async(self.get_ai_user)()
+        gpt_response = await ask_gpt(message=user_message)
+
+        # Update chat group title if needed
+        if gpt_response["title"]:
+            await database_sync_to_async(self.set_chat_group_title)(gpt_response["title"])
+
+        message = await database_sync_to_async(self.create_message)(sender=ai_user, content=gpt_response["content"])
+
+        if not gpt_response["is_question"]:
+            await database_sync_to_async(self.create_issues)(gpt_response["issues"])
+
+        # Send AI message to room group
+        await self.channel_layer.group_send(
+            self.room_name,
+            {
                 "type": "chat_message",
-                "message": {**serializer.data, "isAiGenerating": False},
-            }
+                "message": {**message, "isAiGenerating": False},
+            },
+        )
 
-            if not gpt_response["is_question"]:
-                for issue_data in gpt_response["issues"]:
-                    issue = Issue.objects.create(
-                        chat_group=self.chat_group,
-                        description=issue_data["description"],
-                        category=issue_data["category"],
-                        status="open",
-                    )
+    # Database operations
+    def get_chat_group(self):
+        return get_object_or_404(ChatGroup, group_name=self.room_name)
 
-                    for recommendation in issue_data["recommendations"]:
-                        service = get_object_or_404(Service, name=recommendation)
-                        Recommendation.objects.create(issue=issue, service=service)
-            # Send message to room group
-            async_to_sync(self.channel_layer.group_send)(self.room_name, event)
+    def get_is_ai_chat(self):
+        return self.chat_group.members.filter(is_ai=True).exists()
 
-    # Receive message from room group
-    def chat_message(self, event):
-        self.send(text_data=json.dumps(event["message"]))
+    def get_ai_user(self):
+        return self.chat_group.members.filter(is_ai=True).first()
+
+    def create_message(self, sender, content):
+        message = GroupMessage.objects.create(chat_group=self.chat_group, sender=sender, content=content)
+        serializer = GroupMessageSerializer(message)
+        return serializer.data
+
+    def set_chat_group_title(self, title):
+        if not self.chat_group.title:
+            self.chat_group.title = title
+            self.chat_group.save()
+
+    def create_issues(self, issues):
+        for issue_data in issues:
+            issue = Issue.objects.create(
+                chat_group=self.chat_group,
+                description=issue_data["description"],
+                category=issue_data["category"],
+                status="open",
+            )
+
+            for recommendation in issue_data["recommendations"]:
+                service = get_object_or_404(Service, name=recommendation)
+                Recommendation.objects.create(issue=issue, service=service)
