@@ -1,11 +1,12 @@
 from django.conf import settings
+
+settings.configure()
+
 from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
 from channels.db import database_sync_to_async
 from channels.middleware import BaseMiddleware
-
-settings.configure()
 
 
 @database_sync_to_async
