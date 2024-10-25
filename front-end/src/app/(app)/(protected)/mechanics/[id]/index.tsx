@@ -6,7 +6,7 @@ import { FaTrash } from 'react-icons/fa6'
 import { Button } from '@/components/button'
 import { Card } from '@/components/card'
 import { confirmationModal } from '@/components/modal'
-import { Select } from '@/components/select'
+import { ServicesSelect } from '@/components/select/services-select'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { toast } from '@/hooks/use-toast'
 import { AddressCreateOutput, addServices, createAddress, deleteAddress, deleteService } from '@/http'
@@ -179,29 +179,5 @@ export function MechanicDetails({ id }: MechanicDetailsProps) {
         </>
       )}
     </div>
-  )
-}
-
-interface ServicesSelectProps {
-  selectedServices: Selection
-  setSelectedServices: React.Dispatch<React.SetStateAction<Selection>>
-}
-
-function ServicesSelect({ selectedServices, setSelectedServices }: ServicesSelectProps) {
-  const { state } = useSWRCustom<Service[]>(`services/`, { fetcherConfig: { params: { paginate: false } } })
-  const services = state.data ?? []
-
-  return (
-    <Select
-      variant="faded"
-      selectionMode="multiple"
-      items={services}
-      valueKey="id"
-      labelKey="name"
-      selectedKeys={selectedServices}
-      onSelectionChange={setSelectedServices}
-      className="w-60 max-w-full"
-      isLoading={state.isLoading}
-    />
   )
 }

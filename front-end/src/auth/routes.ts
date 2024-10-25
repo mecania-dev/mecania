@@ -10,6 +10,7 @@ export type AuthRoute =
   | '/profile'
   | '/profile/addresses'
   | '/profile/requests'
+  | '/profile/services'
   | '/profile/vehicles'
   | '/chat'
   | '/mechanics'
@@ -46,6 +47,9 @@ export const authRoutes: { unauthorized: AuthRoutes; authorized: AuthRoutes } = 
         ['message_mechanic', 'Chat'],
         ['message_user', 'Chat']
       ]
+    },
+    '/profile/services': {
+      can: ['provide', 'Service']
     },
     '/profile': {},
     '/chat': {

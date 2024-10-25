@@ -3,6 +3,7 @@ import { BiSolidCar, BiSolidCarMechanic } from 'react-icons/bi'
 import { CgProfile } from 'react-icons/cg'
 import { FaTools } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
+import { MdMiscellaneousServices } from 'react-icons/md'
 
 import { SidebarRoute, SidebarRouteProps } from '@/components/sidebar/sidebar-route'
 
@@ -39,6 +40,12 @@ export function SidebarRoutes() {
             I: ['message_mechanic', 'message_user'],
             a: 'Chat'
           }
+        },
+        {
+          icon: MdMiscellaneousServices,
+          href: '/profile/services',
+          children: 'Serviços',
+          canProps: { I: 'provide', a: 'Service' }
         },
         { icon: FaTools, href: '/services', children: 'Serviços', canProps: { I: 'manage', a: 'Service' } },
         {
