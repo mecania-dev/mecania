@@ -26,11 +26,9 @@ class Address(models.Model):
         return f"{self.street}, {self.number} - {self.district}, {self.city} - {self.state}, {self.zip_code}, {self.country}"
 
     def set_coords(self):
-        print("Setting coords")
         coords = get_coords_from_address(
             f"{self.street}, {self.number} - {self.district}, {self.city} - {self.state}, {self.zip_code}"
         )
-        print(f"Coords: {coords}")
         if coords:
             self.latitude = coords[0]
             self.longitude = coords[1]
