@@ -1,12 +1,12 @@
 import { Image } from '@/components/image'
 import { Rating } from '@/components/rating'
 import { useRequests } from '@/mocks/use-requests'
+import { User } from '@/types/entities/user'
 import { Checkbox } from '@nextui-org/react'
 
-import { MechanicWithDistance } from '.'
 import { useChat } from '../use-chat'
 
-export function MechanicRecommendation(mechanic: MechanicWithDistance) {
+export function MechanicRecommendation(mechanic: User & { distance?: string }) {
   const { chat } = useChat()
   const { getRequest } = useRequests()
   const request = getRequest(chat, mechanic)
@@ -41,7 +41,7 @@ export function MechanicRecommendation(mechanic: MechanicWithDistance) {
           <p className="truncate whitespace-nowrap font-semibold">{mechanic.firstName}</p>
           <p className="truncate whitespace-nowrap">{`${mechanic.addresses[0].city}, ${mechanic.addresses[0].district}`}</p>
           <Rating rating={mechanic.rating ?? 0} hideLabel />
-          <p className="truncate whitespace-nowrap">{mechanic.distance} km</p>
+          {mechanic.distance && <p className="truncate whitespace-nowrap">{mechanic.distance} km</p>}
         </div>
       </Checkbox>
       {request !== undefined && (

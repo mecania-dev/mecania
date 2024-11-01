@@ -4,26 +4,23 @@ import Loading from '@/app/loading'
 import { AsyncScroll } from '@/components/async-scroll'
 import { Button } from '@/components/button'
 import { Modal } from '@/components/modal'
+import { useLocation } from '@/hooks/use-location'
 import { PaginationState } from '@/hooks/use-pagination'
 import { search } from '@/lib/string'
 import { User } from '@/types/entities/user'
 import { CheckboxGroup } from '@nextui-org/react'
-import { intersection, map, random } from 'lodash'
+import { intersection, map } from 'lodash'
 
 import { ChatStore, useChat } from '../use-chat'
 import { ChatRecommendationsFilters } from './filters'
 import { MechanicRecommendation } from './mechanic'
 import { SendMessageModal } from './send-message-modal'
 
-export interface MechanicWithDistance extends User {
-  distance: number
-}
-
 export function ChatRecommendations() {
   const { chat, recommendations: recs } = useChat()
   const [mechanicsState, setMechanicsState] = useState<PaginationState<User>>()
-  const [filteredMechanics, setFilteredMechanics] = useState<MechanicWithDistance[]>([])
-  const searchedMechanics = search(filteredMechanics, 'firstName', recs.searchQuery, false)
+  const searchedMechanics = search(applyFilters(recs.mechanics, recs.filters), 'firstName', recs.searchQuery, false)
+  const location = useLocation()
 
   useEffect(() => {
     if (mechanicsState?.items.length) {
@@ -31,13 +28,6 @@ export function ChatRecommendations() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mechanicsState?.items])
-
-  // TODO: As soon as the distance feature is implemented, this will be removed
-  useEffect(() => {
-    if (recs.mechanics.length) {
-      setFilteredMechanics(applyFilters(recs.mechanics, recs.filters))
-    }
-  }, [recs.filters, recs.mechanics])
 
   return (
     <Modal
@@ -69,7 +59,14 @@ export function ChatRecommendations() {
               services__isnull: false,
               services__id__in: chat?.issues.flatMap(issue => issue.recommendations.map(r => r.service)).join(','),
               addresses__city__in: recs.filters.cities.reduce((acc, city) => (acc += city + ','), ''),
-              received_ratings__score__avg: `${recs.filters.ratings.min},${recs.filters.ratings.max}`
+              received_ratings__score__avg: `${recs.filters.ratings.min},${recs.filters.ratings.max}`,
+              ...(location.lat !== undefined &&
+                recs.filters.distance && {
+                  lat: location.lat,
+                  lon: location.lon,
+                  distance_min: recs.filters.distance.min,
+                  distance_max: recs.filters.distance.max
+                })
             }
           }}
           data-mounted={mechanicsState?.isMounted}
@@ -86,7 +83,11 @@ export function ChatRecommendations() {
                 classNames={{ wrapper: 'grid grid-cols-1 gap-3 md:grid-cols-2' }}
               >
                 {searchedMechanics.map(mechanic => (
-                  <MechanicRecommendation key={mechanic.id} {...mechanic} />
+                  <MechanicRecommendation
+                    distance={`${recs.filters.distance.min} - ${recs.filters.distance.max}`}
+                    key={mechanic.id}
+                    {...mechanic}
+                  />
                 ))}
               </CheckboxGroup>
             )
@@ -128,16 +129,8 @@ function applyFilters(
       return acc
     }
 
-    // Filter by distance
-    // TODO: Replace this with the real distance calculation
-    const distance = random(1, 10)
-
-    if (distance > filters.distance.max || distance < filters.distance.min) {
-      return acc
-    }
-
-    acc.push({ ...current, distance })
+    acc.push({ ...current })
 
     return acc
-  }, [] as MechanicWithDistance[])
+  }, [] as User[])
 }

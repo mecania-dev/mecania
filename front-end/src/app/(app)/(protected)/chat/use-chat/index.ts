@@ -10,7 +10,7 @@ export * from './initial-questions'
 
 export const defaultRecommendationsFilters = {
   ratings: { min: 0, max: 5 },
-  distance: { min: 0, max: 10 },
+  distance: { min: 0, max: 50 },
   cities: []
 }
 
