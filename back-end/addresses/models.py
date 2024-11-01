@@ -29,6 +29,10 @@ class Address(models.Model):
         coords = get_coords_from_address(
             f"{self.street}, {self.number} - {self.district}, {self.city} - {self.state}, {self.zip_code}"
         )
+        if not coords:
+            coords = get_coords_from_address(
+                f"{self.street}, {self.number} - {self.district}, {self.city} - {self.state}"
+            )
         if coords:
             self.latitude = coords[0]
             self.longitude = coords[1]
