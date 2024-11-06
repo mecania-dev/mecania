@@ -13,18 +13,22 @@ export interface WebSocketProps<T = any> {
   onClose?: (e: Event) => void
 }
 
+let timeout: NodeJS.Timeout
+
 export function useWebSocket<T = any>(
   url: string,
   { maxRetries = 5, retryDelay = 1000, isDisabled, onMessage, onError, onOpen, onClose }: WebSocketProps<T> = {}
 ) {
   const socketRef = useRef<WebSocket | null>(null)
+  const [isConnecting, setIsConnecting] = useState(false) // New state for tracking if connecting
   const [isConnected, setIsConnected] = useState(false)
   const [retryCount, setRetryCount] = useState(0)
 
   useEffect(() => {
-    if (isDisabled) return
+    if (isDisabled || isConnecting || isConnected) return // Avoid reconnection if already connecting or connected
 
     const connectWebSocket = () => {
+      setIsConnecting(true) // Set connecting state to true
       const fullUrl = new URL(env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') + url)
       fullUrl.searchParams.append('token', getCookie('access_token') ?? '')
       const socket = new WebSocket(fullUrl.href.replace('http', 'ws'))
@@ -32,7 +36,8 @@ export function useWebSocket<T = any>(
       socket.onopen = e => {
         if (onOpen) onOpen(e)
         setRetryCount(0) // Reset retry count on successful connection
-        !isConnected && setIsConnected(true)
+        setIsConnected(true)
+        setIsConnecting(false) // Set connecting state to false
       }
 
       socket.onmessage = e => {
@@ -47,14 +52,14 @@ export function useWebSocket<T = any>(
       socket.onclose = e => {
         if (onClose) onClose(e)
 
-        // Retry logic
-        if (!isConnected && retryCount < maxRetries) {
-          setRetryCount(prevCount => prevCount + 1)
-          const timeout = Math.min(retryDelay * Math.pow(2, retryCount), 30000) // Exponential backoff
-          setTimeout(connectWebSocket, timeout)
-        }
+        setIsConnecting(false) // Set connecting state to false on close
+        setIsConnected(false) // Set connected state to false
 
-        isConnected && setIsConnected(false)
+        // Retry logic
+        if (!isConnecting && !isConnected && retryCount < maxRetries) {
+          setRetryCount(prevCount => prevCount + 1)
+          timeout = setTimeout(connectWebSocket, Math.min(retryDelay * Math.pow(2, retryCount), 30000))
+        }
       }
 
       socketRef.current = socket
@@ -66,6 +71,7 @@ export function useWebSocket<T = any>(
       if (socketRef.current) {
         socketRef.current.close()
       }
+      clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDisabled, url, retryCount, maxRetries, retryDelay])
