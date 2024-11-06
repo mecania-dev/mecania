@@ -37,25 +37,6 @@ class GroupMessage(models.Model):
 
 
 class Issue(models.Model):
-    CATEGORIES_CHOICES = [
-        ("Controls", "Controles"),
-        ("Harness", "Fiação"),
-        ("PTO", "PTO (Tomada de Força)"),
-        ("Maintenance", "Manutenção"),
-        ("Rotation", "Rotação"),
-        ("Outrigger", "Estabilizador"),
-        ("Body", "Carroceria"),
-        ("Electronics", "Eletrônicos"),
-        ("Resale", "Revenda"),
-        ("Hydraulics", "Hidráulica"),
-        ("Boom", "Braço"),
-        ("Test", "Teste"),
-        ("Auger", "Sonda"),
-        ("Digger", "Escavadeira"),
-        ("Chassis", "Chassi"),
-        ("Vague", "Vago"),
-    ]
-
     STATUS_CHOICES = [
         ("pending", "Pendente"),  # Foi feita solicitação
         ("accepted", "Aceito"),  # Oficina aceitou
