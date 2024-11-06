@@ -47,7 +47,7 @@ class Issue(models.Model):
 
     chat_group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE, related_name="group_issues")
     description = models.TextField()
-    category = models.CharField(max_length=50, choices=CATEGORIES_CHOICES)
+    category = models.CharField(max_length=50)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES)
     solution = models.TextField(null=True, blank=True)
     is_resolved = models.BooleanField(default=False)
