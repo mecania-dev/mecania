@@ -46,17 +46,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Send message to WebSocket
         await self.send(text_data=json.dumps(event["message"]))
 
+    def get_existing_messages(self):
+        # Get previous messages in the chat group as a list of role-content dicts
+        return [
+            {"role": "user" if msg.sender == self.user else "assistant", "content": msg.content}
+            for msg in self.chat_group.group_messages.all()
+        ]
+
     async def process_ai_response(self, user_message):
         ai_user = await database_sync_to_async(self.get_ai_user)()
-        gpt_response = await ask_gpt(message=user_message)
+        existing_messages = await database_sync_to_async(self.get_existing_messages)()
+        gpt_response = await ask_gpt(message=(existing_messages if existing_messages else user_message))
 
         # Update chat group title if needed
-        if gpt_response["title"]:
+        if gpt_response and gpt_response["title"]:
             await database_sync_to_async(self.set_chat_group_title)(gpt_response["title"])
 
-        message = await database_sync_to_async(self.create_message)(sender=ai_user, content=gpt_response["content"])
+        message = await database_sync_to_async(self.create_message)(
+            sender=ai_user,
+            content=gpt_response["content"] if gpt_response else "Algo deu errado, tente perguntar de outra forma.",
+        )
 
-        if not gpt_response["is_question"]:
+        if gpt_response and not gpt_response["is_question"]:
             await database_sync_to_async(self.create_issues)(gpt_response["issues"])
 
         # Send AI message to room group
