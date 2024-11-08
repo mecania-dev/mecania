@@ -35,9 +35,9 @@ export function ChatHistory() {
   }
 
   return (
-    <div className="w-0 space-y-3 overflow-hidden transition-width group-data-[chat=true]:w-full">
+    <div className="flex w-0 flex-col space-y-3 overflow-hidden transition-width group-data-[chat=true]:w-full">
       <NewChatButton />
-      <div className="space-y-1">
+      <div className="space-y-1 overflow-auto scrollbar-hide">
         {chats.state.isLoading && <Loading className="mt-20" isFixed={false} />}
         {!chats.state.isLoading && sortedChats.length === 0 && (
           <EmptyHistory
