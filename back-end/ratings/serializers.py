@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Rating
+from .models import Rating, AIRating
 
 
 class RatingSerializer(serializers.ModelSerializer):
@@ -17,4 +17,16 @@ class RatingSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context["request"]
         validated_data["driver"] = request.user
+        return super().create(validated_data)
+
+
+class AIRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AIRating
+        fields = "__all__"
+        read_only_fields = ["user", "created_at"]
+
+    def create(self, validated_data):
+        request = self.context["request"]
+        validated_data["user"] = request.user
         return super().create(validated_data)

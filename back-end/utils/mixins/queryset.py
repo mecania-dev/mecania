@@ -95,10 +95,22 @@ class UserQuerysetMixin:
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
-        lookup_data = {}
-        lookup_data[self.user_field] = self.request.user
         qs = super().get_queryset(*args, **kwargs)
 
+        # Allow staff users to view all records if enabled
         if self.allow_staff_view and user.is_staff:
             return qs
-        return qs.filter(**lookup_data)
+
+        # Build the filter criteria
+        if isinstance(self.user_field, list):
+            # Use Q objects for filtering by multiple user fields
+            from django.db.models import Q
+
+            filter_query = Q()
+            for field in self.user_field:
+                filter_query |= Q(**{field: user})
+
+            return qs.filter(filter_query)
+
+        # If user_field is a single field, apply a direct filter
+        return qs.filter(**{self.user_field: user})
