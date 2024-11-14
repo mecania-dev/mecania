@@ -65,7 +65,9 @@ function DisplayQuestion({ question, onSelectOption, disableAnimation }: Questio
         )}
       </div>
       {selectedOption && typeof selectedOption.followUp === 'string' && (
-        <h2 className="!my-8 text-medium font-semibold italic text-secondary">{selectedOption.followUp}</h2>
+        <h2 className="!my-8 text-medium font-semibold italic text-indigo-800 dark:text-secondary">
+          {selectedOption.followUp}
+        </h2>
       )}
       {selectedOption && typeof selectedOption.followUp === 'object' && (
         <DisplayQuestion question={selectedOption.followUp} onSelectOption={onSelectOption} />
