@@ -88,13 +88,13 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
     if (!chat) return
 
     const data = JSON.parse(e.data)
-    sendMessage(data)
 
+    sendMessage(data)
     if (data.sender.id !== user?.id) {
-      mutate(`/chat/${chat.id}`).then(() => {
-        setIsAiGenerating(false)
-      })
+      setIsAiGenerating(false)
     }
+
+    mutate(`/chat/${chat.id}`)
   }
 
   async function onSubmit({ message }: SendMessage) {
