@@ -1,15 +1,13 @@
 import { Image } from '@/components/image'
 import { Rating } from '@/components/rating'
-import { useRequests } from '@/mocks/use-requests'
 import { User } from '@/types/entities/user'
 import { Checkbox } from '@nextui-org/react'
 
 import { useChat } from '../use-chat'
 
 export function MechanicRecommendation(mechanic: User & { distance?: string }) {
-  const { chat } = useChat()
-  const { getRequest } = useRequests()
-  const request = getRequest(chat, mechanic)
+  const { mechanicsWithRequest } = useChat()
+  const hasRequest = mechanicsWithRequest.some(id => id === mechanic.id)
   const initials = (mechanic.firstName ?? mechanic.username)
     .split(' ')
     .map(name => name[0])
@@ -29,7 +27,7 @@ export function MechanicRecommendation(mechanic: User & { distance?: string }) {
           ],
           label: 'flex h-full w-full overflow-hidden'
         }}
-        isDisabled={request !== undefined}
+        isDisabled={hasRequest}
       >
         <Image
           src={mechanic.avatarUrl ?? `https://placehold.co/100/png?text=${initials}&font=roboto`}
@@ -44,11 +42,6 @@ export function MechanicRecommendation(mechanic: User & { distance?: string }) {
           {mechanic.distance && <p className="truncate whitespace-nowrap">{mechanic.distance} km</p>}
         </div>
       </Checkbox>
-      {request !== undefined && (
-        <p className="text-small text-default-500">
-          {request.status === 'accepted' ? 'Solicitação aceita' : 'Solicitação já enviada'}
-        </p>
-      )}
     </div>
   )
 }

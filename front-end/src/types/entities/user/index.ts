@@ -9,7 +9,6 @@ import { vehicleSchema } from './vehicle'
 
 export * from './address'
 export * from './rating'
-export * from './request'
 export * from './vehicle'
 
 export const permissions = getPermissions()

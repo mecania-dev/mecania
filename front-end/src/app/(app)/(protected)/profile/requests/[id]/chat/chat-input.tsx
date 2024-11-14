@@ -5,19 +5,20 @@ import { Form } from '@/components/form'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
 import { useForm } from '@/hooks/use-form'
 import { SendMessage, sendMessageSchema } from '@/types/entities/chat'
-import { Request } from '@/types/entities/user'
+import { Request } from '@/types/entities/chat/request'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 interface RequestChatInputProps {
-  request: Request
+  request?: Request
+  isLoading: boolean
 }
 
-export function RequestChatInput({}: RequestChatInputProps) {
+export function RequestChatInput({ request, isLoading }: RequestChatInputProps) {
   const form = useForm<SendMessage>({
     resolver: zodResolver(sendMessageSchema)
   })
   const { isSubmitting, isValid } = form.formState
-  const isDisabled = isSubmitting || !isValid
+  const isDisabled = isLoading || isSubmitting || !isValid
 
   useFirstRenderEffect(() => {
     form.setFocus('message')
@@ -38,6 +39,7 @@ export function RequestChatInput({}: RequestChatInputProps) {
         maxLength={1024}
         submitProps={{ isDisabled }}
         onSubmit={form.handleSubmit(onSubmit)}
+        isDisabled={!request?.accepted}
         fullWidth
         {...form.register('message')}
       />

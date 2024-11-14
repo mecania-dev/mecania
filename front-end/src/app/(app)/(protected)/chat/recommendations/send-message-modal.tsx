@@ -1,42 +1,59 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/button'
 import { Modal } from '@/components/modal'
 import { TextArea } from '@/components/textarea'
 import { useIsLoading } from '@/hooks/use-is-loading'
 import { toast } from '@/hooks/use-toast'
-import { delay } from '@/lib/promise'
-import { useRequests } from '@/mocks/use-requests'
+import { createRequest } from '@/http'
 import { useUser } from '@/providers/user-provider'
 import confetti from 'canvas-confetti'
+import { mutate } from 'swr'
 
 import { useChat } from '../use-chat'
 
 export function SendMessageModal() {
   const { user } = useUser()
-  const { chat, recommendations: recs } = useChat()
-  const { sendRequest } = useRequests()
-  const defaultMessage = `Estou com um problema no meu carro: há um barulho metálico ao acelerar, além de perda de potência e aumento no consumo de combustível. Acredito que possa estar relacionado ao sistema de exaustão ou ao motor. Poderia analisar isso para mim?\n\nAguardo seu retorno.\n\nObrigado,\n${user?.firstName}`
-  const [message, setMessage] = useState(defaultMessage)
+  const { chat, recommendations: recs, summary } = useChat()
+  const [message, setMessage] = useState(summary ?? '')
 
   const [sendMessage, isSending] = useIsLoading(async () => {
+    let success = true
     for (const mechanic of recs.selectedMechanics) {
-      await delay(250)
-      sendRequest({
-        chat: chat!,
-        driver: user!,
-        mechanic,
-        message: getGreeting(mechanic.firstName ?? mechanic.username) + message
-      })
+      await createRequest(
+        {
+          chatGroup: chat!.id,
+          title: chat!.title,
+          mechanic: mechanic.id,
+          messages: [{ content: message, sender: user!.id }]
+        },
+        {
+          onError() {
+            success = false
+          }
+        }
+      )
+      await mutate('chat/requests/')
     }
+
+    return success
   })
 
+  useEffect(() => {
+    setMessage(summary ?? '')
+  }, [summary])
+
   function resetMessage() {
-    setMessage(defaultMessage)
+    setMessage(summary ?? '')
   }
 
   async function onSend() {
-    await sendMessage()
+    const success = await sendMessage()
+
+    if (!success) {
+      toast({ message: 'Erro ao enviar solicitação', type: 'error' })
+      return
+    }
 
     confetti({
       particleCount: 100,
@@ -51,7 +68,6 @@ export function SendMessageModal() {
     <Modal title="Mensagem" isOpen={recs.isSendOpen} onOpenChange={recs.setIsSendOpen} fullScreen={false}>
       <Modal.Body className="pt-0">
         <TextArea
-          label={getGreeting('{Nome do mecânico}')}
           labelPlacement="outside"
           value={message}
           onValueChange={setMessage}
@@ -60,7 +76,7 @@ export function SendMessageModal() {
         />
       </Modal.Body>
       <Modal.Footer className="p-2 pt-0">
-        <Button color="secondary" onPress={resetMessage} isDisabled={message === defaultMessage || isSending}>
+        <Button color="secondary" onPress={resetMessage} isDisabled={message === summary || isSending}>
           Resetar
         </Button>
         <Button onPress={onSend} isLoading={isSending}>
@@ -69,8 +85,4 @@ export function SendMessageModal() {
       </Modal.Footer>
     </Modal>
   )
-}
-
-function getGreeting(mechanicName: string) {
-  return `Olá, ${mechanicName}!\n\n`
 }

@@ -74,6 +74,8 @@ class RequestGroupMessageSerializer(serializers.ModelSerializer):
 
 
 class RequestGroupSerializer(serializers.ModelSerializer):
+    driver = MemberSerializer(read_only=True)
+    mechanic = MemberSerializer(read_only=True)
     messages = RequestGroupMessageSerializer(many=True, read_only=True, source="group_messages")
 
     class Meta:

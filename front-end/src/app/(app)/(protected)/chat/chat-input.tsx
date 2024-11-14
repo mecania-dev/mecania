@@ -6,7 +6,7 @@ import { ChatInput } from '@/components/chat/input'
 import { Form } from '@/components/form'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
 import { useForm } from '@/hooks/use-form'
-import useWebSocket from '@/hooks/use-web-socket'
+import { ReadyState, useWebSocket } from '@/hooks/use-web-socket'
 import { createChat } from '@/http'
 import { useUser } from '@/providers/user-provider'
 import { Message, SendMessage, sendMessageSchema } from '@/types/entities/chat'
@@ -62,10 +62,12 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
   const { currentQuestion, index: questionIndex, isLastQuestion } = getCurrentQuestion()
   const form = useForm<SendMessage>({ resolver: zodResolver(sendMessageSchema), defaultValues: { message: '' } })
   const { isSubmitting, isValid } = form.formState
-  const socket = useWebSocket<Message & { isAiGenerating: boolean }>(`/ws/chat/${chat?.groupName}/`, {
-    isDisabled: !chat?.groupName,
-    onMessage
-  })
+  const socket = useWebSocket<Message & { isAiGenerating: boolean }>(
+    chat?.groupName ? `/ws/chat/${chat.groupName}/` : null,
+    {
+      onMessage
+    }
+  )
 
   const hasRecommendations = !!chat?.issues.some(issue => issue.recommendations.length > 0)
   const isChatDisabled = (!chat && currentQuestion?.type === 'options') || !vehicle
@@ -76,15 +78,16 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
   })
 
   useEffect(() => {
-    if (socket.isConnected && firstMessage) {
+    if (socket.readyState === ReadyState.OPEN && firstMessage) {
       sendMessage(firstMessage, user!)
-      socket.sendMessage<{ message: string }>({ message: firstMessage })
+      socket.sendJsonMessage({ message: firstMessage })
       setFirstMessage('')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket.isConnected])
+  }, [socket.readyState])
 
-  function onMessage(data: Message & { isAiGenerating: boolean }) {
+  function onMessage(e: MessageEvent<any>) {
+    const data = JSON.parse(e.data)
     if (!chat) return
     if (data.sender.id !== user?.id) {
       sendMessage(data.content, data.sender)
@@ -123,7 +126,7 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
     }
 
     sendMessage(message, user!)
-    socket.sendMessage<{ message: string }>({ message })
+    socket.sendJsonMessage({ message })
   }
 
   if (hasRecommendations && !isLoading) return null

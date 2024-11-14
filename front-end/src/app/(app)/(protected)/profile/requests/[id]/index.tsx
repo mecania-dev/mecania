@@ -1,7 +1,8 @@
 'use client'
 
-import { useRequests } from '@/mocks/use-requests'
-import { redirect } from 'next/navigation'
+import { Redirect } from '@/components/redirect'
+import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
+import { Request } from '@/types/entities/chat/request'
 
 import { RequestChatHeader } from './chat/chat-header'
 import { RequestChatInput } from './chat/chat-input'
@@ -12,18 +13,15 @@ interface MechanicRequestProps {
 }
 
 export function MechanicRequest({ id }: MechanicRequestProps) {
-  // TODO: Remover depois que implementar o backend
-  const { requests } = useRequests()
-  const request = requests.find(r => r.id === id)
-  // END TODO
+  const request = useSWRCustom<Request>(id ? `chat/requests/${id}` : null)
 
-  if (!request) return redirect('/profile')
+  if (id && !request.state.isLoading && !request.state.data) return <Redirect url="/profile" />
 
   return (
     <div className="relative flex max-h-[calc(100dvh-4rem)] grow flex-col">
-      <RequestChatHeader request={request} />
-      <RequestChatWindow request={request} />
-      <RequestChatInput request={request} />
+      <RequestChatHeader request={request.state.data} />
+      <RequestChatWindow request={request.state.data} isLoading={request.state.isLoading} />
+      <RequestChatInput request={request.state.data} isLoading={request.state.isLoading} />
     </div>
   )
 }

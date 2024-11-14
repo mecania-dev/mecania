@@ -4,9 +4,12 @@ import Loading from '@/app/loading'
 import { AsyncScroll } from '@/components/async-scroll'
 import { Button } from '@/components/button'
 import { Modal } from '@/components/modal'
+import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { useLocation } from '@/hooks/use-location'
 import { PaginationState } from '@/hooks/use-pagination'
+import { api } from '@/http'
 import { search } from '@/lib/string'
+import { Request } from '@/types/entities/chat/request'
 import { User } from '@/types/entities/user'
 import { CheckboxGroup } from '@nextui-org/react'
 import { intersection, map } from 'lodash'
@@ -17,14 +20,34 @@ import { MechanicRecommendation } from './mechanic'
 import { SendMessageModal } from './send-message-modal'
 
 export function ChatRecommendations() {
-  const { chat, recommendations: recs } = useChat()
+  const { chat, recommendations: recs, summary, setSummary, setMechanicsWithRequest } = useChat()
   const [mechanicsState, setMechanicsState] = useState<PaginationState<User>>()
   const searchedMechanics = search(applyFilters(recs.mechanics, recs.filters), 'firstName', recs.searchQuery, false)
   const location = useLocation()
+  const requests = useSWRCustom<Request[]>(recs.mechanics.length ? 'chat/requests/' : null, {
+    fetcherConfig: { params: { chat_group__id: chat?.id, mechanic__id__in: recs.mechanics.map(m => m.id).join(',') } }
+  })
+
+  useEffect(() => {
+    if (requests.state.data) {
+      setMechanicsWithRequest(requests.state.data.map(r => r.mechanic.id))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requests.state.data])
 
   useEffect(() => {
     if (mechanicsState?.items.length) {
       recs.setMechanics(mechanicsState.items)
+    }
+
+    if (!summary) {
+      api.get<{ message: string }>(`chat/${chat?.id}/summary/`, {
+        onSuccess(res) {
+          if (res.data.message) {
+            setSummary(res.data.message)
+          }
+        }
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mechanicsState?.items])
@@ -95,7 +118,7 @@ export function ChatRecommendations() {
         </AsyncScroll>
         {!!mechanicsState?.items.length && (
           <div className="flex justify-end p-4 pt-3">
-            <Button isDisabled={recs.selectedMechanics.length === 0} onPress={recs.openSendModal}>
+            <Button isDisabled={recs.selectedMechanics.length === 0 || !summary} onPress={recs.openSendModal}>
               Enviar
               <SendMessageModal />
             </Button>

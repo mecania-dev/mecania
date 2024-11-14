@@ -109,7 +109,7 @@ class RequestGroupView(UserQuerysetMixin, DynamicQuerysetMixin, generics.Generic
         title = request.data.get("title")
         messages = request.data.get("messages")
 
-        if not messages or not isinstance(messages, list) or len(messages) > 0:
+        if not messages or not isinstance(messages, list) or len(messages) <= 0:
             return Response({"detail": "A list of messages is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         request_group = RequestGroup.objects.create(
@@ -125,6 +125,8 @@ class RequestGroupView(UserQuerysetMixin, DynamicQuerysetMixin, generics.Generic
                 sender_id=message.get("sender"),
                 content=message.get("content"),
             )
+
+        return Response({"id": request_group.id}, status=status.HTTP_201_CREATED)
 
     def put(self, request, pk):
         instance = get_object_or_404(self.get_queryset(), id=pk)

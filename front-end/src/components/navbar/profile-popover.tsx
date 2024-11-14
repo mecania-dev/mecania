@@ -28,7 +28,6 @@ export function ProfilePopover() {
     { label: 'Meus dados', path: '/profile', I: 'update', a: 'User' },
     { label: 'Endereços', path: '/profile/addresses', I: 'create', a: 'Address' },
     { label: 'Veículos', path: '/profile/vehicles', I: 'create', a: 'Vehicle' },
-    { label: 'Solicitações', path: '/profile/requests', I: ['message_mechanic', 'message_user'], a: 'Chat' },
     { label: 'Serviços', path: '/profile/services', I: 'provide', a: 'Service' },
     { label: 'Serviços', path: '/services', I: 'manage', a: 'Service' },
     { label: 'Oficinas', path: '/mechanics', I: 'manage', a: 'User' }

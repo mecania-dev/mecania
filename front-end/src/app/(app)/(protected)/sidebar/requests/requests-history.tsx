@@ -1,57 +1,54 @@
 'use client'
 
-import { LuTrash2 } from 'react-icons/lu'
+import React from 'react'
 
-import { confirmationModal } from '@/components/modal'
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { compareDates } from '@/lib/date'
-import { useRequests } from '@/mocks/use-requests'
+import { Request } from '@/types/entities/chat/request'
+import { groupBy } from 'lodash'
 
 import { EmptyHistory } from '../empty-history'
 
 export function RequestsHistory() {
-  // TODO: Remover depois que implementar o backend
-  const { requests, removeRequest } = useRequests()
-  const {} = useSWRCustom(null)
-  const sortedReqs = requests.sort((a, b) => compareDates(a.updatedAt, b.updatedAt, 'desc'))
-
-  const handleChatRemove = (requestId?: number) => (e: React.MouseEvent<SVGElement, MouseEvent>) => {
-    e.stopPropagation()
-    e.preventDefault()
-
-    confirmationModal({
-      size: 'sm',
-      title: 'Excluir solicitação',
-      question: 'Tem certeza que deseja excluir essa solicitação?',
-      onConfirm: () => removeRequest(requestId)
-    })
-  }
+  const requests = useSWRCustom<Request[]>('chat/requests/', {
+    fetcherConfig: { params: { paginate: false, title__isnull: false } }
+  })
+  const sortedReqs = requests.state.data?.sort((a, b) => compareDates(a.updatedAt, b.updatedAt, 'desc'))
+  const groupedReqs = groupBy(sortedReqs ?? [], req => req.mechanic.username)
 
   return (
-    <div className="w-0 space-y-1 overflow-hidden transition-width group-data-[requests=true]:w-full">
-      {sortedReqs.length === 0 && (
-        <EmptyHistory title="Você ainda não tem solicitações" description="Suas futuras solicitações aparecerão aqui" />
-      )}
-      {sortedReqs.map((req, i) => (
-        <SidebarRoute
-          href={`/profile/requests/${req.id}`}
-          variant="ghost"
-          activeVariant="solid"
-          classNames={{ text: 'truncate' }}
-          endContent={
-            req.status === 'pending' && (
-              <LuTrash2
-                className="hidden h-5 w-5 shrink-0 text-danger hover:scale-105 group-data-[active=true]:block group-data-[hover=true]:block"
-                onClick={handleChatRemove(req.id)}
-              />
-            )
-          }
-          key={`${i}-${req.id}`}
-        >
-          {`${req.mechanic.firstName} - ${req.chat.title}`}
-        </SidebarRoute>
-      ))}
+    <div className="flex w-0 flex-col space-y-3 overflow-hidden transition-width group-data-[requests=true]:w-full">
+      <div className="space-y-1 overflow-auto scrollbar-hide">
+        {sortedReqs?.length === 0 && (
+          <EmptyHistory
+            title="Você ainda não tem solicitações"
+            description="Suas futuras solicitações aparecerão aqui"
+          />
+        )}
+        {Object.entries(groupedReqs).map(([mechanic, requests], i) => (
+          <React.Fragment key={i}>
+            <p
+              data-is-first={i === 0}
+              className="truncate text-small font-semibold text-primary data-[is-first=false]:!mt-3"
+            >
+              {mechanic}
+            </p>
+            {requests.map((req, i) => (
+              <SidebarRoute
+                canProps={{ I: ['message_mechanic', 'message_user'], a: 'Chat' }}
+                href={`/profile/requests/${req.id}`}
+                variant="ghost"
+                activeVariant="solid"
+                classNames={{ text: 'truncate' }}
+                key={`${i}-${req.id}`}
+              >
+                {req.title}
+              </SidebarRoute>
+            ))}
+          </React.Fragment>
+        ))}
+      </div>
     </div>
   )
 }

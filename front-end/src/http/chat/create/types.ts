@@ -3,7 +3,15 @@ import { z } from 'zod'
 
 export const chatCreateSchema = z.object({
   vehicle: z.number(),
-  message: string({ name: 'Mensagem', min: 1, max: 4096, allowEmpty: true }).optional(),
+  members: z.array(z.number()).optional(),
+  messages: z
+    .array(
+      z.object({
+        content: string({ name: 'Mensagem', min: 1, max: 4096, allowEmpty: true }),
+        sender: z.number()
+      })
+    )
+    .optional(),
   isPrivate: z.boolean().default(true)
 })
 
