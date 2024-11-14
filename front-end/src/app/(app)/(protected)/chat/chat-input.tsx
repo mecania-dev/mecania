@@ -79,19 +79,22 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
 
   function onOpen() {
     if (!firstMessage) return
-    sendMessage(firstMessage, user!)
+    setIsAiGenerating(true)
     socket.sendJsonMessage({ message: firstMessage })
     setFirstMessage('')
   }
 
   function onMessage(e: MessageEvent<any>) {
-    const data = JSON.parse(e.data)
     if (!chat) return
+
+    const data = JSON.parse(e.data)
+    sendMessage(data)
+
     if (data.sender.id !== user?.id) {
-      sendMessage(data.content, data.sender)
-      mutate(`/chat/${chat.id}`)
+      mutate(`/chat/${chat.id}`).then(() => {
+        setIsAiGenerating(false)
+      })
     }
-    setIsAiGenerating(!!data.isAiGenerating)
   }
 
   async function onSubmit({ message }: SendMessage) {
@@ -123,7 +126,7 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
       return
     }
 
-    sendMessage(message, user!)
+    setIsAiGenerating(true)
     socket.sendJsonMessage({ message })
   }
 

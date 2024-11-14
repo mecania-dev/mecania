@@ -2,6 +2,7 @@ import json, asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.shortcuts import get_object_or_404
 from channels.db import database_sync_to_async
+from djangorestframework_camel_case.util import camelize
 
 from .models import ChatGroup, GroupMessage, Issue, Recommendation
 from .serializers import GroupMessageSerializer
@@ -44,7 +45,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Async handlers
     async def chat_message(self, event):
         # Send message to WebSocket
-        await self.send(text_data=json.dumps(event["message"]))
+        await self.send(text_data=json.dumps(camelize(event["message"])))
 
     def get_existing_messages(self):
         # Get previous messages in the chat group as a list of role-content dicts

@@ -25,7 +25,7 @@ export interface ChatStore {
   mechanicsWithRequest: number[]
   setChat: (chat?: Chat) => void
   setVehicle: (vehicle: Vehicle) => void
-  sendMessage: (message: string, sender: Pick<User, 'id' | 'username' | 'isAi'>) => void
+  sendMessage: (message: Chat['messages'][number]) => void
   answerQuestion: (questionIndex: number, updatedQuestion: Question) => void
   getCurrentQuestion: () => {
     currentQuestion?: Question
@@ -82,21 +82,15 @@ export const useChat = create<ChatStore>()((set, get) => ({
     set(state => ({
       chat,
       vehicle: chat?.vehicle,
-      messages: chat?.messages ?? [],
+      messages: state.chat?.id === chat?.id && state.messages.length ? state.messages : chat?.messages ?? [],
       mechanicsWithRequest: state.chat?.id === chat?.id ? state.mechanicsWithRequest : [],
       isAiGenerating: chat ? state.isAiGenerating : false,
       recommendations: chat ? state.recommendations : createRecommendations(set)
     })),
   setVehicle: vehicle => set({ vehicle }),
-  sendMessage: (message, sender) => {
+  sendMessage: message => {
     set(state => {
-      state.messages.push({
-        id: state.messages.length + 1,
-        content: message,
-        sender: { id: sender.id, username: sender.username, isAi: sender.isAi },
-        sentAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      })
+      state.messages.push(message)
       return { messages: state.messages }
     })
   },

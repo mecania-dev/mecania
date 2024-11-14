@@ -29,7 +29,7 @@ export function ChatHistory() {
       question: 'Tem certeza que deseja excluir essa conversa?',
       onConfirm: () => {
         chats.remove({ url: url => url + chatId })
-        mutate(`/chat/${chatId}`)
+        mutate('chat/')
       }
     })
   }
