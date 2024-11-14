@@ -1,7 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
-
 import { ChatInput } from '@/components/chat/input'
 import { Form } from '@/components/form'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
@@ -65,26 +63,26 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
   const socket = useWebSocket<Message & { isAiGenerating: boolean }>(
     chat?.groupName ? `/ws/chat/${chat.groupName}/` : null,
     {
+      onOpen,
       onMessage
     }
   )
 
   const hasRecommendations = !!chat?.issues.some(issue => issue.recommendations.length > 0)
   const isChatDisabled = (!chat && currentQuestion?.type === 'options') || !vehicle
-  const isDisabled = isSubmitting || !isValid || isChatDisabled || isAiGenerating
+  const isDisabled =
+    (chat && socket.readyState !== ReadyState.OPEN) || isSubmitting || !isValid || isChatDisabled || isAiGenerating
 
   useFirstRenderEffect(() => {
     form.setFocus('message')
   })
 
-  useEffect(() => {
-    if (socket.readyState === ReadyState.OPEN && firstMessage) {
-      sendMessage(firstMessage, user!)
-      socket.sendJsonMessage({ message: firstMessage })
-      setFirstMessage('')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket.readyState])
+  function onOpen() {
+    if (!firstMessage) return
+    sendMessage(firstMessage, user!)
+    socket.sendJsonMessage({ message: firstMessage })
+    setFirstMessage('')
+  }
 
   function onMessage(e: MessageEvent<any>) {
     const data = JSON.parse(e.data)
