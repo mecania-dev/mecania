@@ -12,8 +12,8 @@ export const requestSchema = z.object({
   driver: userSchema.pick({ id: true, username: true, isAi: true }),
   mechanic: userSchema.pick({ id: true, username: true, isAi: true }),
   accepted: z.boolean(),
-  driverStatus: z.enum(['pending', 'accepted', 'rejected']),
-  mechanicStatus: z.enum(['pending', 'accepted', 'rejected']),
+  driverStatus: z.enum(['pending', 'accepted', 'rejected', 'closed']),
+  mechanicStatus: z.enum(['pending', 'accepted', 'rejected', 'closed']),
   messages: messageSchema.array(),
   createdAt: z.string(),
   updatedAt: z.string()

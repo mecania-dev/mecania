@@ -2,13 +2,12 @@
 
 import { ChatHeader } from '@/components/chat/header'
 import { formatDate } from '@/lib/date'
-import { Request } from '@/types/entities/chat/request'
 
-interface RequestChatHeaderProps {
-  request?: Request
-}
+import { useRequest } from '../use-chat'
 
-export function RequestChatHeader({ request }: RequestChatHeaderProps) {
+export function RequestChatHeader() {
+  const { request } = useRequest()
+
   return (
     <ChatHeader classNames={{ body: 'space-x-2' }}>
       <p className="truncate whitespace-nowrap">{request?.title}</p>

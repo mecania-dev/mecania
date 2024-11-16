@@ -5,17 +5,19 @@ import React from 'react'
 import { SidebarRoute } from '@/components/sidebar/sidebar-route'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { compareDates } from '@/lib/date'
+import { useUser } from '@/providers/user-provider'
 import { Request } from '@/types/entities/chat/request'
 import { groupBy } from 'lodash'
 
 import { EmptyHistory } from '../empty-history'
 
 export function RequestsHistory() {
+  const { isMechanic } = useUser()
   const requests = useSWRCustom<Request[]>('chat/requests/', {
     fetcherConfig: { params: { paginate: false, title__isnull: false } }
   })
   const sortedReqs = requests.state.data?.sort((a, b) => compareDates(a.updatedAt, b.updatedAt, 'desc'))
-  const groupedReqs = groupBy(sortedReqs ?? [], req => req.mechanic.username)
+  const groupedReqs = groupBy(sortedReqs ?? [], req => (isMechanic ? req.driver.username : req.mechanic.username))
 
   return (
     <div className="flex w-0 flex-col space-y-3 overflow-hidden transition-width group-data-[requests=true]:w-full">
@@ -26,13 +28,13 @@ export function RequestsHistory() {
             description="Suas futuras solicitações aparecerão aqui"
           />
         )}
-        {Object.entries(groupedReqs).map(([mechanic, requests], i) => (
+        {Object.entries(groupedReqs).map(([user, requests], i) => (
           <React.Fragment key={i}>
             <p
               data-is-first={i === 0}
               className="truncate text-small font-semibold text-primary data-[is-first=false]:!mt-3"
             >
-              {mechanic}
+              {user}
             </p>
             {requests.map((req, i) => (
               <SidebarRoute

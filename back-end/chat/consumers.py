@@ -4,8 +4,8 @@ from django.shortcuts import get_object_or_404
 from channels.db import database_sync_to_async
 from djangorestframework_camel_case.util import camelize
 
-from .models import ChatGroup, GroupMessage, Issue, Recommendation
-from .serializers import GroupMessageSerializer
+from .models import ChatGroup, GroupMessage, Issue, Recommendation, RequestGroup, RequestGroupMessage
+from .serializers import GroupMessageSerializer, RequestGroupMessageSerializer
 from .chatgpt_utils import ask_gpt
 from services.models import Service
 
@@ -112,3 +112,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
             for recommendation in issue_data["recommendations"]:
                 service = get_object_or_404(Service, name=recommendation)
                 Recommendation.objects.create(issue=issue, service=service)
+
+
+class RequestsConsumer(AsyncWebsocketConsumer):
+    # Default methods
+    async def connect(self):
+        self.user = self.scope["user"]
+        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
+        self.request_group = await database_sync_to_async(self.get_request_group)()
+
+        # Join room group
+        await self.channel_layer.group_add(self.room_name, self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        # Leave room group
+        await self.channel_layer.group_discard(self.room_name, self.channel_name)
+
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        print(text_data_json)
+        message = await database_sync_to_async(self.create_message)(sender=self.user, content=text_data_json["message"])
+
+        # Send user message to room group
+        await self.channel_layer.group_send(self.room_name, {"type": "request_message", "message": message})
+
+    # Async handlers
+    async def request_message(self, event):
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps(camelize(event["message"])))
+
+    # Database operations
+    def get_request_group(self):
+        return get_object_or_404(RequestGroup, group_name=self.room_name)
+
+    def create_message(self, sender, content):
+        message = RequestGroupMessage.objects.create(request_group=self.request_group, sender=sender, content=content)
+        serializer = RequestGroupMessageSerializer(message)
+        return serializer.data
