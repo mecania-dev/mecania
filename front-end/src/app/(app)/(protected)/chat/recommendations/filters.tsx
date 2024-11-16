@@ -82,7 +82,7 @@ export function ChatRecommendationsFilters({ className }: ChatRecommendationsFil
           getValue={distance => `${typeof distance === 'number' ? distance : distance.join('-')} km`}
           step={1}
           minValue={0}
-          maxValue={100}
+          maxValue={500}
           className="max-w-md"
           onChange={onDistancesChange}
         />
