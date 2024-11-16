@@ -37,6 +37,14 @@ export function UserActions({ isLoading }: UserActionsProps) {
     })
     await mutate(`chat/requests/${request?.id}`)
   })
+  const [onResolved, isResolving] = useIsLoading(async () => {
+    await api.put(`chat/requests/${request?.id}/`, {
+      accepted: true,
+      driverStatus: !isMechanic ? 'resolved' : request?.driverStatus,
+      mechanicStatus: isMechanic ? 'resolved' : request?.mechanicStatus
+    })
+    await mutate(`chat/requests/${request?.id}`)
+  })
 
   if (isLoading) return null
 
@@ -94,11 +102,46 @@ export function UserActions({ isLoading }: UserActionsProps) {
 
   if (
     (isMechanic ? request?.mechanicStatus : request?.driverStatus) === 'closed' &&
-    (isMechanic ? request?.driverStatus : request?.mechanicStatus) !== 'closed'
+    (isMechanic ? request?.driverStatus : request?.mechanicStatus) !== 'closed' &&
+    (isMechanic ? request?.driverStatus : request?.mechanicStatus) !== 'resolved'
   ) {
     return (
       <div className="flex gap-2">
         <p className="text-small font-semibold text-default-400">Aguardando a outra parte fechar o negócio</p>
+      </div>
+    )
+  }
+
+  if (
+    (isMechanic ? request?.mechanicStatus : request?.driverStatus) === 'resolved' &&
+    (isMechanic ? request?.driverStatus : request?.mechanicStatus) !== 'resolved'
+  ) {
+    return (
+      <div className="flex gap-2">
+        <p className="text-small font-semibold text-default-400">
+          Aguardando a outra parte confirmar a resolução do problema
+        </p>
+      </div>
+    )
+  }
+
+  if (
+    (request?.mechanicStatus === 'closed' || request?.mechanicStatus === 'resolved') &&
+    (request?.driverStatus === 'closed' || request?.driverStatus === 'resolved') &&
+    !(request?.mechanicStatus === 'resolved' && request?.driverStatus === 'resolved')
+  ) {
+    return (
+      <div className="flex gap-2">
+        <Button
+          color="primary"
+          size="sm"
+          radius="lg"
+          className="font-semibold"
+          onPress={onResolved}
+          isLoading={isResolving}
+        >
+          Problema resolvido
+        </Button>
       </div>
     )
   }
