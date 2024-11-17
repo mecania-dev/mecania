@@ -4,8 +4,12 @@ import { create } from 'zustand'
 export interface RequestStore {
   request?: Request
   messages: Request['messages']
+  hasRatings?: boolean
+  hasAIRatings?: boolean
   setRequest: (request?: Request) => void
   sendMessage: (message: Request['messages'][number]) => void
+  setHasRatings: (hasRatings: boolean) => void
+  setHasAIRatings: (hasAIRatings: boolean) => void
 }
 
 export const useRequest = create<RequestStore>()(set => ({
@@ -18,5 +22,7 @@ export const useRequest = create<RequestStore>()(set => ({
   sendMessage: message =>
     set(state => ({
       messages: [...state.messages, message]
-    }))
+    })),
+  setHasRatings: hasRatings => set({ hasRatings }),
+  setHasAIRatings: hasAIRatings => set({ hasAIRatings })
 }))

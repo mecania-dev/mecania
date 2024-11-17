@@ -13,7 +13,7 @@ interface RatingProps extends VariantProps<typeof ratingClasses> {
 const ratingClasses = tv({
   slots: {
     base: 'flex items-center',
-    label: '',
+    label: 'select-none font-[monospace] text-medium',
     star: 'cursor-pointer transition-colors duration-500 hover:scale-110 active:scale-95'
   },
   variants: {

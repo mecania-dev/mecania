@@ -6,6 +6,7 @@ import { ChatWindow } from '@/components/chat/window'
 import { useUser } from '@/providers/user-provider'
 
 import { useRequest } from '../use-chat'
+import { Feedbacks } from './feedbacks'
 
 interface RequestChatWindowProps {
   isLoading: boolean
@@ -21,14 +22,17 @@ export function RequestChatWindow({ isLoading }: RequestChatWindowProps) {
       {isLoading ? (
         <Loading isFixed={false} />
       ) : (
-        messages.map(msg => (
-          <ChatMessage
-            isSender={user?.id === msg.sender.id}
-            isAIGenerating={msg.sender.isAi && !msg.content}
-            key={msg.id}
-            {...msg}
-          />
-        ))
+        <>
+          <Feedbacks />
+          {messages.map(msg => (
+            <ChatMessage
+              isSender={user?.id === msg.sender.id}
+              isAIGenerating={msg.sender.isAi && !msg.content}
+              key={msg.id}
+              {...msg}
+            />
+          ))}
+        </>
       )}
     </ChatWindow>
   )

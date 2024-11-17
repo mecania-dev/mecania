@@ -5,6 +5,7 @@ import { Form } from '@/components/form'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
 import { useForm } from '@/hooks/use-form'
 import { ReadyState, useWebSocket } from '@/hooks/use-web-socket'
+import { useUser } from '@/providers/user-provider'
 import { Message, SendMessage, sendMessageSchema } from '@/types/entities/chat'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { mutate } from 'swr'
@@ -17,7 +18,8 @@ interface RequestChatInputProps {
 }
 
 export function RequestChatInput({ isLoading }: RequestChatInputProps) {
-  const { request, sendMessage } = useRequest()
+  const { isMechanic } = useUser()
+  const { request, sendMessage, hasRatings, hasAIRatings } = useRequest()
   const form = useForm<SendMessage>({
     resolver: zodResolver(sendMessageSchema)
   })
@@ -25,6 +27,7 @@ export function RequestChatInput({ isLoading }: RequestChatInputProps) {
 
   const { isSubmitting, isValid } = form.formState
   const isDisabled = isLoading || socket.readyState !== ReadyState.OPEN || isSubmitting || !isValid
+  const isRated = isMechanic ? hasRatings && hasAIRatings : hasAIRatings
 
   useFirstRenderEffect(() => {
     form.setFocus('message')
@@ -49,12 +52,15 @@ export function RequestChatInput({ isLoading }: RequestChatInputProps) {
       onSubmit={onSubmit}
       className="mx-auto flex w-full flex-col gap-2 px-5 pb-3 md:max-w-3xl lg:max-w-[40rem] xl:max-w-[48rem]"
     >
+      {isRated && <p className="text-center text-small text-default-500">Essa conversa foi encerrada</p>}
       <UserActions isLoading={isLoading} />
       <ChatInput
         maxLength={1024}
         submitProps={{ isDisabled }}
         onSubmit={form.handleSubmit(onSubmit)}
-        isDisabled={!request?.accepted || (request?.driverStatus === 'closed' && request?.mechanicStatus === 'closed')}
+        isDisabled={
+          !request?.accepted || (request?.driverStatus === 'closed' && request?.mechanicStatus === 'closed') || isRated
+        }
         fullWidth
         {...form.register('message')}
       />
