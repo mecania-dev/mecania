@@ -52,7 +52,7 @@ export function UserActions({ isLoading }: UserActionsProps) {
     return (
       <div className="flex gap-2">
         {!isMechanic && (
-          <p className="text-small font-semibold text-default-400">Aguardando o motorista aceitar ou rejeitar</p>
+          <p className="text-small font-semibold text-default-400">Aguardando a oficina aceitar ou rejeitar</p>
         )}
         {isMechanic && (
           <>
