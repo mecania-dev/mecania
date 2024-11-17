@@ -87,8 +87,8 @@ class RequestGroup(models.Model):
     driver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="requests")
     mechanic = models.ForeignKey(User, on_delete=models.CASCADE, related_name="requests_received")
     accepted = models.BooleanField(default=False)
-    driver_status = models.CharField(max_length=50)
-    mechanic_status = models.CharField(max_length=50)
+    driver_status = models.CharField(max_length=50, default="pending")
+    mechanic_status = models.CharField(max_length=50, default="pending")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
