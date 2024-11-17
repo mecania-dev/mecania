@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Redirect } from '@/components/redirect'
 import { useSWRCustom } from '@/hooks/swr/use-swr-custom'
 import { useFirstRenderEffect } from '@/hooks/use-first-render-effect'
+import { usePathnameChange } from '@/hooks/use-pathname-change'
 import { Request } from '@/types/entities/chat/request'
 import { deleteCookie, getCookie, setCookie } from 'cookies-next'
 import { mutate } from 'swr'
@@ -29,7 +30,7 @@ function isInvalidRequestId(requestId?: number) {
 
 export function MechanicRequest({ id }: MechanicRequestProps) {
   const isCreatedRequestId = getCookie('createdRequestId') === id?.toString()
-  const { setRequest } = useRequest()
+  const { setRequest, setHasRatings, setHasAIRatings } = useRequest()
   const [isMutating, setIsMutating] = useState(id ? !isCreatedRequestId : false)
   const request = useSWRCustom<Request>(id ? `chat/requests/${id}` : null, {
     onSuccess: handleSuccess
@@ -55,6 +56,12 @@ export function MechanicRequest({ id }: MechanicRequestProps) {
       setIsMutating(true)
       mutate(`chat/requests/${id}`).then(() => setIsMutating(false))
     }
+  })
+
+  usePathnameChange(() => {
+    setRequest()
+    setHasRatings()
+    setHasAIRatings()
   })
 
   if (id && !request.state.isLoading && !request.state.data) return <Redirect url="/profile" />

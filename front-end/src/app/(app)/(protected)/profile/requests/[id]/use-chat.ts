@@ -8,8 +8,8 @@ export interface RequestStore {
   hasAIRatings?: boolean
   setRequest: (request?: Request) => void
   sendMessage: (message: Request['messages'][number]) => void
-  setHasRatings: (hasRatings: boolean) => void
-  setHasAIRatings: (hasAIRatings: boolean) => void
+  setHasRatings: (hasRatings?: boolean) => void
+  setHasAIRatings: (hasAIRatings?: boolean) => void
 }
 
 export const useRequest = create<RequestStore>()(set => ({
