@@ -131,7 +131,6 @@ class RequestsConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        print(text_data_json)
         message = await database_sync_to_async(self.create_message)(sender=self.user, content=text_data_json["message"])
 
         # Send user message to room group
