@@ -31,7 +31,7 @@ export function Feedbacks() {
     fetcherConfig: { params: { paginate: false, user__id: user?.id, chat_group__id: request?.chatGroup } },
     onSuccess: data => {
       setHasAIRatings(data.length > 0)
-      setIsModalOpen(isMechanicFeedback || data.length === 0)
+      setIsModalOpen(data.length === 0)
     }
   })
 

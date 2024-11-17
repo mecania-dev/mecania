@@ -45,10 +45,22 @@ export function UserActions({ isLoading }: UserActionsProps) {
     })
     await mutate(`chat/requests/${request?.id}`)
   })
+  const myStatus = isMechanic ? request?.mechanicStatus : request?.driverStatus
+  const otherStatus = isMechanic ? request?.driverStatus : request?.mechanicStatus
 
-  if (isLoading) return null
+  if (isLoading || !request) return null
 
-  if (request?.mechanicStatus === 'pending') {
+  if (request.mechanicStatus === 'rejected') {
+    return (
+      <div className="flex gap-2">
+        <p className="text-small font-semibold text-default-400">
+          {isMechanic ? 'Você rejeitou a solicitação' : 'A oficina rejeitou a solicitação'}
+        </p>
+      </div>
+    )
+  }
+
+  if (request.mechanicStatus === 'pending') {
     return (
       <div className="flex gap-2">
         {!isMechanic && (
@@ -84,13 +96,15 @@ export function UserActions({ isLoading }: UserActionsProps) {
     )
   }
 
-  if (
-    request?.accepted &&
-    (isMechanic
-      ? request.mechanicStatus === 'accepted'
-      : (request.mechanicStatus === 'accepted' || request.mechanicStatus === 'closed') &&
-        request.driverStatus !== 'closed')
-  ) {
+  if (request.driverStatus === 'pending' || request.mechanicStatus === 'accepted') {
+    if (myStatus === 'closed') {
+      return (
+        <div className="flex gap-2">
+          <p className="text-small font-semibold text-default-400">Aguardando a outra parte fechar o negócio</p>
+        </div>
+      )
+    }
+
     return (
       <div className="flex gap-2">
         <Button color="primary" size="sm" radius="lg" className="font-semibold" onPress={onClose} isLoading={isClosing}>
@@ -100,50 +114,33 @@ export function UserActions({ isLoading }: UserActionsProps) {
     )
   }
 
-  if (
-    (isMechanic ? request?.mechanicStatus : request?.driverStatus) === 'closed' &&
-    (isMechanic ? request?.driverStatus : request?.mechanicStatus) !== 'closed' &&
-    (isMechanic ? request?.driverStatus : request?.mechanicStatus) !== 'resolved'
-  ) {
-    return (
-      <div className="flex gap-2">
-        <p className="text-small font-semibold text-default-400">Aguardando a outra parte fechar o negócio</p>
-      </div>
-    )
-  }
+  if (myStatus === 'closed' || myStatus === 'resolved') {
+    if (myStatus !== 'resolved') {
+      return (
+        <div className="flex gap-2">
+          <Button
+            color="primary"
+            size="sm"
+            radius="lg"
+            className="font-semibold"
+            onPress={onResolved}
+            isLoading={isResolving}
+          >
+            Problema resolvido
+          </Button>
+        </div>
+      )
+    }
 
-  if (
-    (isMechanic ? request?.mechanicStatus : request?.driverStatus) === 'resolved' &&
-    (isMechanic ? request?.driverStatus : request?.mechanicStatus) !== 'resolved'
-  ) {
-    return (
-      <div className="flex gap-2">
-        <p className="text-small font-semibold text-default-400">
-          Aguardando a outra parte confirmar a resolução do problema
-        </p>
-      </div>
-    )
-  }
-
-  if (
-    (request?.mechanicStatus === 'closed' || request?.mechanicStatus === 'resolved') &&
-    (request?.driverStatus === 'closed' || request?.driverStatus === 'resolved') &&
-    !(request?.mechanicStatus === 'resolved' && request?.driverStatus === 'resolved')
-  ) {
-    return (
-      <div className="flex gap-2">
-        <Button
-          color="primary"
-          size="sm"
-          radius="lg"
-          className="font-semibold"
-          onPress={onResolved}
-          isLoading={isResolving}
-        >
-          Problema resolvido
-        </Button>
-      </div>
-    )
+    if (otherStatus !== 'resolved') {
+      return (
+        <div className="flex gap-2">
+          <p className="text-small font-semibold text-default-400">
+            Aguardando a outra parte confirmar a resolução do problema
+          </p>
+        </div>
+      )
+    }
   }
 
   return null

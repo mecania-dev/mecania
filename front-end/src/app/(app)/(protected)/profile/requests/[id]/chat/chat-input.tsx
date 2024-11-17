@@ -27,7 +27,10 @@ export function RequestChatInput({ isLoading }: RequestChatInputProps) {
 
   const { isSubmitting, isValid } = form.formState
   const isDisabled = isLoading || socket.readyState !== ReadyState.OPEN || isSubmitting || !isValid
-  const isRated = isMechanic ? hasRatings && hasAIRatings : hasAIRatings
+  const myStatus = isMechanic ? request?.mechanicStatus : request?.driverStatus
+  const otherStatus = isMechanic ? request?.driverStatus : request?.mechanicStatus
+  const isRated =
+    myStatus === 'resolved' && otherStatus === 'resolved' && (isMechanic ? hasAIRatings : hasRatings && hasAIRatings)
 
   useFirstRenderEffect(() => {
     form.setFocus('message')
