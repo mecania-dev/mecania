@@ -25,7 +25,9 @@ export function SendMessageModal() {
           chatGroup: chat!.id,
           title: chat!.title,
           mechanic: mechanic.id,
-          messages: [{ content: message, sender: user!.id }]
+          messages: [{ content: message, sender: user!.id }],
+          driverStatus: 'pending',
+          mechanicStatus: 'pending'
         },
         {
           onError() {

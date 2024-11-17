@@ -5,6 +5,8 @@ export const requestCreateSchema = z.object({
   chatGroup: z.number(),
   title: string({ name: 'Título', min: 1, max: 255 }),
   mechanic: z.number(),
+  driverStatus: z.enum(['pending', 'accepted', 'rejected', 'closed', 'resolved']).default('pending'),
+  mechanicStatus: z.enum(['pending', 'accepted', 'rejected', 'closed', 'resolved']).default('pending'),
   messages: z
     .array(
       z.object({
