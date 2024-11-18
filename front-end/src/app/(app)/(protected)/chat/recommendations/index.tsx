@@ -41,10 +41,10 @@ export function ChatRecommendations() {
     }
 
     if (!summary) {
-      api.get<{ message: string }>(`chat/${chat?.id}/summary/`, {
+      api.get<{ summary: string }>(`chat/${chat?.id}/summary/`, {
         onSuccess(res) {
-          if (res.data.message) {
-            setSummary(res.data.message)
+          if (res.data.summary) {
+            setSummary(res.data.summary)
           }
         }
       })
