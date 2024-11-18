@@ -15,11 +15,16 @@ import { mutate } from 'swr'
 
 import { Question, useChat } from './use-chat'
 
+function addColonIfNeeded(text = '') {
+  // Verifica se o texto termina com ".", "?", ";", "!" ou "..."
+  return /[.?!;]$|\.{3}$/.test(text) ? text : `${text}:`
+}
+
 function setInitialMessage(question: Question) {
   let initialMessage = ''
 
   if (question.answer) {
-    initialMessage += `${question.text}\n${question.answer}\n\n`
+    initialMessage += `- ${addColonIfNeeded(question.text)} ${question.answer}\n`
   }
 
   if (question.type === 'text' && typeof question.followUp === 'object') {
@@ -100,8 +105,8 @@ export function AIChatInput({ isLoading }: AIChatInputProps) {
 
       if (isLastQuestion) {
         message = ''
-        message += `Resumo do problema:\n\n`
-        message += `Qual veículo está com problemas?\n${vehicle?.brand} ${vehicle?.model} - ${vehicle?.year}\n\n`
+        message += `Meu veículo está apresentando um problema que gostaria de diagnosticar. Vou descrever o que já observei:\n`
+        message += `- Veículo: ${vehicle?.brand} ${vehicle?.model} - ${vehicle?.year}\n`
 
         initialQuestions.forEach(q => {
           message += setInitialMessage(q)

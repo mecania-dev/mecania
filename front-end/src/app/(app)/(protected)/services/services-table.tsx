@@ -96,9 +96,10 @@ export function ServicesTable() {
     const grouped = groupBy(services.state.data, service => service.category.name)
     // Format the data to { category: 'category.name', services: [] }
     const formattedData = Object.keys(grouped).map(categoryName => ({
+      categoryId: grouped[categoryName][0].category.id,
       category: categoryName,
-      services: grouped[categoryName].map(({ name, description, vehicleType }) => {
-        if (description) return { name, description, vehicleType }
+      services: grouped[categoryName].map(({ id, name, description, vehicleType }) => {
+        if (description) return { id, name, description, vehicleType }
         return { name, vehicleType }
       })
     }))

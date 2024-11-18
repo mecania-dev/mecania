@@ -111,7 +111,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             for recommendation in issue_data["recommendations"]:
                 service = get_object_or_404(Service, name=recommendation)
-                Recommendation.objects.create(issue=issue, service=service)
+                try:
+                    Recommendation.objects.create(issue=issue, service=service)
+                except Exception as e:
+                    print(e)
 
 
 class RequestsConsumer(AsyncWebsocketConsumer):
