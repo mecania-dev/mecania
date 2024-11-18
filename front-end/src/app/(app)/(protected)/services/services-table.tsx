@@ -100,7 +100,7 @@ export function ServicesTable() {
       category: categoryName,
       services: grouped[categoryName].map(({ id, name, description, vehicleType }) => {
         if (description) return { id, name, description, vehicleType }
-        return { name, vehicleType }
+        return { id, name, vehicleType }
       })
     }))
     // Create a Blob from the JSON data
