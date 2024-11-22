@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export default function Home() {
   return (
-    <div className="flex min-h-[calc(100dvh-4rem)] flex-col items-center justify-center bg-gradient-to-b from-primary-50 via-white to-primary-100 text-default-800">
+    <div className="flex min-h-[calc(100dvh-4rem)] flex-col items-center justify-center bg-gradient-to-b from-primary-50 via-background to-primary-100 text-default-800">
       <main className="mt-16 flex flex-col items-center space-y-8 px-5 text-center md:px-10">
         <h1 className="text-4xl font-bold leading-tight text-primary md:text-6xl">
           Bem-vindo ao{' '}
