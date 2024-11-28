@@ -24,7 +24,24 @@ export async function getSession() {
 export async function setSession(user?: User, access?: string) {
   if (user && access) {
     await cookies.set(
-      { session: user },
+      {
+        session: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          isAi: user.isAi,
+          isActive: user.isActive,
+          isSuperuser: user.isSuperuser,
+          isStaff: user.isStaff,
+          groups: user.groups,
+          permissions: user.permissions,
+          lastLogin: user.lastLogin,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
+        }
+      },
       {
         maxAge: getTokenExpiration(access) - Date.now() / 1000,
         path: '/',
