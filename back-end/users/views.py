@@ -77,6 +77,9 @@ class MechanicsListView(DynamicQuerysetMixin, generics.ListAPIView):
                             filtered_mechanics.append(mechanic.id)
                             break  # Stop further checks for this mechanic once a match is found
 
+            if not filtered_mechanics:
+                return queryset
+
             # Return only mechanics within the specified distance range
             queryset = queryset.filter(id__in=filtered_mechanics)
 
